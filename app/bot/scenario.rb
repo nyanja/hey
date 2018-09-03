@@ -78,9 +78,8 @@ module Bot
     end
 
     def apply_bad_behavior
-      rand(2..7).times do
-        scroll
-      end
+      scroll_percent = rand(Range.new(*cfg.scroll_height_non_target))
+      scroll while (drv.scroll_height * 0.01 * scroll_percent) >= drv.y_offset
       sleep rand(0.2..2)
     end
 
