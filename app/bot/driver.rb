@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-require "selenium-webdriver"
-
 module Bot
   class Driver
     attr_reader :driver, :delay
 
-    def initialize _
-      @driver = Selenium::WebDriver.for :firefox
+    def initialize options
+      @driver = Selenium::WebDriver.for :firefox, options
       @delay = Selenium::WebDriver::Wait.new(timeout: 15)
     end
 

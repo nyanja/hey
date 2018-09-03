@@ -2,6 +2,7 @@
 
 require "pry"
 require "yaml"
+require "selenium-webdriver"
 require "./app/bot/driver"
 require "./app/bot/core"
 require "./app/bot/scenario"

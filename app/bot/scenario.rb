@@ -93,14 +93,14 @@ module Bot
     end
 
     def scroll
-      sleep rand(0.4..2.4)
-      drv.scroll_by rand(40..180)
+      sleep rand(Range.new(*cfg.scroll_delay))
+      drv.scroll_by rand(Range.new(*cfg.scroll_amount))
     end
 
     def wait key
-      intervals = { page_loading: 5,
-                    min: 0.4,
-                    avg: 1 }
+      intervals = { page_loading: 6,
+                    min: 1,
+                    avg: 2 }
       sleep intervals.fetch(key, 0)
     end
   end

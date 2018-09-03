@@ -9,11 +9,12 @@ module Bot
     end
 
     def execute
-
-      config.queries.each do |q|
-        drv = Driver.new nil
+      config.queries.each do |query|
+        opts = Selenium::WebDriver::Firefox::Options.new
+        opts.add_preference "general.useragent.override", config.user_agents.sample
+        drv = Driver.new options: opts
         scn = Scenario.new drv, config
-        scn.default q
+        scn.default query
       end
     end
   end
@@ -27,7 +28,7 @@ module Bot
       true
     end
 
-    def method_missing method, *args, &block
+    def method_missing method, *_args
       @cfg.fetch(method.to_s, nil)
     end
   end
