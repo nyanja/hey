@@ -1,0 +1,25 @@
+#
+# Поисковой запрос
+#
+query: "как варить пельмени"
+
+#
+# Продвигаемый домен
+#
+target: timeboil
+
+#
+# Не переходить по ссылкам
+#
+ignore:
+  - реклама
+  - yandex.ru
+  - mail.ru
+  - яндекс.видео
+
+
+
+nav_classes:
+  - sub
+
+engine: yandex.ru

@@ -1,0 +1,11 @@
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Metrics/MethodLength:
+  Max: 16
+
+Style/Documentation:
+  Enabled: false
+
+Style/MethodDefParentheses:
+  EnforcedStyle: require_no_parentheses
