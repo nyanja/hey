@@ -57,5 +57,12 @@ module Bot
     def switch_tab number
       switch_to.window(driver.window_handles[number])
     end
+
+    def close_all_tabs
+      driver.window_handles.each do |id|
+        switch_to.window id
+        close
+      end
+    end
   end
 end

@@ -1,2 +1,4 @@
-gem "selenium-webdriver"
+# frozen_string_literal: true
+
 gem "pry"
+gem "selenium-webdriver"

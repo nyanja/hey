@@ -10,15 +10,18 @@ module Bot
     end
 
     def default
-      search
-      inspect_results
+      cfg.queries.each do |query|
+        search query
+        inspect_results
+        clean_up
+      end
     end
 
-    def search
+    def search query
       drv.navigate.to "https://#{cfg.engine}" # yandex only
       wait :min
       bar = drv.find_element(id: "text") # mocked
-      drv.type bar, cfg.query
+      drv.type bar, query
       wait :min
       bar.submit
       wait :page_loading
@@ -30,6 +33,10 @@ module Bot
       drv.scroll_to rand(0..600)
       wait :min
       results.take(6).each { |r| handle_result r }
+    end
+
+    def clean_up
+      drv.close_all_tabs
     end
 
     def handle_result result
@@ -55,7 +62,7 @@ module Bot
 
     def apply_good_behavior
       n = rand(1..3)
-      n = 2
+      n = 2 # mocked
       n.times do
         wait :page_loading
         scroll while (drv.scroll_height + 10) >= drv.y_offset
