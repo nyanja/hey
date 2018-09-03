@@ -9,13 +9,12 @@ module Bot
     end
 
     def execute
-      drv = Driver.new nil
-      scn = Scenario.new drv, config
 
-      scn.default
-
-      sleep 5
-      drv.quit
+      config.queries.each do |q|
+        drv = Driver.new nil
+        scn = Scenario.new drv, config
+        scn.default q
+      end
     end
   end
 

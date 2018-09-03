@@ -9,12 +9,11 @@ module Bot
       @cfg = config
     end
 
-    def default
-      cfg.queries.each do |query|
-        search query
-        inspect_results
-        clean_up
-      end
+    def default query
+      search query
+      inspect_results
+      sleep 4
+      clean_up
     end
 
     def search query
@@ -32,7 +31,15 @@ module Bot
       results = content.find_elements class: "serp-item", tag_name: "li"
       drv.scroll_to rand(0..600)
       wait :min
-      results.take(6).each { |r| handle_result r }
+      verified_results = []
+
+      while verified_results.count < cfg.results_count
+        result = results.shift
+        next if result.text.match?(/#{cfg.ignore.join("|")}/i)
+        verified_results << result
+      end
+
+      verified_results.each { |r| handle_result r }
     end
 
     def clean_up
@@ -41,7 +48,6 @@ module Bot
 
     def handle_result result
       text = result.text
-      return if text.match?(/#{cfg.ignore.join("|")}/i)
 
       drv.scroll_to [(result.location.y - rand(140..300)), 0].max
       wait :min
@@ -79,9 +85,10 @@ module Bot
     end
 
     def visit_some_link
-      el = drv.find_element class: cfg.nav_classes.sample
-      link = el.find_elements(tag_name: :a).sample
-      drv.scroll_to link.location.y - rand(120..220)
+      link = drv.find_element(class: cfg.nav_classes.sample)
+                .find_elements(tag_name: :a)
+                .sample
+      drv.scroll_to(link.location.y - rand(120..220))
       wait :avg
       link.click
     end
