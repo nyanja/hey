@@ -10,9 +10,7 @@ module Bot
 
     def execute
       config.queries.each do |query|
-        opts = Selenium::WebDriver::Firefox::Options.new
-        opts.add_preference "general.useragent.override", config.user_agents.sample
-        drv = Driver.new options: opts
+        drv = Driver.new config
         scn = Scenario.new drv, config
         scn.default query
       end

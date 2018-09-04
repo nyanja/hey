@@ -4,9 +4,13 @@ module Bot
   class Driver
     attr_reader :driver, :delay
 
-    def initialize options
-      @driver = Selenium::WebDriver.for :firefox, options
-      @delay = Selenium::WebDriver::Wait.new(timeout: 15)
+    def initialize config
+      opts = Selenium::WebDriver::Firefox::Options.new
+      opts.add_preference "general.useragent.override", config.user_agents.sample
+      # @driver = Selenium::WebDriver.for :firefox, options: opts
+      @driver = Selenium::WebDriver.for :chrome
+      #:chrome
+      # @delay = Selenium::WebDriver::Wait.new(timeout: 15)
     end
 
     def respond_to_missing?
