@@ -61,6 +61,7 @@ module Bot
         apply_bad_behavior
       end
 
+      drv.close
       drv.switch_tab 0
       wait :avg
     rescue
@@ -98,9 +99,9 @@ module Bot
     end
 
     def wait key
-      intervals = { page_loading: 6,
-                    min: 1,
-                    avg: 2 }
+      intervals = { page_loading: 5,
+                    min: 2,
+                    avg: 3 }
       sleep intervals.fetch(key, 0)
     end
   end
