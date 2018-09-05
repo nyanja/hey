@@ -5,10 +5,15 @@ module Bot
     attr_reader :driver, :delay
 
     def initialize config
-      opts = Selenium::WebDriver::Firefox::Options.new
-      opts.add_preference "general.useragent.override", config.user_agents.sample
+      # opts = Selenium::WebDriver::Firefox::Options.new
+      # opts.add_preference "general.useragent.override", config.user_agents.sample
+      opts = Selenium::WebDriver::Chrome::Options.new
+      opts.add_argument "--incognito"
+      opts.add_argument "--kiosk"
+      opts.add_argument "--user-agent=#{config.user_agents.sample}"
+
       # @driver = Selenium::WebDriver.for :firefox, options: opts
-      @driver = Selenium::WebDriver.for :chrome
+      @driver = Selenium::WebDriver.for :chrome, options: opts
       #:chrome
       # @delay = Selenium::WebDriver::Wait.new(timeout: 15)
     end
@@ -30,7 +35,7 @@ module Bot
     end
 
     def wait &block
-      delay.until(&block)
+      # delay.until(&block)
     end
 
     def js str
