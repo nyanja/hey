@@ -4,7 +4,8 @@ queries:
   - муж на час в москве
 
 # Целевой сайт
-target: lideruslug
+target:
+  - lideruslug
 
 # Количество обрабатываемых результатов на один поисковой запрос
 results_count: 8

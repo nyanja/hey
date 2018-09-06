@@ -55,7 +55,7 @@ module Bot
       wait :page_loading
       drv.switch_tab 1
 
-      if cfg.target && text.match?(/#{cfg.target}/)
+      if cfg.target && text.match?(/#{cfg.target.join"|"}/i)
         apply_good_behavior
       else
         apply_bad_behavior
