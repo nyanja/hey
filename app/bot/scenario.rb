@@ -87,6 +87,7 @@ module Bot
 
     def visit_some_link
       nav = drv.find_element(class: cfg.nav_classes.sample)
+      return unless nav
       link = nav.find_elements(tag_name: :a).sample
       return unless link
       drv.scroll_to(link.location.y - rand(120..220))
