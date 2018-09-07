@@ -70,11 +70,11 @@ module Bot
     def apply_good_behavior
       n = rand(1..3)
       n = 2 # mocked
-      n.times do
+      n.times do |i|
         wait :page_loading
-        scroll while (drv.scroll_height + 10) >= drv.y_offset
+        scroll while (drv.scroll_height - 10) >= drv.y_offset
         wait :avg
-        visit_some_link if n != 1
+        visit_some_link if n != i
       end
     end
 
@@ -85,9 +85,9 @@ module Bot
     end
 
     def visit_some_link
-      link = drv.find_element(class: cfg.nav_classes.sample)
-                .find_elements(tag_name: :a)
-                .sample
+      nav = drv.find_element(class: cfg.nav_classes.sample)
+      link = nav.find_elements(tag_name: :a).sample
+      return unless link
       drv.scroll_to(link.location.y - rand(120..220))
       wait :avg
       link.click

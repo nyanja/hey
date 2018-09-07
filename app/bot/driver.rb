@@ -14,7 +14,6 @@ module Bot
 
       # @driver = Selenium::WebDriver.for :firefox, options: opts
       @driver = Selenium::WebDriver.for :chrome, options: opts
-      #:chrome
       # @delay = Selenium::WebDriver::Wait.new(timeout: 15)
     end
 
