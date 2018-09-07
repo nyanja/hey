@@ -7,7 +7,6 @@ queries:
 target:
   - lideruslug
 
-
 # Количество обрабатываемых результатов на один поисковой запрос
 results_count: 8
 

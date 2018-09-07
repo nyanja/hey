@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cp config_example.yml config.yml
