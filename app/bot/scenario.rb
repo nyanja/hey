@@ -64,12 +64,13 @@ module Bot
       drv.close
       drv.switch_tab 0
       wait :avg
-    rescue
+    rescue Exception => e
+      puts e.message
     end
 
     def apply_good_behavior
-      n = rand(1..3)
-      n = 2 # mocked
+      n = rand Range.new(*cfg.explore_deepness.map(&:succ))
+      # n = 2 # mocked
       n.times do |i|
         wait :page_loading
         scroll while (drv.scroll_height - 10) >= drv.y_offset
