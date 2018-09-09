@@ -33,7 +33,7 @@ module Bot
       wait :min
       verified_results = []
 
-      while verified_results.count < cfg.results_count
+      while verified_results.count < cfg.results_count.to_i
         result = results.shift
         next if result.text.match?(/#{cfg.ignore.join("|")}/i)
         verified_results << result
@@ -50,9 +50,9 @@ module Bot
       text = result.text
 
       drv.scroll_to [(result.location.y - rand(140..300)), 0].max
-      wait :min
       result.find_element(class: "organic__url").click
-      wait :page_loading
+      wait :min
+      # wait :page_loading
       drv.switch_tab 1
 
       if cfg.target && text.match?(/#{cfg.target.join"|"}/i)
@@ -65,14 +65,12 @@ module Bot
       drv.switch_tab 0
       wait :avg
     rescue Exception => e
-      puts e.message
+      puts e.message, e.backtrace
     end
 
     def apply_good_behavior
-      n = rand Range.new(*cfg.explore_deepness.map(&:succ))
-      # n = 2 # mocked
+      n = cfg.explore_deepness.succ
       n.times do |i|
-        wait :page_loading
         scroll while (drv.scroll_height - 10) >= drv.y_offset
         wait :avg
         visit_some_link if n != i
@@ -80,7 +78,8 @@ module Bot
     end
 
     def apply_bad_behavior
-      scroll_percent = rand(Range.new(*cfg.scroll_height_non_target))
+      scroll_percent = cfg.scroll_height_non_target
+      return if scroll_percent.nil? || scroll_percent.zero?
       scroll while (drv.scroll_height * 0.01 * scroll_percent) >= drv.y_offset
       sleep rand(0.2..2)
     end
@@ -96,8 +95,8 @@ module Bot
     end
 
     def scroll
-      sleep rand(Range.new(*cfg.scroll_delay))
-      drv.scroll_by rand(Range.new(*cfg.scroll_amount))
+      sleep cfg.scroll_delay
+      drv.scroll_by cfg.scroll_amount
     end
 
     def wait key

@@ -1,33 +1,32 @@
 # Поисковые запросы
 queries:
-  - вызвать электрика в москве
+  - вызвать электрика
   - муж на час в космосе
 
 # Целевые сайты
 target:
   - lideruslug
 
-
 # Количество обрабатываемых результатов на один поисковой запрос
-results_count: 8
+results_count: 4
 
 # Глубина просмотра целевого сайта (количество переходов по ссылкам)
-explore_deepness:
+explore_deepness_range:
   - 0
   - 2
 
 # Диапазон высоты прокрутки нецелевых сайтов (%)
-scroll_height_non_target:
-  - 30
-  - 50
+scroll_height_non_target_range:
+  - 0
+  - 0
 
 # Задержка прокрутки (с)
-scroll_delay:
+scroll_delay_range:
   - 0.2
   - 3.8
 
 # Величина прокрутки за раз (px)
-scroll_amount:
+scroll_amount_range:
   - 20
   - 180
 

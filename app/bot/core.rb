@@ -10,9 +10,14 @@ module Bot
 
     def execute
       config.queries.each do |query|
-        drv = Driver.new config
-        scn = Scenario.new drv, config
-        scn.default query
+        begin
+          drv = Driver.new config
+          scn = Scenario.new drv, config
+          scn.default query
+        rescue Exception => e
+          drv&.close
+          sleep 20
+        end
       end
     end
   end
@@ -27,7 +32,11 @@ module Bot
     end
 
     def method_missing method, *_args
-      @cfg.fetch(method.to_s, nil)
+      if @cfg.key? method.to_s
+        @cfg[method.to_s]
+      elsif @cfg.key? "#{method}_range"
+        rand Range.new(*@cfg["#{method}_range"])
+      end
     end
   end
 end
