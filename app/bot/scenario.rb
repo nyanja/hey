@@ -50,9 +50,9 @@ module Bot
       text = result.text
 
       drv.scroll_to [(result.location.y - rand(140..300)), 0].max
+      wait :min
       result.find_element(class: "organic__url").click
       wait :min
-      # wait :page_loading
       drv.switch_tab 1
 
       if cfg.target && text.match?(/#{cfg.target.join"|"}/i)
@@ -66,6 +66,7 @@ module Bot
       wait :avg
     rescue Exception => e
       puts e.message, e.backtrace
+      sleep 4
     end
 
     def apply_good_behavior

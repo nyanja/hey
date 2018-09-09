@@ -14,9 +14,10 @@ module Bot
           drv = Driver.new config
           scn = Scenario.new drv, config
           scn.default query
-        rescue Exception => e
+        rescue Net::ReadTimeout
           drv&.close
           sleep 20
+          next
         end
       end
     end
