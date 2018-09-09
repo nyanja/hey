@@ -52,7 +52,6 @@ module Bot
       drv.scroll_to [(result.location.y - rand(140..300)), 0].max
       wait :min
       result.find_element(class: "organic__url").click
-      wait :min
       drv.switch_tab 1
 
       if cfg.target && text.match?(/#{cfg.target.join"|"}/i)
