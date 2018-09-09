@@ -63,9 +63,14 @@ module Bot
 
       drv.close
       drv.switch_tab 0
-      wait :avg
-    rescue Exception => e
-      puts e.message, e.backtrace
+      sleep cfg.query_delay
+
+    rescue Selenium::WebDriver::Error::StaleElementReferenceError
+      drv.close
+      drv.switch_tab 0
+    rescue StandardError => e
+      puts e.inspect
+      puts e.backtrace
       sleep 4
     end
 

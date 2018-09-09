@@ -9,16 +9,13 @@ module Bot
     end
 
     def execute
-      config.queries.each do |query|
-        begin
-          drv = Driver.new config
-          scn = Scenario.new drv, config
-          scn.default query
-        rescue Net::ReadTimeout
-          drv&.close
-          sleep 20
-          next
-        end
+      config.queries.each_with_index do |query, i|
+        drv = Driver.new config
+        scn = Scenario.new drv, config
+        scn.default query
+        raise if i.succ == queries.size
+      rescue
+        retry
       end
     end
   end

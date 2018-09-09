@@ -1,3 +1,4 @@
 #!/bin/bash
 
+git pull
 cp config_example.yml config.yml
