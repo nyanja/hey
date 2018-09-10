@@ -11,7 +11,7 @@ target:
 results_count: 8
 
 # Пауза между поисковыми запросами (с)
-query_delay: 10
+query_delay: 6
 
 # Глубина просмотра целевого сайта (количество переходов по ссылкам)
 explore_deepness_range:

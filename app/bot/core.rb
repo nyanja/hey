@@ -13,11 +13,14 @@ module Bot
         drv = Driver.new config
         scn = Scenario.new drv, config
         scn.default query
-        raise if i.succ == queries.size
-      rescue
+        raise Retry if i.succ == config.queries.size
+      rescue Retry
         retry
       end
     end
+  end
+
+  class Retry < Exception
   end
 
   class ConfigObject

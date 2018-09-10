@@ -35,7 +35,7 @@ module Bot
 
       while verified_results.count < cfg.results_count.to_i
         result = results.shift
-        next if result.text.match?(/#{cfg.ignore.join("|")}/i)
+        next if result.text.match?(/#{cfg.ignore.join("|").tr(" ", ".")}/i)
         verified_results << result
       end
 
@@ -52,9 +52,11 @@ module Bot
       drv.scroll_to [(result.location.y - rand(140..300)), 0].max
       wait :min
       result.find_element(class: "organic__url").click
+      # wait :min
+      sleep 0.2
       drv.switch_tab 1
 
-      if cfg.target && text.match?(/#{cfg.target.join"|"}/i)
+      if cfg.target && text.match?(/#{cfg.target.join("|").tr(" ", ".")}/i)
         apply_good_behavior
       else
         apply_bad_behavior
