@@ -72,7 +72,7 @@ module Bot
     rescue StandardError => e
       puts e.inspect
       puts e.backtrace
-      sleep 4
+      sleep 8
     end
 
     def apply_good_behavior

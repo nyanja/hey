@@ -16,6 +16,9 @@ module Bot
         raise Retry if i.succ == config.queries.size
       rescue Retry
         retry
+      rescue RuntimeError
+        drv&.close
+        sleep 20
       end
     end
   end
