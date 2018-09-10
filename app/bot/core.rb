@@ -20,7 +20,7 @@ module Bot
     end
   end
 
-  class Retry < Exception
+  class Retry < RuntimeError
   end
 
   class ConfigObject
