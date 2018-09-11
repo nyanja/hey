@@ -6,16 +6,15 @@ queries:
 # Целевые сайты
 target_patterns:
   - lideruslug
-  - hr-tv.ru
 
 # Количество обрабатываемых результатов на один поисковой запрос
-results_count: 2
+results_count: 8
 
 # Пауза между поисковыми запросами (с)
 query_delay: 6
 
 # Пауза между запросами при возникновении ошибки
-error_delay: 5
+error_delay: 120
 
 # Глубина просмотра целевого сайта (количество переходов по ссылкам)
 explore_deepness_range:

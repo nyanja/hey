@@ -19,7 +19,6 @@ module Bot
           scn.default query
         rescue StandardError => e
           puts e.inspect
-          puts e.backtrace
           drv&.close
           sleep config.error_delay || 60
         end

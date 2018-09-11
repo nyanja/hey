@@ -72,7 +72,6 @@ module Bot
       drv&.close
       drv&.switch_tab 0
       puts e.inspect
-      puts e.backtrace
       sleep 8
     # rescue StandardError => e
       # puts e.inspect
