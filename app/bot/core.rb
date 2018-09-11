@@ -11,21 +11,20 @@ module Bot
     end
 
     def execute
-      config.queries.each_with_index do |query, i|
-        drv = Driver.new config
-        scn = Scenario.new drv, config
-        scn.default query
-        raise Retry if i.succ == config.queries.size
-      rescue Retry
-        # retry
-      rescue RuntimeError
-        drv&.close
-        sleep 20
+      loop do
+        config.queries.each do |query|
+          Logger.query query
+          drv = Driver.new config
+          scn = Scenario.new drv, config
+          scn.default query
+        rescue StandardError => e
+          puts e.inspect
+          puts e.backtrace
+          drv&.close
+          sleep config.error_delay || 60
+        end
       end
     end
-  end
-
-  class Retry < StandardError
   end
 
   class ConfigObject

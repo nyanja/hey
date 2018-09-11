@@ -10,6 +10,8 @@ module Bot
       opts = Selenium::WebDriver::Chrome::Options.new
       opts.add_argument "--incognito"
       opts.add_argument "--kiosk"
+      # opts.add_argument "--force-desktop"
+      opts.add_argument "--force-desktop[6]"
       opts.add_argument "--user-agent=#{config.user_agents.sample}"
 
       # @driver = Selenium::WebDriver.for :firefox, options: opts

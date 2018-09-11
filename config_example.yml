@@ -6,12 +6,16 @@ queries:
 # Целевые сайты
 target_patterns:
   - lideruslug
+  - hr-tv.ru
 
 # Количество обрабатываемых результатов на один поисковой запрос
-results_count: 8
+results_count: 2
 
 # Пауза между поисковыми запросами (с)
 query_delay: 6
+
+# Пауза между запросами при возникновении ошибки
+error_delay: 5
 
 # Глубина просмотра целевого сайта (количество переходов по ссылкам)
 explore_deepness_range:
@@ -35,7 +39,6 @@ scroll_amount_range:
 
 # Не переходить по ссылкам
 ignore_patterns:
-  - hr-tv
   - реклама
   - yandex
   - яндекс
