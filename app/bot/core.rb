@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+require "yaml"
+
 module Bot
   class Core
     attr_reader :config
 
-    def initialize config
-      @config = ConfigObject.new(config)
+    def initialize path_to_config
+      @config = ConfigObject.new(YAML.load_file(path_to_config))
     end
 
     def execute
@@ -15,7 +17,7 @@ module Bot
         scn.default query
         raise Retry if i.succ == config.queries.size
       rescue Retry
-        retry
+        # retry
       rescue RuntimeError
         drv&.close
         sleep 20
@@ -23,7 +25,7 @@ module Bot
     end
   end
 
-  class Retry < RuntimeError
+  class Retry < StandardError
   end
 
   class ConfigObject
@@ -38,8 +40,12 @@ module Bot
     def method_missing method, *_args
       if @cfg.key? method.to_s
         @cfg[method.to_s]
+
       elsif @cfg.key? "#{method}_range"
         rand Range.new(*@cfg["#{method}_range"])
+
+      elsif @cfg.key? "#{method}_patterns"
+        Regexp.new(@cfg["#{method}_patterns"].join("|"), "i")
       end
     end
   end

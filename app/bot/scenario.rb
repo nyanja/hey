@@ -33,12 +33,15 @@ module Bot
       wait :min
       verified_results = []
 
-      while verified_results.count < cfg.results_count.to_i
+      while verified_results.count < cfg.results_count.to_i &&
+            verified_results.count < results.count
         result = results.shift
-        next if result.text.match?(/#{cfg.ignore.join("|").tr(" ", ".")}/i)
+        if result.text.match?(cfg.ignore)
+          Logger.ignoring result.text
+          next
+        end
         verified_results << result
       end
-
       verified_results.each { |r| handle_result r }
     end
 
@@ -48,15 +51,15 @@ module Bot
 
     def handle_result result
       text = result.text
+      Logger.visiting text
 
       drv.scroll_to [(result.location.y - rand(140..300)), 0].max
       wait :min
       result.find_element(class: "organic__url").click
-      # wait :min
       sleep 0.2
       drv.switch_tab 1
 
-      if cfg.target && text.match?(/#{cfg.target.join("|").tr(" ", ".")}/i)
+      if cfg.target && text.match?(cfg.target)
         apply_good_behavior
       else
         apply_bad_behavior
@@ -65,14 +68,16 @@ module Bot
       drv.close
       drv.switch_tab 0
       sleep cfg.query_delay
-
-    rescue Selenium::WebDriver::Error::StaleElementReferenceError
-      drv.close
-      drv.switch_tab 0
-    rescue StandardError => e
+    rescue Selenium::WebDriver::Error::StaleElementReferenceError => e
+      drv&.close
+      drv&.switch_tab 0
       puts e.inspect
       puts e.backtrace
       sleep 8
+    # rescue StandardError => e
+      # puts e.inspect
+      # puts e.backtrace
+      # sleep 8
     end
 
     def apply_good_behavior
