@@ -74,12 +74,8 @@ module Bot
     rescue Selenium::WebDriver::Error::StaleElementReferenceError => e
       drv&.close
       drv&.switch_tab 0
-      puts e.inspect
+      Logger.error "Страница неактуальна"
       sleep 8
-    # rescue StandardError => e
-      # puts e.inspect
-      # puts e.backtrace
-      # sleep 8
     end
 
     def apply_good_behavior
@@ -106,7 +102,7 @@ module Bot
       wait :avg
       link.click
     rescue Selenium::WebDriver::Error::NoSuchElementError
-      Logger.error "invalid link, ignoring"
+      Logger.error "Нет подходящей ссылки для перехода"
     end
 
     def scroll
