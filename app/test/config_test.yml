@@ -1,0 +1,7 @@
+regexp_patterns:
+  - че-лов.ек
+  - моле кула
+
+integer_range:
+  - 20
+  - 30
