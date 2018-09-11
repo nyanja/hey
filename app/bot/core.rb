@@ -17,7 +17,7 @@ module Bot
           drv = Driver.new config
           scn = Scenario.new drv, config
           scn.default query
-        rescue StandardError => e
+        rescue Exception => e
           puts e.inspect
           drv&.close
           sleep config.error_delay || 60

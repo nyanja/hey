@@ -12,6 +12,7 @@ module Bot
       opts.add_argument "--kiosk"
       # opts.add_argument "--force-desktop"
       opts.add_argument "--force-desktop[6]"
+      # opts.add_argument "--proxy-server=85.26.146.169:80"
       opts.add_argument "--user-agent=#{config.user_agents.sample}"
 
       # @driver = Selenium::WebDriver.for :firefox, options: opts
