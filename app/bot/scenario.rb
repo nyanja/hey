@@ -43,6 +43,9 @@ module Bot
         verified_results << result
       end
       verified_results.each { |r| handle_result r }
+
+    rescue Selenium::WebDriver::Error::NoSuchElementError
+      Logger.error "Нетипичная страница поиска"
     end
 
     def clean_up
