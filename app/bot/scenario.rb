@@ -17,8 +17,9 @@ module Bot
     end
 
     def search query
-      drv.navigate.to "https://#{cfg.engine}" # yandex only
+      drv.navigate.to "https://yandex.ru" # yandex only
       wait :min
+      # sleep 1000
       bar = drv.find_element(id: "text") # mocked
       drv.type bar, query
       wait :min
