@@ -35,7 +35,7 @@ module Bot
       last_target = 0
 
       results.each_with_index do |result, i|
-        break if i > cfg.results_count.to_i && !pseudo.empty?
+        break if i > cfg.results_count.to_i && pseudo.empty?
         if result.text.match?(cfg.ignore)
           Logger.skip result.text
           last_target += 1 if last_target.positive?
