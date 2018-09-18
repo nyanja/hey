@@ -30,7 +30,6 @@ module Bot
     def inspect_results
       content = drv.find_element class: "content__left"
       results = content.find_elements class: "serp-item", tag_name: "li"
-      drv.scroll_to rand(0..600)
       wait :min
       verified_results = []
 
@@ -71,8 +70,8 @@ module Bot
 
       drv.close
       drv.switch_tab 0
-      sleep cfg.query_delay
-    rescue Selenium::WebDriver::Error::StaleElementReferenceError => e
+      sleep cfg.result_delay || 2
+    rescue Selenium::WebDriver::Error::StaleElementReferenceError
       drv&.close
       drv&.switch_tab 0
       Logger.error "Страница неактуальна"
