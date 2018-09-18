@@ -31,17 +31,31 @@ module Bot
       results = content.find_elements class: "serp-item", tag_name: "li"
       wait :min
       verified_results = []
+      pseudo = cfg.pseudo_targets || []
+      last_target = 0
 
-      while verified_results.count < cfg.results_count.to_i &&
-            verified_results.count < results.count
-        result = results.shift
+      results.each_with_index do |result, i|
+        break if i > cfg.results_count.to_i && !pseudo.empty?
         if result.text.match?(cfg.ignore)
           Logger.skip result.text
+          last_target += 1 if last_target.positive?
           next
         end
-        verified_results << result
+        is_target = false
+        if result.text.match?(cfg.target)
+          last_target = i
+          is_target = true
+        elsif pseudo.first && pseudo.first == i - last_target
+          last_target = i
+          is_target = true
+          pseudo.shift
+        end
+
+        verified_results << [result, is_target]
       end
-      verified_results.each { |r| handle_result r }
+
+      verified_results.each { |r| handle_result(*r) }
+
     rescue Selenium::WebDriver::Error::NoSuchElementError
       Logger.error "Нетипичная страница поиска"
     end
@@ -50,7 +64,7 @@ module Bot
       drv.close_all_tabs
     end
 
-    def handle_result result
+    def handle_result result, is_target = false
       text = result.text
       Logger.visit text
 
@@ -60,7 +74,7 @@ module Bot
       sleep 0.2
       drv.switch_tab 1
 
-      if cfg.target && text.match?(cfg.target)
+      if is_target
         apply_good_behavior
       elsif cfg.skip
         Logger.skip "игнорирование ссылки"
