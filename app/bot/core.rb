@@ -44,6 +44,9 @@ module Bot
 
       elsif @cfg.key? "#{method}_patterns"
         Regexp.new(@cfg["#{method}_patterns"].join("|"), "i")
+
+      elsif @cfg.key? "#{method}_sample"
+        @cfg["#{method}_sample"].sample
       end
     end
   end
