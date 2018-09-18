@@ -47,6 +47,9 @@ module Bot
 
       elsif @cfg.key? "#{method}_sample"
         @cfg["#{method}_sample"].sample
+
+      elsif @cfg.key? "#{method}_chance"
+        @cfg["#{method}_chance"] > rand(0..100)
       end
     end
   end

@@ -12,8 +12,8 @@ module Bot
     def default query
       search query
       inspect_results
-      sleep 4
       clean_up
+      sleep cfg.query_delay
     end
 
     def search query
@@ -65,6 +65,7 @@ module Bot
       if cfg.target && text.match?(cfg.target)
         apply_good_behavior
       else
+        return if cfg.skip_chance
         apply_bad_behavior
       end
 
