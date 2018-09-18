@@ -19,12 +19,11 @@ module Bot
     def search query
       drv.navigate.to "https://yandex.ru" # yandex only
       wait :min
-      # sleep 1000
       bar = drv.find_element(id: "text") # mocked
       drv.type bar, query
       wait :min
       bar.submit
-      wait :page_loading
+      # wait :page_loading
     end
 
     def inspect_results
@@ -37,13 +36,12 @@ module Bot
             verified_results.count < results.count
         result = results.shift
         if result.text.match?(cfg.ignore)
-          Logger.ignoring result.text
+          Logger.skip result.text
           next
         end
         verified_results << result
       end
       verified_results.each { |r| handle_result r }
-
     rescue Selenium::WebDriver::Error::NoSuchElementError
       Logger.error "Нетипичная страница поиска"
     end
@@ -64,8 +62,9 @@ module Bot
 
       if cfg.target && text.match?(cfg.target)
         apply_good_behavior
+      elsif cfg.skip
+        Logger.skip "игнорирование ссылки"
       else
-        return if cfg.skip_chance
         apply_bad_behavior
       end
 
@@ -76,7 +75,12 @@ module Bot
       drv&.close
       drv&.switch_tab 0
       Logger.error "Страница неактуальна"
-      sleep 8
+      sleep 4
+    rescue Net::ReadTimeout
+      drv&.close
+      drv&.switch_tab 0
+      Logger.error "Необрабатываемая страница"
+      sleep 4
     end
 
     def apply_good_behavior
@@ -84,8 +88,13 @@ module Bot
       Logger.target "глубина = #{n}"
       n.times do |i|
         scroll while (drv.scroll_height - 10) >= drv.y_offset
-        wait :avg
-        visit_some_link if n != i
+        w = cfg.explore_delay
+        Logger.wait w
+        sleep w
+        visit_some_link if n != i.succ
+      rescue Selenium::WebDriver::Error::NoSuchElementError
+        Logger.error "Нет подходящей ссылки для перехода"
+        break
       end
     end
 
@@ -104,8 +113,6 @@ module Bot
       drv.scroll_to(link.location.y - rand(120..220))
       wait :avg
       link.click
-    rescue Selenium::WebDriver::Error::NoSuchElementError
-      Logger.error "Нет подходящей ссылки для перехода"
     end
 
     def scroll

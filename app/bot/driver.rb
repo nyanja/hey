@@ -6,7 +6,7 @@ module Bot
 
     def initialize config
       # opts = Selenium::WebDriver::Firefox::Options.new
-      # opts.add_preference "general.useragent.override", config.user_agents.sample
+      # opts.add_preference "general.useragent.override", config.user_agent
       opts = Selenium::WebDriver::Chrome::Options.new
       opts.add_argument "--incognito"
       opts.add_argument "--kiosk"
@@ -17,8 +17,8 @@ module Bot
       opts.add_argument "--user-agent=#{config.user_agent}"
 
       # @driver = Selenium::WebDriver.for :firefox, options: opts
-      @driver = Selenium::WebDriver.for :chrome, options: opts
       # @delay = Selenium::WebDriver::Wait.new(timeout: 15)
+      @driver = Selenium::WebDriver.for :chrome, options: opts
     end
 
     def respond_to_missing?
