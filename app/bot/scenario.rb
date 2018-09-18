@@ -70,7 +70,7 @@ module Bot
       text = result.text
       Logger.visit text
 
-      if cfg.skip
+      if cfg.skip && !is_target
         Logger.skip "игнорирование ссылки"
       else
         drv.scroll_to [(result.location.y - rand(140..300)), 0].max
