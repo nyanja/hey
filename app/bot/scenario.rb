@@ -84,10 +84,11 @@ module Bot
         else
           apply_bad_behavior
         end
+
+        drv.close
+        drv.switch_tab 0
       end
 
-      drv.close
-      drv.switch_tab 0
       sleep cfg.result_delay || 2
     rescue Selenium::WebDriver::Error::StaleElementReferenceError
       drv&.close
