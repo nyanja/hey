@@ -58,8 +58,8 @@ module Bot
 
     rescue Selenium::WebDriver::Error::NoSuchElementError => e
       Logger.error "Нетипичная страница поиска"
-      puts e.message
-      puts e.backtrace
+      # puts e.message
+      # puts e.backtrace
     end
 
     def clean_up
@@ -70,18 +70,20 @@ module Bot
       text = result.text
       Logger.visit text
 
-      drv.scroll_to [(result.location.y - rand(140..300)), 0].max
-      wait :min
-      result.find_element(class: "organic__url").click
-      sleep 0.2
-      drv.switch_tab 1
-
-      if is_target
-        apply_good_behavior
-      elsif cfg.skip
+      if cfg.skip
         Logger.skip "игнорирование ссылки"
       else
-        apply_bad_behavior
+        drv.scroll_to [(result.location.y - rand(140..300)), 0].max
+        wait :min
+        result.find_element(class: "organic__url").click
+        sleep 0.2
+        drv.switch_tab 1
+
+        if is_target
+          apply_good_behavior
+        else
+          apply_bad_behavior
+        end
       end
 
       drv.close
