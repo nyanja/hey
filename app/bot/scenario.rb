@@ -54,7 +54,7 @@ module Bot
 
     def handle_result result
       text = result.text
-      Logger.visiting text
+      Logger.visit text
 
       drv.scroll_to [(result.location.y - rand(140..300)), 0].max
       wait :min
@@ -79,7 +79,8 @@ module Bot
     end
 
     def apply_good_behavior
-      n = cfg.explore_deepness.succ
+      n = cfg.explore_deepness
+      Logger.target "глубина = #{n}"
       n.times do |i|
         scroll while (drv.scroll_height - 10) >= drv.y_offset
         wait :avg
@@ -89,6 +90,7 @@ module Bot
 
     def apply_bad_behavior
       scroll_percent = cfg.scroll_height_non_target
+      Logger.non_target "прокрутка #{scroll_percent}%"
       return if scroll_percent.nil? || scroll_percent.zero?
       scroll while (drv.scroll_height * 0.01 * scroll_percent) >= drv.y_offset
       sleep rand(0.2..2)
