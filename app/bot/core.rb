@@ -17,10 +17,16 @@ module Bot
           drv = Driver.new config
           scn = Scenario.new drv, config
           scn.default query
-        rescue Exception => e
+        rescue Interrupt
+          puts "\nВыход..."
+          exit
+        rescue StandardError => e
           puts e.inspect
-          puts e.backtrace
-          drv&.close
+          # puts e.backtrace
+          begin
+            puts drv.close
+          rescue StandardError
+          end
           sleep config.error_delay || 60
         end
       end
