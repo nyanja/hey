@@ -11,6 +11,7 @@ module Bot
 
     def default query
       search query
+      wait :min
       inspect_results
       clean_up
       sleep cfg.query_delay
@@ -29,32 +30,41 @@ module Bot
     def inspect_results
       content = drv.find_element class: "content__left"
       results = content.find_elements class: "serp-item", tag_name: "li"
-      wait :min
       verified_results = []
       pseudo = cfg.pseudo_targets || []
       last_target = 0
+      target_presence = nil
 
       results.each_with_index do |result, i|
         break if i > cfg.results_count.to_i && pseudo.empty?
         if result.text.match?(cfg.ignore)
           Logger.skip result.text
-          last_target += 1 if last_target.positive?
+          last_target += 1
           next
         end
-        is_target = false
+
+        is_target = nil
+
         if result.text.match?(cfg.target)
+          target_presence = true
           last_target = i
-          is_target = true
+          is_target = :main
         elsif pseudo.first && pseudo.first == i - last_target
-          last_target = i
-          is_target = true
           pseudo.shift
+          last_target = i
+          is_target = :pseudo
         end
 
         verified_results << [result, is_target]
       end
 
-      verified_results.each { |r| handle_result(*r) }
+      if !target_presence
+        Logger.skip! "Продвигаемого сайта нет на странице"
+      elsif verified_results.first.last
+        Logger.skip! "Продвигаемый сайт уже на первом месте"
+      else
+        verified_results.each { |r| handle_result(*r) }
+      end
 
     rescue Selenium::WebDriver::Error::NoSuchElementError => e
       Logger.error "Нетипичная страница поиска"
@@ -66,7 +76,7 @@ module Bot
       drv.close_all_tabs
     end
 
-    def handle_result result, is_target = false
+    def handle_result result, is_target = nil
       text = result.text
       Logger.visit text
 
@@ -80,7 +90,7 @@ module Bot
         drv.switch_tab 1
 
         if is_target
-          apply_good_behavior
+          apply_good_behavior is_target
         else
           apply_bad_behavior
         end
@@ -102,9 +112,9 @@ module Bot
       sleep 4
     end
 
-    def apply_good_behavior
-      n = cfg.explore_deepness
-      Logger.target "глубина = #{n}"
+    def apply_good_behavior target_type
+      n = target_type == :main ? 2 : cfg.explore_deepness
+      Logger.send "#{target_type}_target", "глубина = #{n}"
       n.times do |i|
         scroll while (drv.scroll_height - 10) >= drv.y_offset
         w = cfg.explore_delay
@@ -129,6 +139,7 @@ module Bot
       nav = drv.find_element(class: cfg.nav_classes.sample)
       link = nav.find_elements(tag_name: :a).sample
       return unless link
+      Logger.link link.text
       drv.scroll_to(link.location.y - rand(120..220))
       wait :avg
       link.click
