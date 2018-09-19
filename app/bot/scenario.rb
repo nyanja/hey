@@ -113,7 +113,7 @@ module Bot
     end
 
     def apply_good_behavior target_type
-      n = target_type == :main ? 2 : cfg.explore_deepness
+      n = cfg.explore_deepness
       Logger.send "#{target_type}_target", "глубина = #{n}"
       n.times do |i|
         scroll while (drv.scroll_height - 10) >= drv.y_offset
