@@ -11,17 +11,18 @@ module Bot
       # 36 light blue
 
       keys = {
-        visit: "\n--- \e[36mОбработка\e[0m:",
-        main_target: "    \e[32mЦелевой сайт\e[0m:",
-        pseudo_target: "    \e[34mДополнительный целевой сайт\e[0m:",
-        non_target: "    Нецелевой сайт:",
-        query: "\n=== \e[33mЗапрос\e[0m:",
-        skip: "    Пропуск:",
-        skip!: "\n--- \e[36mПропуск\e[0m:",
-        wait: "    \e[35mПауза\e[0m:",
-        error: "    \e[31mОшибка\e[0m:",
-        link: "    \e[32mПереход\e[0m:",
-        ip: "    \e[33mIP\e[0m:"
+        visit: "\n- \e[36mОбработка\e[0m:",
+        main_target: "  \e[32mЦелевой сайт\e[0m:",
+        pseudo_target: "  \e[34mДополнительный целевой сайт\e[0m:",
+        non_target: "  Нецелевой сайт:",
+        query: "\n= \e[33mЗапрос\e[0m:",
+        skip: "  Пропуск:",
+        skip!: "\n- \e[36mПропуск\e[0m:",
+        wait: "  \e[35mПауза\e[0m:",
+        error: "  \e[31mОшибка\e[0m:",
+        link: "  \e[32mПереход\e[0m:",
+        ip: "  \e[33mIP\e[0m:",
+        info: "\n  \e[33m>>\e[0m "
       }
 
       text = case content

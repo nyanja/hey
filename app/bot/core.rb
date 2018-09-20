@@ -14,27 +14,57 @@ module Bot
       loop do
         config.queries.each do |query|
           Logger.query query
-          Logger.ip Ip.refresh!
-          begin
-            drv = Driver.new config
-            scn = Scenario.new drv, config
-            scn.default query
-          rescue Interrupt
-            puts "\nВыход..."
-            exit
-          rescue StandardError => e
-            puts e.inspect
-            # puts e.backtrace
-            begin
-              puts drv.close
-            rescue StandardError
-              nil
-            end
-            sleep config.error_delay || 60
-          end
-          puts "hillol"
+          refresh_ip
+
+          perform_scenario query
+          wait_for_new_ip
         end
+
+      rescue Interrupt
+        puts "\nВыход..."
+        exit
       end
+    end
+
+    private
+
+    def refresh_ip
+      Logger.ip Ip.refresh!
+    rescue HTTP::ConnectionError
+      Logger.error "Нет соединения. Ожидание подключения..."
+      w = config.check_ip_delay
+      Logger.wait w
+      sleep w
+      retry
+    end
+
+    def perform_scenario query
+      drv = Driver.new config
+      scn = Scenario.new drv, config
+      scn.default query
+    rescue StandardError => e
+      puts e.inspect
+      # puts e.backtrace
+      begin
+        puts drv.close
+      rescue StandardError
+        nil
+      end
+      sleep config.error_delay || 60
+    end
+
+    def wait_for_new_ip
+      while Ip.same? && config.unique_query_ip?
+        Logger.info "Ожидание смены IP", Ip.current
+        Logger.wait config.check_ip_delay
+        sleep config.check_ip_delay
+      end
+    rescue HTTP::ConnectionError
+      Logger.error "Нет соединения. Ожидание подключения..."
+      w = config.check_ip_delay
+      Logger.wait w
+      sleep w
+      retry
     end
   end
 

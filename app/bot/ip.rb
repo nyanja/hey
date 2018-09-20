@@ -28,6 +28,7 @@ module Bot
 
       def fetch_ip
         HTTP.get("http://canhazip.com").to_s
+        # YAML.load_file("./config_example.yml")["test_ip"]
       end
     end
   end
