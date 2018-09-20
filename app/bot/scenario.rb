@@ -2,15 +2,17 @@
 
 module Bot
   class Scenario
-    attr_reader :drv, :cfg
+    attr_reader :drv, :cfg, :query
 
-    def initialize driver, config
+    def initialize driver, config, query
       @drv = driver
       @cfg = config
+      @query = query
     end
 
-    def default query
-      search query
+    def default
+      return if delayed_query?
+      search
       wait :min
       exit_code = handle_results
       clean_up
@@ -18,7 +20,7 @@ module Bot
       exit_code
     end
 
-    def search query
+    def search
       drv.navigate.to "https://yandex.ru" # yandex only
       wait :min
       bar = drv.find_element(id: "text") # mocked
@@ -61,8 +63,12 @@ module Bot
 
       if !target_presence && cfg.query_skip_on_presence?
         Logger.skip! "Продвигаемого сайта нет на странице"
+        Logger.info "Запрос отложен на #{cfg.query_skip_interval} мин."
+        Storage.set query, Time.now.to_i
       elsif target_presence >= (cfg.query_skip_on_position || 1000)
         Logger.skip! "Продвигаемый сайт уже на #{target_presence} месте"
+        Logger.info "Запрос отложен на #{cfg.query_skip_interval} мин."
+        Storage.set query, Time.now.to_i
       else
         verified_results.each { |r| handle_result(*r) }
         :pass
@@ -76,6 +82,21 @@ module Bot
 
     def clean_up
       drv.close_all_tabs
+    end
+
+    def delayed_query?
+      ts = Storage.get(query).to_i
+      return unless ts
+      time = ((Time.now - Time.at(ts)) / 60).round
+      if time > cfg.query_skip_interval
+        Storage.del query
+        return
+      end
+      Logger.skip! "Запрос отложен. Осталось #{cfg.query_skip_interval - time} мин."
+      w = cfg.query_delay
+      Logger.wait w
+      sleep w
+      true
     end
 
     def handle_result result, is_target = nil

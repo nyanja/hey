@@ -39,8 +39,8 @@ module Bot
 
     def perform_scenario query
       drv = Driver.new config
-      scn = Scenario.new drv, config
-      scn.default query
+      scn = Scenario.new drv, config, query
+      scn.default
     rescue StandardError => e
       puts e.inspect
       begin
