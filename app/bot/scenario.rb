@@ -66,7 +66,7 @@ module Bot
         Logger.info "Запрос отложен на #{cfg.query_skip_interval} мин."
         Storage.set query, Time.now.to_i
       elsif target_presence >= (cfg.query_skip_on_position || 1000)
-        Logger.skip! "Продвигаемый сайт уже на #{target_presence} месте"
+        Logger.skip! "Продвигаемый сайт уже на высокой позиции"
         Logger.info "Запрос отложен на #{cfg.query_skip_interval} мин."
         Storage.set query, Time.now.to_i
       else
