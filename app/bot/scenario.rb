@@ -11,7 +11,10 @@ module Bot
     end
 
     def default
-      return if delayed_query?
+      if delayed_query?
+        clean_up
+        return
+      end
       search
       wait :min
       exit_code = handle_results
