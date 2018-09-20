@@ -11,10 +11,7 @@ module Bot
     end
 
     def default
-      if delayed_query?
-        clean_up
-        return
-      end
+      return if delayed_query?
       search
       wait :min
       exit_code = handle_results
@@ -95,6 +92,7 @@ module Bot
         Storage.del query
         return
       end
+      clean_up
       Logger.skip! "Запрос отложен. Осталось #{cfg.query_skip_interval - time} мин."
       w = cfg.query_delay
       Logger.wait w
