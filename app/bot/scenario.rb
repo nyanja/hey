@@ -33,14 +33,14 @@ module Bot
       results = content.find_elements class: "serp-item", tag_name: "li"
       verified_results = []
       pseudo = cfg.pseudo_targets || []
-      last_target = 0
+      last_target = nil
       target_presence = nil
 
       results.each_with_index do |result, i|
         break if i > cfg.results_count.to_i && pseudo.empty?
         if result.text.match?(cfg.ignore)
           Logger.skip result.text
-          last_target += 1
+          last_target += 1 if last_target
           next
         end
 
@@ -50,7 +50,7 @@ module Bot
           target_presence = true
           last_target = i
           is_target = :main
-        elsif pseudo.first && pseudo.first == i - last_target
+        elsif pseudo.first && target_presence && pseudo.first == i - last_target
           pseudo.shift
           last_target = i
           is_target = :pseudo
