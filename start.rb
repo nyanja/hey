@@ -7,5 +7,6 @@ require "./app/bot/driver"
 require "./app/bot/core"
 require "./app/bot/scenario"
 require "./app/bot/ip"
+require "./app/bot/storage"
 
 Bot::Core.new("./config.yml").execute
