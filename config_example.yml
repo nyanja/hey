@@ -35,11 +35,11 @@ check_ip_delay: 20
 error_delay: 20
 
 # Отложить обработку, если:
-query_skip_on_position: 0 # позиция целевого сайта не ниже значения
-query_skip_on_presence?: false # целевого сайта нет в выдаче
+query_skip_on_position: 2 # позиция целевого сайта не ниже значения
+query_skip_on_presence?: true # целевого сайта нет в выдаче
 
 # Отложить обработку на время (минут)
-query_skip_interval: 0
+query_skip_interval: 1
 
 
 ################################################################################
