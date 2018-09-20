@@ -17,7 +17,6 @@ module Bot
       opts.add_argument "--user-agent=#{config.user_agent}"
 
       # @driver = Selenium::WebDriver.for :firefox, options: opts
-      # @delay = Selenium::WebDriver::Wait.new(timeout: 15)
       @driver = Selenium::WebDriver.for :chrome, options: opts
     end
 
@@ -37,9 +36,9 @@ module Bot
       end
     end
 
-    def wait &block
+    # def wait &block
       # delay.until(&block)
-    end
+    # end
 
     def js str
       driver.execute_script str

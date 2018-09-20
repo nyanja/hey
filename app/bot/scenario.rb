@@ -47,7 +47,7 @@ module Bot
         is_target = nil
 
         if result.text.match?(cfg.target)
-          target_presence = true
+          target_presence = i
           last_target = i
           is_target = :main
         elsif pseudo.first && target_presence && pseudo.first == i - last_target
@@ -59,10 +59,10 @@ module Bot
         verified_results << [result, is_target]
       end
 
-      if !target_presence
+      if !target_presence && cfg.query_skip_on_presence?
         Logger.skip! "Продвигаемого сайта нет на странице"
-      elsif verified_results.first.last
-        Logger.skip! "Продвигаемый сайт уже на первом месте"
+      elsif target_presence >= (cfg.query_skip_on_position || 1000)
+        Logger.skip! "Продвигаемый сайт уже на #{target_presence} месте"
       else
         verified_results.each { |r| handle_result(*r) }
         :pass

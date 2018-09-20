@@ -19,11 +19,6 @@ module Bot
         current != fetch_ip
       end
 
-      def debug
-        puts current
-        puts fetch_ip
-      end
-
       private
 
       def fetch_ip

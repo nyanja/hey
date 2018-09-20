@@ -43,7 +43,6 @@ module Bot
       scn.default query
     rescue StandardError => e
       puts e.inspect
-      # puts e.backtrace
       begin
         puts drv.close
       rescue StandardError
