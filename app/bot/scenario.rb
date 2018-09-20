@@ -11,7 +11,7 @@ module Bot
     end
 
     def default
-      return if delayed_query?
+      return if delayed_query? && cfg.unique_query_ip?
       search
       wait :min
       exit_code = handle_results
