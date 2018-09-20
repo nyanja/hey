@@ -12,9 +12,10 @@ module Bot
     def default query
       search query
       wait :min
-      inspect_results
+      exit_code = handle_results
       clean_up
       sleep cfg.query_delay
+      exit_code
     end
 
     def search query
@@ -27,7 +28,7 @@ module Bot
       # wait :page_loading
     end
 
-    def inspect_results
+    def handle_results
       content = drv.find_element class: "content__left"
       results = content.find_elements class: "serp-item", tag_name: "li"
       verified_results = []
@@ -64,6 +65,7 @@ module Bot
         Logger.skip! "Продвигаемый сайт уже на первом месте"
       else
         verified_results.each { |r| handle_result(*r) }
+        :pass
       end
 
     rescue Selenium::WebDriver::Error::NoSuchElementError => e
