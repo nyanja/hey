@@ -14,20 +14,25 @@ module Bot
       loop do
         config.queries.each do |query|
           Logger.query query
-          drv = Driver.new config
-          scn = Scenario.new drv, config
-          scn.default query
-        rescue Interrupt
-          puts "\nВыход..."
-          exit
-        rescue StandardError => e
-          puts e.inspect
-          # puts e.backtrace
+          Logger.ip Ip.refresh!
           begin
-            puts drv.close
-          rescue StandardError
+            drv = Driver.new config
+            scn = Scenario.new drv, config
+            scn.default query
+          rescue Interrupt
+            puts "\nВыход..."
+            exit
+          rescue StandardError => e
+            puts e.inspect
+            # puts e.backtrace
+            begin
+              puts drv.close
+            rescue StandardError
+              nil
+            end
+            sleep config.error_delay || 60
           end
-          sleep config.error_delay || 60
+          puts "hillol"
         end
       end
     end

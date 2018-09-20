@@ -20,7 +20,8 @@ module Bot
         skip!: "\n--- \e[36mПропуск\e[0m:",
         wait: "    \e[35mПауза\e[0m:",
         error: "    \e[31mОшибка\e[0m:",
-        link: "    \e[32mПереход\e[0m:"
+        link: "    \e[32mПереход\e[0m:",
+        ip: "    \e[33mIP\e[0m:"
       }
 
       text = case content
