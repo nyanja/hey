@@ -24,6 +24,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
     public_suffix (3.0.3)
+    redis (4.0.2)
     rubyzip (1.2.1)
     selenium-webdriver (3.14.0)
       childprocess (~> 0.5)
@@ -39,6 +40,7 @@ DEPENDENCIES
   http
   minitest
   pry
+  redis
   selenium-webdriver
 
 BUNDLED WITH

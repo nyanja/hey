@@ -37,6 +37,7 @@ module Bot
       pseudo = cfg.pseudo_targets || []
       last_target = nil
       target_presence = nil
+      actual_index = 0
 
       results.each_with_index do |result, i|
         break if i > cfg.results_count.to_i && pseudo.empty?
@@ -46,15 +47,16 @@ module Bot
           next
         end
 
+        actual_index += 1
         is_target = nil
 
         if result.text.match?(cfg.target)
-          target_presence = i
-          last_target = i
+          target_presence = actual_index
+          last_target = actual_index
           is_target = :main
-        elsif pseudo.first && target_presence && pseudo.first == i - last_target
+        elsif pseudo.first && target_presence && pseudo.first == actual_index - last_target
           pseudo.shift
-          last_target = i
+          last_target = actual_index
           is_target = :pseudo
         end
 
@@ -65,7 +67,7 @@ module Bot
         Logger.skip! "Продвигаемого сайта нет на странице"
         Logger.info "Запрос отложен на #{cfg.query_skip_interval} мин."
         Storage.set query, Time.now.to_i
-      elsif target_presence >= (cfg.query_skip_on_position || 1000)
+      elsif target_presence <= (cfg.query_skip_on_position || 0)
         Logger.skip! "Продвигаемый сайт уже на высокой позиции"
         Logger.info "Запрос отложен на #{cfg.query_skip_interval} мин."
         Storage.set query, Time.now.to_i
