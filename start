@@ -2,5 +2,6 @@
 
 
 git pull
+sudo apt install g++ -y
 bundle
 ruby start.rb
