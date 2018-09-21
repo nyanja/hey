@@ -12,6 +12,7 @@ module Bot
       # opts.add_argument "--kiosk"
       # opts.add_argument "--force-desktop"
       # opts.add_argument "--force-desktop[6]"
+
       # opts.add_argument "--proxy-server=185.14.6.134:8080"
       opts.add_argument "--proxy-server=#{config.proxy}" if config.use_proxy?
       opts.add_argument "--user-agent=#{config.user_agent}"
