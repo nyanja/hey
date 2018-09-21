@@ -78,9 +78,9 @@ module Bot
     rescue HTTP::ConnectionError
       Logger.error "Потеря соединения"
       begin
+        thr.kill
         drv.close
         drv.close_all_tabs
-        thr.kill
       rescue StandardError => e
         puts e.message
         # nil
