@@ -99,6 +99,7 @@ module Bot
         Storage.del query
         return
       end
+      drv.close
       Logger.skip! "Запрос отложен. Осталось #{cfg.query_skip_interval - time} мин."
       w = cfg.query_delay
       Logger.wait w
