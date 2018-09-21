@@ -168,7 +168,8 @@ module Bot
         return 0
       else
         Logger.info "IP изменился. Посещение разрешено"
-        Ip.refresh!
+        # Ip.refresh!
+        Storage.set "refresh_ip", true
         return n
       end
     end
