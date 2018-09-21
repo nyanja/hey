@@ -2,5 +2,4 @@
 
 git reset --hard
 git pull
-sudo apt install g++ redis-server -y
 bundle
