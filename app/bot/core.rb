@@ -61,7 +61,8 @@ module Bot
     rescue StandardError => e
       puts e.inspect
       begin
-        puts drv.close
+        drv.close
+        drv.close
       rescue StandardError
         nil
       end

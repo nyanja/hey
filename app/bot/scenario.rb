@@ -83,6 +83,8 @@ module Bot
 
     rescue Selenium::WebDriver::Error::NoSuchElementError => e
       Logger.error "Нетипичная страница поиска"
+      drv&.close
+      drv&.switch_tab 0
       # puts e.message
       # puts e.backtrace
     end
@@ -93,11 +95,11 @@ module Bot
 
     def delayed_query?
       ts = Storage.get(query).to_i
-      return unless ts
+      return false unless ts
       time = ((Time.now - Time.at(ts)) / 60).round
       if time > cfg.query_skip_interval
         Storage.del query
-        return
+        return false
       end
       drv.close
       Logger.skip! "Запрос отложен. Осталось #{cfg.query_skip_interval - time} мин."
