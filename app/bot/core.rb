@@ -11,6 +11,7 @@ module Bot
     end
 
     def execute
+      Thread.abort_on_exception = true
       loop do
         config.queries.each do |query|
           wait_for_connection
@@ -57,7 +58,34 @@ module Bot
     def perform_scenario query
       drv = Driver.new config
       scn = Scenario.new drv, config, query
+      thr = Thread.new do
+        loop do
+          Ip.ping
+          sleep 10
+        end
+      # rescue HTTP::ConnectionError
+      #   Logger.error "Потеря соединения"
+      #   begin
+      #     drv.close
+      #     drv.close
+      #   rescue StandardError
+      #     nil
+      #   end
+      end
       scn.default
+      thr.kill
+
+    rescue HTTP::ConnectionError
+      Logger.error "Потеря соединения"
+      begin
+        drv.close
+        drv.close_all_tabs
+        thr.kill
+      rescue StandardError => e
+        puts e.message
+        # nil
+      end
+      # raise StandardError
     rescue StandardError => e
       puts e.inspect
       begin
