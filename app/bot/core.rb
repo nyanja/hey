@@ -14,7 +14,7 @@ module Bot
       loop do
         config.queries.each do |query|
           Logger.query query
-          refresh_ip
+          refresh_ip if config.unique_query_ip?
           exit_code = perform_scenario query
           wait_for_new_ip if exit_code == :pass
         end

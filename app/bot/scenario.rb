@@ -16,7 +16,9 @@ module Bot
       wait :min
       exit_code = handle_results
       clean_up
-      sleep cfg.query_delay
+      w = cfg.query_delay
+      Logger.wait w
+      sleep w
       exit_code
     end
 
@@ -40,7 +42,7 @@ module Bot
       actual_index = 0
 
       results.each_with_index do |result, i|
-        break if i > cfg.results_count.to_i && pseudo.empty?
+        break if i > cfg.results_count.to_i && pseudo.empty? && target_presence
         if result.text.match?(cfg.ignore)
           Logger.skip result.text
           last_target += 1 if last_target
@@ -48,19 +50,21 @@ module Bot
         end
 
         actual_index += 1
-        is_target = nil
+        status = nil
 
         if result.text.match?(cfg.target)
           target_presence = actual_index
           last_target = actual_index
-          is_target = :main
+          status = :main
         elsif pseudo.first && target_presence && pseudo.first == actual_index - last_target
           pseudo.shift
           last_target = actual_index
-          is_target = :pseudo
+          status = :pseudo
+        elsif actual_index > cfg.results_count
+          status = :skip
         end
 
-        verified_results << [result, is_target]
+        verified_results << [result, status]
       end
 
       if !target_presence && cfg.query_skip_on_presence?
@@ -101,12 +105,14 @@ module Bot
       true
     end
 
-    def handle_result result, is_target = nil
+    def handle_result result, status = nil
       text = result.text
       Logger.visit text
 
-      if cfg.skip && !is_target
-        Logger.skip "игнорирование ссылки"
+      if cfg.skip && !status
+        Logger.skip "Игнорирование ссылки"
+      elsif status == :skip
+        Logger.skip "Лимит обрабатываемых результатов превышен"
       else
         drv.scroll_to [(result.location.y - rand(140..300)), 0].max
         wait :min
@@ -114,8 +120,8 @@ module Bot
         sleep 0.2
         drv.switch_tab 1
 
-        if is_target
-          apply_good_behavior is_target
+        if status
+          apply_good_behavior status
         else
           apply_bad_behavior
         end
@@ -138,7 +144,7 @@ module Bot
     end
 
     def apply_good_behavior target_type
-      n = cfg.explore_deepness
+      n = determine_explore_deepness!
       Logger.send "#{target_type}_target", "глубина = #{n}"
       n.times do |i|
         scroll while (drv.scroll_height - 10) >= drv.y_offset
@@ -149,6 +155,19 @@ module Bot
       rescue Selenium::WebDriver::Error::NoSuchElementError
         Logger.error "Нет подходящей ссылки для перехода"
         break
+      end
+    end
+
+    def determine_explore_deepness!
+      n = cfg.explore_deepness
+      return n if cfg.unique_visit_ip? == false || n.zero?
+      if Ip.same?
+        Logger.info "Посещение с таким IP уже было. Глубина установлена на 0"
+        return 0
+      else
+        Logger.info "IP изменился. Посещение разрешено"
+        Ip.refresh!
+        return n
       end
     end
 
