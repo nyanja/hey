@@ -88,13 +88,15 @@ module Bot
       # raise StandardError
     rescue StandardError => e
       puts e.inspect
+      thr.kill
       begin
         drv.close
         drv.close
       rescue StandardError
         nil
       end
-      sleep config.error_delay || 10
+      # sleep config.error_delay || 10
+      sleep 1
     end
 
     def wait_for_new_ip
