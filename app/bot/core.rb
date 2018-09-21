@@ -13,15 +13,17 @@ module Bot
     def execute
       loop do
         config.queries.each do |query|
+          wait_for_connection
+
           Logger.query query
+
+          exit_code = perform_scenario query
+          wait_for_new_ip if exit_code == :pass
+
           if Storage.get "refresh_ip"
             Storage.del "refresh_ip"
             refresh_ip
           end
-          # refresh_ip if config.unique_query_ip?
-          exit_code = perform_scenario query
-          wait_for_new_ip if exit_code == :pass
-          # refresh_ip
         end
 
       rescue Interrupt
@@ -42,6 +44,16 @@ module Bot
       retry
     end
 
+    def wait_for_connection
+      Ip.ping
+    rescue HTTP::ConnectionError
+      Logger.error "Нет соединения. Ожидание подключения..."
+      w = config.check_ip_delay
+      Logger.wait w
+      sleep w
+      retry
+    end
+
     def perform_scenario query
       drv = Driver.new config
       scn = Scenario.new drv, config, query
@@ -53,7 +65,7 @@ module Bot
       rescue StandardError
         nil
       end
-      sleep config.error_delay || 60
+      sleep config.error_delay || 10
     end
 
     def wait_for_new_ip

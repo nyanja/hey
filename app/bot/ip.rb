@@ -19,6 +19,10 @@ module Bot
         current != fetch_ip
       end
 
+      def ping
+        fetch_ip
+      end
+
       private
 
       def fetch_ip
