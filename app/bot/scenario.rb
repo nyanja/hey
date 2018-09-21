@@ -30,6 +30,9 @@ module Bot
       wait :min
       bar.submit
       # wait :page_loading
+    rescue Selenium::WebDriver::Error::NoSuchElementError
+      Logger.error "Нетипичная страница поиска"
+      drv&.close
     end
 
     def handle_results
@@ -81,8 +84,8 @@ module Bot
         :pass
       end
 
-    rescue Selenium::WebDriver::Error::NoSuchElementError => e
-      Logger.error "Нетипичная страница поиска"
+    rescue Selenium::WebDriver::Error::NoSuchElementError
+      Logger.error "Нетипичная страница"
       drv&.close
       drv&.switch_tab 0
       # puts e.message
