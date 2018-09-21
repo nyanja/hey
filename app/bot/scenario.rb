@@ -113,7 +113,7 @@ module Bot
     end
 
     def handle_result result, status = nil, info = []
-      Logger.visit "##{info.second} text"
+      Logger.visit "##{info[1]} text"
 
       if cfg.skip && !status
         Logger.skip "Игнорирование ссылки"
