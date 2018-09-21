@@ -36,7 +36,7 @@ module Bot
       content = drv.find_element class: "content__left"
       results = content.find_elements class: "serp-item", tag_name: "li"
       verified_results = []
-      pseudo = cfg.pseudo_targets || []
+      pseudo = cfg.pseudo_targets.dup || []
       last_target = nil
       target_presence = nil
       actual_index = 0
@@ -45,13 +45,13 @@ module Bot
         break if i > cfg.results_count.to_i && pseudo.empty? && target_presence
         if result.text.match?(cfg.ignore)
           Logger.skip result.text
-          last_target += 1 if last_target
           next
         end
 
         actual_index += 1
         status = nil
 
+        info = [last_target, actual_index, pseudo.first]
         if result.text.match?(cfg.target)
           target_presence = actual_index
           last_target = actual_index
@@ -64,7 +64,8 @@ module Bot
           status = :skip
         end
 
-        verified_results << [result, status]
+
+        verified_results << [result, status, info]
       end
 
       if !target_presence && cfg.query_skip_on_presence?
@@ -105,9 +106,9 @@ module Bot
       true
     end
 
-    def handle_result result, status = nil
+    def handle_result result, status = nil, info = []
       text = result.text
-      Logger.visit text
+      Logger.visit text, info.join("|")
 
       if cfg.skip && !status
         Logger.skip "Игнорирование ссылки"
