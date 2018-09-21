@@ -146,7 +146,7 @@ module Bot
     end
 
     def apply_good_behavior target_type
-      n = determine_explore_deepness!
+      n = determine_explore_deepness! target_type
       Logger.send "#{target_type}_target", "глубина = #{n}"
       n.times do |i|
         scroll while (drv.scroll_height - 10) >= drv.y_offset
@@ -160,7 +160,7 @@ module Bot
       end
     end
 
-    def determine_explore_deepness!
+    def determine_explore_deepness! target_type
       n = cfg.explore_deepness
       return n if cfg.unique_visit_ip? == false || n.zero?
       if Ip.same?
@@ -169,7 +169,7 @@ module Bot
       else
         Logger.info "IP изменился. Посещение разрешено"
         # Ip.refresh!
-        Storage.set "refresh_ip", true
+        Storage.set "refresh_ip", true if target_type == :main
         return n
       end
     end
