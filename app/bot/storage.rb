@@ -5,7 +5,6 @@ require "redis"
 module Bot
   module Storage
     class << self
-
       def method_missing key, *args, &block
         super unless db.respond_to? key
         db.send key, *args
@@ -13,8 +12,10 @@ module Bot
 
       private
 
+      # May be some https://github.com/steveklabnik/request_store ?
       def db
-        @db ||= Redis.new
+        # it can cross with another ruby projects with default db
+        @db ||= Redis.new(db: :bot)
       end
     end
   end

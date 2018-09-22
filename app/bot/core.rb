@@ -1,13 +1,18 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 require "yaml"
 
 module Bot
   class Core
-    attr_reader :config
+    attr_reader :config, :driver
+
+    include Helpers::Waiter
+    include Helpers::ExceptionHandler
+    include Helpers::Logger
 
     def initialize path_to_config
-      @config = ConfigObject.new(YAML.load_file(path_to_config))
+      @config = Helpers::Config.new(YAML.load_file(path_to_config))
     end
 
     def execute
@@ -16,7 +21,7 @@ module Bot
         config.queries.each do |query|
           wait_for_connection
 
-          Logger.query query
+          log(:query, query)
 
           exit_code = perform_scenario query
           wait_for_new_ip if exit_code == :pass
@@ -36,109 +41,46 @@ module Bot
     private
 
     def refresh_ip
-      Logger.ip Ip.refresh!
+      log(:ip, Ip.refresh!)
     rescue HTTP::ConnectionError
-      Logger.error "Нет соединения. Ожидание подключения..."
-      w = config.check_ip_delay
-      Logger.wait w
-      sleep w
+      connection_setup_exception_handler
       retry
     end
 
     def wait_for_connection
       Ip.ping
     rescue HTTP::ConnectionError
-      Logger.error "Нет соединения. Ожидание подключения..."
-      w = config.check_ip_delay
-      Logger.wait w
-      sleep w
+      connection_setup_exception_handler
       retry
     end
 
     def perform_scenario query
-      drv = Driver.new config
-      scn = Scenario.new drv, config, query
+      @driver = Driver.new config
+      scn = Scenario.new self, query
       thr = Thread.new do
         loop do
           Ip.ping
           sleep 10
         end
-      # rescue HTTP::ConnectionError
-      #   Logger.error "Потеря соединения"
-      #   begin
-      #     drv.close
-      #     drv.close
-      #   rescue StandardError
-      #     nil
-      #   end
       end
       scn.default
       thr.kill
-
     rescue HTTP::ConnectionError
-      Logger.error "Потеря соединения"
-      begin
-        thr.kill
-        drv.close
-        drv.close_all_tabs
-      rescue StandardError => e
-        puts e.message
-        # nil
-      end
+      connection_lost_exception_handler(thr)
       # raise StandardError
     rescue StandardError => e
-      puts e.inspect
-      thr.kill
-      begin
-        drv.close
-        drv.close
-      rescue StandardError
-        nil
-      end
-      # sleep config.error_delay || 10
-      sleep 1
+      standart_exception_handler(thr, e)
     end
 
     def wait_for_new_ip
       while Ip.same? && config.unique_query_ip?
-        Logger.info "Ожидание смены IP", Ip.current
-        Logger.wait config.check_ip_delay
-        sleep config.check_ip_delay
+        log(:info, "Ожидание смены IP", Ip.current)
+        log(:wait, config.check_ip_delay)
+        sleep ip_delay_waiter
       end
     rescue HTTP::ConnectionError
-      Logger.error "Нет соединения. Ожидание подключения..."
-      w = config.check_ip_delay
-      Logger.wait w
-      sleep w
+      connection_setup_exception_handler
       retry
-    end
-  end
-
-  class ConfigObject
-    def initialize cfg
-      @cfg = cfg
-    end
-
-    def respond_to_missing?
-      true
-    end
-
-    def method_missing method, *_args
-      if @cfg.key? method.to_s
-        @cfg[method.to_s]
-
-      elsif @cfg.key? "#{method}_range"
-        rand Range.new(*@cfg["#{method}_range"])
-
-      elsif @cfg.key? "#{method}_patterns"
-        Regexp.new(@cfg["#{method}_patterns"].join("|"), "i")
-
-      elsif @cfg.key? "#{method}_sample"
-        @cfg["#{method}_sample"].sample
-
-      elsif @cfg.key? "#{method}_chance"
-        @cfg["#{method}_chance"] > rand(0..100)
-      end
     end
   end
 end
