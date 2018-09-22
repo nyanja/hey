@@ -9,3 +9,6 @@ Style/Documentation:
 
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
+
+# Style/FrozenStringLiteralComment:
+  # EnforcedStyle: never

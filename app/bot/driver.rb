@@ -2,9 +2,18 @@
 
 module Bot
   class Driver
-    attr_reader :driver, :delay
+    attr_reader :driver, :core, :delay
 
-    def initialize config
+    extend Forwardable
+    def_delegator :core, :config
+
+    def initialize core
+      @core = core
+      # @driver = Selenium::WebDriver.for :firefox, options: opts
+      @driver = Selenium::WebDriver.for :chrome, options: driver_options
+    end
+
+    def driver_options
       # opts = Selenium::WebDriver::Firefox::Options.new
       # opts.add_preference "general.useragent.override", config.user_agent
       opts = Selenium::WebDriver::Chrome::Options.new
@@ -16,17 +25,14 @@ module Bot
       # opts.add_argument "--proxy-server=185.14.6.134:8080"
       opts.add_argument "--proxy-server=#{config.proxy}" if config.use_proxy?
       opts.add_argument "--user-agent=#{config.user_agent}"
-
-      # @driver = Selenium::WebDriver.for :firefox, options: opts
-      @driver = Selenium::WebDriver.for :chrome, options: opts
     end
 
-    def respond_to_missing?
-      true
+    def respond_to_missing? method
+      driver.respond_to?(method)
     end
 
     def method_missing method, *args, &block
-      super unless driver.respond_to? method
+      super unless respond_to_missing?(method)
       driver.send method, *args
     end
 
@@ -36,10 +42,6 @@ module Bot
         sleep rand(0.01..0.4)
       end
     end
-
-    # def wait &block
-      # delay.until(&block)
-    # end
 
     def js str
       driver.execute_script str
@@ -69,10 +71,25 @@ module Bot
     end
 
     def close_all_tabs
-      driver.window_handles.each do |id|
-        switch_to.window id
-        close
-      end
+      driver.quit
+      # driver.window_handles.each do |id|
+      # switch_to.window id
+      # close
+      # end
+    end
+
+    def close_active_tab *logger_params
+      driver&.close
+      driver&.switch_tab 0
+      log(*logger_params) if logger_params&.any?
+    end
+
+    def clean_up
+      driver.close_all_tabs
+    end
+
+    def click query, element = driver
+      element.find_element(query).click
     end
   end
 end
