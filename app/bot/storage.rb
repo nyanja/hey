@@ -15,7 +15,7 @@ module Bot
       # May be some https://github.com/steveklabnik/request_store ?
       def db
         # it can cross with another ruby projects with default db
-        @db ||= Redis.new(db: :bot)
+        @db ||= Redis.new(db: 11)
       end
     end
   end

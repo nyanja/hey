@@ -7,7 +7,7 @@ module Bot
         driver.navigate.to("https://yandex.ru")
         # wait(:min)
         # search_bar = driver.find_element(id: "text")
-        search_bar = selenium_wait { driver.find_element(id: "text") }
+        search_bar = selenium_wait.until { driver.find_element(id: "text") }
         driver.type search_bar, query
         wait(:min)
         search_bar.submit
