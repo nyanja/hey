@@ -29,6 +29,7 @@ module Bot
       # Core.perform_scenario
       def standart_exception_handler thread, error
         puts error.inspect
+        puts error.backtrace
         thread.kill
         begin
           # driver.close

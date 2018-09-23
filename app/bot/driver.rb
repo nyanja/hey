@@ -25,6 +25,7 @@ module Bot
       # opts.add_argument "--proxy-server=185.14.6.134:8080"
       opts.add_argument "--proxy-server=#{config.proxy}" if config.use_proxy?
       opts.add_argument "--user-agent=#{config.user_agent}"
+      opts
     end
 
     def respond_to_missing? method
@@ -80,12 +81,12 @@ module Bot
 
     def close_active_tab *logger_params
       driver&.close
-      driver&.switch_tab 0
+      switch_tab 0
       log(*logger_params) if logger_params&.any?
     end
 
     def clean_up
-      driver.close_all_tabs
+      close_all_tabs
     end
 
     def click query, element = driver

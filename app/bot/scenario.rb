@@ -11,6 +11,7 @@ module Bot
 
     include Helpers::Logger
     include Helpers::Waiter
+    include Helpers::Sites
 
     def initialize core, query
       @core = core
@@ -57,8 +58,8 @@ module Bot
 
     def handle_results
       yandex_search_results.each_with_index do |result, i|
-        break if i > config.results_count.to_i && pseudo.empty? &&
-                 target_presence
+        break if i > config.results_count.to_i && @pseudo.empty? &&
+                 @target_presence
 
         next if skip_result?(result)
 
@@ -76,7 +77,7 @@ module Bot
           @pseudo.shift
           @last_target = @actual_index
           status = :pseudo
-        elsif actual_index > config.results_count
+        elsif @actual_index > config.results_count
           status = :skip
         end
 
