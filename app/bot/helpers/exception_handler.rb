@@ -7,8 +7,7 @@ module Bot
       # Core ip fetching iterations
       def connection_setup_exception_handler
         log(:error, "Нет соединения. Ожидание подключения...")
-        log(:wait, ip_delay_waiter)
-        sleep ip_delay_waiter
+        configured_wait(:check_ip_delay)
         # retry after each `connection_setup_exception_handler` call
       end
 
