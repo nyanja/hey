@@ -75,8 +75,7 @@ module Bot
     def wait_for_new_ip
       while Ip.same? && config.unique_query_ip?
         log(:info, "Ожидание смены IP", Ip.current)
-        log(:wait, config.check_ip_delay)
-        sleep ip_delay_waiter
+        configured_wait(:check_ip_delay)
       end
     rescue HTTP::ConnectionError
       connection_setup_exception_handler
