@@ -4,16 +4,14 @@ require "yaml"
 
 module Bot
   class Core
-    attr_reader :config
-
-    def initialize path_to_config
-      @config = ConfigObject.new(YAML.load_file(path_to_config))
+    def self.run
+      new.execute
     end
 
     def execute
       Thread.abort_on_exception = true
       loop do
-        config.queries.each do |query|
+        Config.queries.each do |query|
           wait_for_connection
 
           Logger.query query
@@ -39,7 +37,7 @@ module Bot
       Logger.ip Ip.refresh!
     rescue HTTP::ConnectionError
       Logger.error "Нет соединения. Ожидание подключения..."
-      w = config.check_ip_delay
+      w = Config.check_ip_delay
       Logger.wait w
       sleep w
       retry
@@ -49,15 +47,15 @@ module Bot
       Ip.ping
     rescue HTTP::ConnectionError
       Logger.error "Нет соединения. Ожидание подключения..."
-      w = config.check_ip_delay
+      w = Config.check_ip_delay
       Logger.wait w
       sleep w
       retry
     end
 
     def perform_scenario query
-      drv = Driver.new config
-      scn = Scenario.new drv, config, query
+      drv = Driver.new
+      scn = Scenario.new drv, query
       thr = Thread.new do
         loop do
           Ip.ping
@@ -95,50 +93,24 @@ module Bot
       rescue StandardError
         nil
       end
-      # sleep config.error_delay || 10
+      # sleep Config.error_delay || 10
       sleep 1
     end
 
     def wait_for_new_ip
-      while Ip.same? && config.unique_query_ip?
+      while Ip.same? && Config.unique_query_ip?
         Logger.info "Ожидание смены IP", Ip.current
-        Logger.wait config.check_ip_delay
-        sleep config.check_ip_delay
+        Logger.wait Config.check_ip_delay
+        sleep Config.check_ip_delay
       end
     rescue HTTP::ConnectionError
       Logger.error "Нет соединения. Ожидание подключения..."
-      w = config.check_ip_delay
+      w = Config.check_ip_delay
       Logger.wait w
       sleep w
       retry
     end
   end
 
-  class ConfigObject
-    def initialize cfg
-      @cfg = cfg
-    end
 
-    def respond_to_missing?
-      true
-    end
-
-    def method_missing method, *_args
-      if @cfg.key? method.to_s
-        @cfg[method.to_s]
-
-      elsif @cfg.key? "#{method}_range"
-        rand Range.new(*@cfg["#{method}_range"])
-
-      elsif @cfg.key? "#{method}_patterns"
-        Regexp.new(@cfg["#{method}_patterns"].join("|"), "i")
-
-      elsif @cfg.key? "#{method}_sample"
-        @cfg["#{method}_sample"].sample
-
-      elsif @cfg.key? "#{method}_chance"
-        @cfg["#{method}_chance"] > rand(0..100)
-      end
-    end
-  end
 end
