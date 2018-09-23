@@ -55,7 +55,7 @@ module Bot
     end
 
     def perform_scenario query
-      @driver = Driver.new config
+      @driver = Driver.new self
       scn = Scenario.new self, query
       thr = Thread.new do
         loop do
