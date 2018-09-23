@@ -4,9 +4,9 @@ module Bot
   class Driver
     attr_reader :driver, :delay
 
-    def initialize config
+    def initialize
       # opts = Selenium::WebDriver::Firefox::Options.new
-      # opts.add_preference "general.useragent.override", config.user_agent
+      # opts.add_preference "general.useragent.override", Config.user_agent
       opts = Selenium::WebDriver::Chrome::Options.new
       opts.add_argument "--incognito"
       opts.add_argument "--kiosk"
@@ -14,8 +14,8 @@ module Bot
       # opts.add_argument "--force-desktop[6]"
 
       # opts.add_argument "--proxy-server=185.14.6.134:8080"
-      opts.add_argument "--proxy-server=#{config.proxy}" if config.use_proxy?
-      opts.add_argument "--user-agent=#{config.user_agent}"
+      opts.add_argument "--proxy-server=#{Config.proxy}" if Config.use_proxy?
+      opts.add_argument "--user-agent=#{Config.user_agent}"
 
       # @driver = Selenium::WebDriver.for :firefox, options: opts
       @driver = Selenium::WebDriver.for :chrome, options: opts
