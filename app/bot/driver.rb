@@ -7,6 +7,8 @@ module Bot
     extend Forwardable
     def_delegator :core, :config
 
+    include Helpers::Logger
+
     def initialize core
       @core = core
       # @driver = Selenium::WebDriver.for :firefox, options: opts
