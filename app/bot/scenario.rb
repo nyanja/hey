@@ -126,7 +126,12 @@ module Bot
 
     def parse_result_page result, status
       driver.scroll_to [(result.location.y - rand(140..300)), 0].max
-      click({ class: "needsclick" }, result)
+      begin
+        click({ class: "organic__url" }, result)
+      rescue Selenium::WebDriver::Error::NoSuchElementError
+        click({ class: "organic__link" }, result)
+      end
+
       sleep 0.2
       driver.switch_tab 1
 
@@ -193,11 +198,15 @@ module Bot
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
       return if scroll_percent.nil? || scroll_percent.zero?
+      start_time = Time.now.to_i
       wait 3
       print "  "
       scroll while (driver.scroll_height * 0.01 * scroll_percent) >= driver.y_offset
       puts
-      sleep rand(0.2..2)
+      if config.min_visit_non_target + start_time > Time.now.to_i
+        wait Time.now.to_i - (config.min_visit_non_target + start_time)
+      end
+      # sleep rand(0.2..2)
     end
 
     def visit_some_link
