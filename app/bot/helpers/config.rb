@@ -3,7 +3,7 @@
 module Bot
   module Helpers
     class Config
-      include Waiter
+      include Wait
 
       attr_reader :config
 
@@ -23,7 +23,6 @@ module Bot
         true
       end
 
-      # hmmmmm =) doubtful refactoring=D
       def method_missing method, *_args
         method = method.to_s
         return @config[method] if @config.key?(method)

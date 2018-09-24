@@ -10,7 +10,7 @@ module Bot
     def_delegators :driver, :close_active_tab, :clean_up, :click
 
     include Helpers::Logger
-    include Helpers::Waiter
+    include Helpers::Wait
     include Helpers::Sites
 
     def initialize core, query
@@ -30,7 +30,7 @@ module Bot
       wait(:min)
       exit_code = handle_results
       clean_up
-      configured_wait(:query_delay)
+      wait(:query_delay)
       exit_code
     end
 
@@ -45,7 +45,7 @@ module Bot
       driver.close
       log(:skip!, "Запрос отложен. Осталось " \
                   "#{config.query_skip_interval - time} мин.")
-      configured_wait(:query_delay)
+      wait(:query_delay)
       true
     end
 
@@ -126,7 +126,7 @@ module Bot
         parse_result_page(result, status)
       end
 
-      configured_wait(:result_delay)
+      wait(:result_delay)
     rescue Selenium::WebDriver::Error::StaleElementReferenceError
       close_active_tab(:error, "Страница неактуальна")
       wait(4)
@@ -156,7 +156,7 @@ module Bot
       log(:send, "#{target_type}_target", "глубина = #{n}")
       n.times do |i|
         scroll while (driver.scroll_height - 10) >= driver.y_offset
-        configured_wait(:explore_delay)
+        wait(:explore_delay)
         visit_some_link if n != i.succ
       rescue Selenium::WebDriver::Error::NoSuchElementError
         log(:error, "Нет подходящей ссылки для перехода")

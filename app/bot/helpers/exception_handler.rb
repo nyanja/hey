@@ -1,4 +1,3 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
@@ -7,7 +6,7 @@ module Bot
       # Core ip fetching iterations
       def connection_setup_exception_handler
         log(:error, "Нет соединения. Ожидание подключения...")
-        configured_wait(:check_ip_delay)
+        wait(:check_ip_delay)
         # retry after each `connection_setup_exception_handler` call
       end
 

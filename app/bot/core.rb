@@ -1,4 +1,3 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 require "yaml"
@@ -7,7 +6,7 @@ module Bot
   class Core
     attr_reader :config, :driver
 
-    include Helpers::Waiter
+    include Helpers::Wait
     include Helpers::ExceptionHandler
     include Helpers::Logger
 
@@ -75,7 +74,7 @@ module Bot
     def wait_for_new_ip
       while Ip.same? && config.unique_query_ip?
         log(:info, "Ожидание смены IP", Ip.current)
-        configured_wait(:check_ip_delay)
+        wait(:check_ip_delay)
       end
     rescue HTTP::ConnectionError
       connection_setup_exception_handler

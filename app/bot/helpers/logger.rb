@@ -1,4 +1,3 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
@@ -25,7 +24,7 @@ module Bot
                ip: "  \e[33mIP\e[0m:",
                info: "\n  \e[33m>>\e[0m " }.freeze
 
-      def log method, content = nil, note = nil, *___
+      def log method, content = nil, note = nil
         text = case content
                when Float
                  content.round(2)
