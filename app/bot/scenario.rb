@@ -132,7 +132,7 @@ module Bot
         click({ class: "organic__link" }, result)
       end
 
-      sleep 0.2
+      # sleep 0.2
       driver.switch_tab 1
 
       begin
