@@ -11,7 +11,7 @@ module Bot
 
     def initialize core
       @core = core
-      # @driver = Selenium::WebDriver.for :firefox, options: opts
+      # @driver = Selenium::WebDriver.for :firefox, options: driver_options
       @driver = Selenium::WebDriver.for :chrome, options: driver_options
     end
 
