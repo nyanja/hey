@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "bot/helpers/waiter"
-require_relative "bot/helpers/exception_handler"
 require_relative "bot/helpers/logger"
+require_relative "bot/helpers/wait"
+require_relative "bot/helpers/exception_handler"
 require_relative "bot/helpers/sites"
 require_relative "bot/storage"
 require_relative "bot/ip"
