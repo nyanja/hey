@@ -4,38 +4,24 @@ module Bot
   module Helpers
     module ExceptionHandler
       # Core ip fetching iterations
-      def connection_setup_exception_handler
+      def handle_no_connection
+        # puts thread
         log(:error, "Нет соединения. Ожидание подключения...")
         wait(:check_ip_delay)
-        # retry after each `connection_setup_exception_handler` call
+        # retry after each `handle_no_connection` call
       end
 
       # Core.perform scenario
-      def connection_lost_exception_handler thread
+      def handle_disconnect
         log(:error, "Потеря соединения")
-        begin
-          thread.kill
-          # driver.close
-          # driver.close_all_tabs
-          driver.quit
-        rescue StandardError => e
-          puts e.message
-          # nil
-        end
+        driver&.quit
       end
 
       # Core.perform_scenario
-      def standart_exception_handler thread, error
+      def handle_exception error
         puts error.inspect
         puts error.backtrace
-        thread.kill
-        begin
-          # driver.close
-          # driver.close
-          driver.quit
-        rescue StandardError
-          nil
-        end
+        driver&.quit
         # sleep config.error_delay || 10
         sleep 1
       end

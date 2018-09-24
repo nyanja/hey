@@ -7,7 +7,7 @@ module Bot
 
     extend Forwardable
     def_delegators :core, :driver, :config
-    def_delegators :driver, :close_active_tab, :clean_up, :click
+    def_delegators :driver, :click
 
     include Helpers::Logger
     include Helpers::Wait
@@ -29,7 +29,7 @@ module Bot
       search
       wait(:min)
       exit_code = handle_results
-      clean_up
+      driver.quit
       wait(:query_delay)
       exit_code
     end
@@ -88,7 +88,7 @@ module Bot
       handle_result(query)
     rescue Selenium::WebDriver::Error::NoSuchElementError
       log(:error, "Нетипичная страница")
-      close_active_tab
+      driver.close_tab
     end
 
     def skip_result? result
@@ -128,10 +128,12 @@ module Bot
 
       wait(:result_delay)
     rescue Selenium::WebDriver::Error::StaleElementReferenceError
-      close_active_tab(:error, "Страница неактуальна")
+      driver.close_tab
+      log :error, "Страница неактуальна"
       wait(4)
     rescue Net::ReadTimeout
-      close_active_tab(:error, "Необрабатываемая страница")
+      driver.close_tab
+      log :error, "Необрабатываемая страница"
       wait(4)
     end
 
@@ -148,7 +150,7 @@ module Bot
         apply_bad_behavior
       end
 
-      close_active_tab
+      driver.close_tab
     end
 
     def apply_good_behavior target_type
