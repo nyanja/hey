@@ -150,6 +150,9 @@ module Bot
         puts
         log :error, "Окно было закрыто"
       rescue StandardError => e
+        if e.class == HTTP::ConnectionError
+          raise e.class
+        end
         puts
         log :error, "Ошибка на странице результата", e.message
       ensure
@@ -190,14 +193,7 @@ module Bot
       log(:non_target, "прокрутка #{scroll_percent}%")
       return if scroll_percent.nil? || scroll_percent.zero?
       print "  "
-      while (driver.scroll_height * 0.01 * scroll_percent) >= driver.y_offset
-        begin
-          scroll
-        rescue StandardError
-          super
-          break
-        end
-      end
+      scroll while (driver.scroll_height * 0.01 * scroll_percent) >= driver.y_offset
       puts
       sleep rand(0.2..2)
     end
