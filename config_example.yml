@@ -67,6 +67,10 @@ explore_deepness_sample:
   # - 2
   # - 3
 
+# Минимальное время посещения (c)
+min_visit_non_target: 60  # нецелевого сайта
+min_visit_target: 60      # целевого сайта
+
 # Диапазон паузы между объявлениями (с)
 result_delay_range:
   - 2
