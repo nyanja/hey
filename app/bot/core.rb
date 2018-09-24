@@ -64,6 +64,7 @@ module Bot
       end
       scn.default
     rescue HTTP::ConnectionError
+      Storage.del "refresh_ip"
       handle_disconnect
     rescue StandardError => e
       handle_exception e

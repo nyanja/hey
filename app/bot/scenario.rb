@@ -1,4 +1,3 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
@@ -65,8 +64,7 @@ module Bot
 
         @actual_index += 1
         status = nil
-        # used only actual_index?
-        info = [@last_target, @actual_index, @pseudo.first]
+        info = @actual_index
 
         if result.text.match?(config.target)
           @target_presence = @actual_index
@@ -115,8 +113,8 @@ module Bot
       Storage.set query, Time.now.to_i
     end
 
-    def parse_result result, status = nil, info = []
-      log(:visit, "##{info[1]} #{result.text}")
+    def parse_result result, status, info
+      log(:visit, "##{info} #{result.text}")
 
       if config.skip && !status
         log(:skip, "Игнорирование ссылки")
@@ -128,13 +126,8 @@ module Bot
 
       wait(:result_delay)
     rescue Selenium::WebDriver::Error::StaleElementReferenceError
-      driver.close_tab
       log :error, "Страница неактуальна"
-      wait(4)
-    rescue Net::ReadTimeout
-      driver.close_tab
-      log :error, "Необрабатываемая страница"
-      wait(4)
+      wait 4
     end
 
     def parse_result_page result, status
@@ -144,25 +137,37 @@ module Bot
       sleep 0.2
       driver.switch_tab 1
 
-      if status
-        apply_good_behavior status
-      else
-        apply_bad_behavior
+      begin
+        if status
+          apply_good_behavior status
+        else
+          apply_bad_behavior
+        end
+      rescue Net::ReadTimeout
+        puts
+        log :error, "Необрабатываемая страница"
+      rescue Selenium::WebDriver::Error::NoSuchWindowError
+        puts
+        log :error, "Окно было закрыто"
+      rescue StandardError => e
+        puts
+        log :error, "Ошибка на странице результата", e.message
+      ensure
+        driver.close_tab
       end
-
-      driver.close_tab
     end
 
     def apply_good_behavior target_type
       n = determine_explore_deepness! target_type
-      log(:send, "#{target_type}_target", "глубина = #{n}")
+      log :"#{target_type}_target", "глубина = #{n}"
       n.times do |i|
+        print "  "
         scroll while (driver.scroll_height - 10) >= driver.y_offset
+        puts
         wait(:explore_delay)
         visit_some_link if n != i.succ
       rescue Selenium::WebDriver::Error::NoSuchElementError
         log(:error, "Нет подходящей ссылки для перехода")
-        break
       end
     end
 
@@ -184,7 +189,16 @@ module Bot
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
       return if scroll_percent.nil? || scroll_percent.zero?
-      scroll while (driver.scroll_height * 0.01 * scroll_percent) >= driver.y_offset
+      print "  "
+      while (driver.scroll_height * 0.01 * scroll_percent) >= driver.y_offset
+        begin
+          scroll
+        rescue StandardError
+          super
+          break
+        end
+      end
+      puts
       sleep rand(0.2..2)
     end
 
@@ -200,6 +214,7 @@ module Bot
     def scroll
       sleep config.scroll_delay
       driver.scroll_by config.scroll_amount
+      print "."
     end
   end
 end
