@@ -5,4 +5,4 @@ require "selenium-webdriver"
 
 require "./app/bot"
 
-Bot.execute("./config_example.yml")
+Bot.execute("./config.yml")
