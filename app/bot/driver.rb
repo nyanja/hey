@@ -74,7 +74,7 @@ module Bot
     end
 
     def close_tab
-      driver&.close
+      driver.close if driver.window_handles.count > 1
       switch_tab 0
     end
 
