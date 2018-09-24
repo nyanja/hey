@@ -14,8 +14,8 @@ module Bot
       end
 
       def yandex_search_results
-        driver.find_element(class: "content__left")
-              .find_elements(class: "serp-item", tag_name: "li")
+        driver.find_element(class: "serp-list")
+              .find_elements(class: "serp-item")
       end
 
       def some_link
