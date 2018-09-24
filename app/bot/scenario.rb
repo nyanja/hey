@@ -31,6 +31,10 @@ module Bot
       driver.quit
       wait(:query_delay)
       exit_code
+    rescue Selenium::WebDriver::Error::NoSuchElementError => e
+      log(:error, "Нетипичная страница поиска")
+      puts e.inspect
+      driver.quit
     end
 
     def delayed_query?
@@ -50,9 +54,6 @@ module Bot
 
     def search
       yandex_search
-    rescue Selenium::WebDriver::Error::NoSuchElementError
-      log(:error, "Нетипичная страница поиска")
-      driver&.close
     end
 
     def handle_results
@@ -83,10 +84,16 @@ module Bot
         @verified_results << [result, status, info]
       end
 
-      handle_result(query)
-    rescue Selenium::WebDriver::Error::NoSuchElementError
-      log(:error, "Нетипичная страница")
-      driver.close_tab
+      if !@target_presence && config.query_skip_on_presence?
+        log(:skip!, "Продвигаемого сайта нет на странице")
+        defer_query
+      elsif @target_presence && @target_presence <= config.query_skip_on_position
+        log(:skip!, "Продвигаемый сайт уже на высокой позиции")
+        defer_query
+      else
+        @verified_results.each { |r| parse_result(*r) }
+        :pass
+      end
     end
 
     def skip_result? result
@@ -94,21 +101,7 @@ module Bot
       log(:skip, result.text)
     end
 
-    def handle_result query
-      if !@target_presence && config.query_skip_on_presence?
-        log(:skip!, "Продвигаемого сайта нет на странице")
-        defer_query query
-      elsif @target_presence && @target_presence <=
-                                config.query_skip_on_position
-        log(:skip!, "Продвигаемый сайт уже на высокой позиции")
-        defer_query query
-      else
-        @verified_results.each { |r| parse_result(*r) }
-        :pass
-      end
-    end
-
-    def defer_query query
+    def defer_query
       log(:info, "Запрос отложен на #{config.query_skip_interval} мин.")
       Storage.set query, Time.now.to_i
     end
@@ -132,8 +125,7 @@ module Bot
 
     def parse_result_page result, status
       driver.scroll_to [(result.location.y - rand(140..300)), 0].max
-      wait :min
-      click({ class: "organic__url" }, result)
+      click({ class: "needsclick" }, result)
       sleep 0.2
       driver.switch_tab 1
 
@@ -143,18 +135,23 @@ module Bot
         else
           apply_bad_behavior
         end
+      rescue Selenium::WebDriver::Error::NoSuchElementError => e
+        puts e.inspect
+        log :skip, "Нетипичная ссылка"
       rescue Net::ReadTimeout
         puts
         log :error, "Необрабатываемая страница"
       rescue Selenium::WebDriver::Error::NoSuchWindowError
         puts
         log :error, "Окно было закрыто"
+      rescue Selenium::WebDriver::Error::UnknownError
+        log :error, e.inspect
       rescue StandardError => e
         if e.class == HTTP::ConnectionError
           raise e.class
         end
         puts
-        log :error, "Ошибка на странице результата", e.message
+        log :error, "Ошибка на странице результата", e.inspect
       ensure
         driver.close_tab
       end
@@ -164,11 +161,14 @@ module Bot
       n = determine_explore_deepness! target_type
       log :"#{target_type}_target", "глубина = #{n}"
       n.times do |i|
+        wait 3
         print "  "
         scroll while (driver.scroll_height - 10) >= driver.y_offset
         puts
-        wait(:explore_delay)
-        visit_some_link if n != i.succ
+        if n != i.succ
+          wait(:explore_delay)
+          visit_some_link
+        end
       rescue Selenium::WebDriver::Error::NoSuchElementError
         log(:error, "Нет подходящей ссылки для перехода")
       end
@@ -192,6 +192,7 @@ module Bot
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
       return if scroll_percent.nil? || scroll_percent.zero?
+      wait 3
       print "  "
       scroll while (driver.scroll_height * 0.01 * scroll_percent) >= driver.y_offset
       puts

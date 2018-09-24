@@ -16,17 +16,21 @@ module Bot
     end
 
     def driver_options
+      user_agent = config.mobile ? config.mobile_ua : config.desktop_ua
+
       # opts = Selenium::WebDriver::Firefox::Options.new
-      # opts.add_preference "general.useragent.override", config.user_agent
+      # opts.add_preference "general.useragent.override", user_agent
       opts = Selenium::WebDriver::Chrome::Options.new
       opts.add_argument "--incognito"
-      opts.add_argument "--kiosk"
+      # opts.add_argument "--kiosk"
       # opts.add_argument "--force-desktop"
       # opts.add_argument "--force-desktop[6]"
 
       # opts.add_argument "--proxy-server=185.14.6.134:8080"
       opts.add_argument "--proxy-server=#{config.proxy}" if config.use_proxy?
-      opts.add_argument "--user-agent=#{config.user_agent}"
+
+      puts "  %s" % user_agent
+      opts.add_argument "--user-agent=#{user_agent}"
       opts
     end
 
