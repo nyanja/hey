@@ -99,6 +99,7 @@ module Bot
     def skip_result? result
       return unless result.text.match?(config.ignore)
       log(:skip, result.text)
+      true
     end
 
     def defer_query
