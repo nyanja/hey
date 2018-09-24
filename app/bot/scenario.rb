@@ -204,7 +204,7 @@ module Bot
       scroll while (driver.scroll_height * 0.01 * scroll_percent) >= driver.y_offset
       puts
       if config.min_visit_non_target + start_time > Time.now.to_i
-        wait Time.now.to_i - (config.min_visit_non_target + start_time)
+        wait (config.min_visit_non_target + start_time) - Time.now.to_i
       end
       # sleep rand(0.2..2)
     end

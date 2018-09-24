@@ -22,7 +22,7 @@ module Bot
       # opts.add_preference "general.useragent.override", user_agent
       opts = Selenium::WebDriver::Chrome::Options.new
       opts.add_argument "--incognito"
-      # opts.add_argument "--kiosk"
+      opts.add_argument "--kiosk"
       # opts.add_argument "--force-desktop"
       # opts.add_argument "--force-desktop[6]"
 
