@@ -73,22 +73,9 @@ module Bot
       switch_to.window(driver.window_handles[number])
     end
 
-    def close_all_tabs
-      driver.quit
-      # driver.window_handles.each do |id|
-      # switch_to.window id
-      # close
-      # end
-    end
-
-    def close_active_tab *logger_params
+    def close_tab
       driver&.close
       switch_tab 0
-      log(*logger_params) if logger_params&.any?
-    end
-
-    def clean_up
-      close_all_tabs
     end
 
     def click query, element = driver

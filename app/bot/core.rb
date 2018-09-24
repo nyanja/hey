@@ -42,14 +42,14 @@ module Bot
     def refresh_ip
       log(:ip, Ip.refresh!)
     rescue HTTP::ConnectionError
-      connection_setup_exception_handler
+      handle_no_connection
       retry
     end
 
     def wait_for_connection
       Ip.ping
     rescue HTTP::ConnectionError
-      connection_setup_exception_handler
+      handle_no_connection
       retry
     end
 
@@ -63,12 +63,12 @@ module Bot
         end
       end
       scn.default
-      thr.kill
     rescue HTTP::ConnectionError
-      connection_lost_exception_handler(thr)
-      # raise StandardError
+      handle_disconnect
     rescue StandardError => e
-      standart_exception_handler(thr, e)
+      handle_exception e
+    ensure
+      thr&.kill
     end
 
     def wait_for_new_ip
@@ -77,7 +77,7 @@ module Bot
         wait(:check_ip_delay)
       end
     rescue HTTP::ConnectionError
-      connection_setup_exception_handler
+      handle_no_connection
       retry
     end
   end
