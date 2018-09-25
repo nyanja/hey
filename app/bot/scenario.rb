@@ -176,8 +176,7 @@ module Bot
       n = determine_explore_deepness! target_type
       log :"#{target_type}_target", "глубина = #{n}"
       visit result
-      wait :pre_delay_target
-      return if n.zero?
+      return wait :pre_delay_target if n.zero?
       n.times do |i|
         start_time = Time.now.to_i
         wait 3
@@ -218,8 +217,7 @@ module Bot
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
       visit result
-      wait :pre_delay_non_target
-      return if scroll_percent.nil? || scroll_percent.zero?
+      return wait :pre_delay_non_target if scroll_percent.nil? || scroll_percent.zero?
       start_time = Time.now.to_i
       wait 3
       print "  "
