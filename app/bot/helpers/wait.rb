@@ -20,12 +20,13 @@ module Bot
                    else
                      time
                    end
+        return if interval.zero?
         log :wait, interval
         sleep interval
       end
 
       def wait_until timeout = SMALL_WAIT, &block
-        Selenium::WebDriver::Wait.new(timeout: timeout).until &block
+        Selenium::WebDriver::Wait.new(timeout: timeout).until(&block)
       end
     end
   end

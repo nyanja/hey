@@ -197,6 +197,7 @@ module Bot
     def apply_bad_behavior
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
+      wait :pre_delay_non_target
       return if scroll_percent.nil? || scroll_percent.zero?
       start_time = Time.now.to_i
       wait 3
