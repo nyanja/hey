@@ -126,7 +126,7 @@ module Bot
 
     def parse_result_page result, status
       if status
-        apply_good_behavior result status
+        apply_good_behavior result, status
       else
         apply_bad_behavior result
       end
