@@ -125,47 +125,48 @@ module Bot
     end
 
     def parse_result_page result, status
+      if status
+        apply_good_behavior result status
+      else
+        apply_bad_behavior result
+      end
+    rescue Selenium::WebDriver::Error::NoSuchElementError => e
+      puts e.inspect
+      log :skip, "Нетипичная ссылка"
+    rescue Net::ReadTimeout
+      puts
+      log :error, "Необрабатываемая страница"
+    rescue Selenium::WebDriver::Error::NoSuchWindowError
+      puts
+      log :error, "Окно было закрыто"
+    rescue Selenium::WebDriver::Error::UnknownError
+      log :error, e.inspect
+    rescue StandardError => e
+      if e.class == HTTP::ConnectionError
+        raise e.class
+      end
+      puts
+      log :error, "Ошибка на странице результата", e.inspect
+    ensure
+      driver.close_tab
+    end
+
+    def visit result
       driver.scroll_to [(result.location.y - rand(140..300)), 0].max
       begin
         click({ class: "organic__url" }, result)
       rescue Selenium::WebDriver::Error::NoSuchElementError
         click({ class: "organic__link" }, result)
       end
-
-      # sleep 0.2
       driver.switch_tab 1
-
-      begin
-        if status
-          apply_good_behavior status
-        else
-          apply_bad_behavior
-        end
-      rescue Selenium::WebDriver::Error::NoSuchElementError => e
-        puts e.inspect
-        log :skip, "Нетипичная ссылка"
-      rescue Net::ReadTimeout
-        puts
-        log :error, "Необрабатываемая страница"
-      rescue Selenium::WebDriver::Error::NoSuchWindowError
-        puts
-        log :error, "Окно было закрыто"
-      rescue Selenium::WebDriver::Error::UnknownError
-        log :error, e.inspect
-      rescue StandardError => e
-        if e.class == HTTP::ConnectionError
-          raise e.class
-        end
-        puts
-        log :error, "Ошибка на странице результата", e.inspect
-      ensure
-        driver.close_tab
-      end
     end
 
-    def apply_good_behavior target_type
+    def apply_good_behavior result, target_type
       n = determine_explore_deepness! target_type
       log :"#{target_type}_target", "глубина = #{n}"
+      visit result
+      wait :pre_delay_target
+      return if n.zero?
       n.times do |i|
         wait 3
         print "  "
@@ -194,9 +195,10 @@ module Bot
       end
     end
 
-    def apply_bad_behavior
+    def apply_bad_behavior result
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
+      visit result
       wait :pre_delay_non_target
       return if scroll_percent.nil? || scroll_percent.zero?
       start_time = Time.now.to_i
@@ -205,7 +207,7 @@ module Bot
       scroll while (driver.scroll_height * 0.01 * scroll_percent) >= driver.y_offset
       puts
       if config.min_visit_non_target + start_time > Time.now.to_i
-        wait (config.min_visit_non_target + start_time) - Time.now.to_i
+        wait((config.min_visit_non_target + start_time) - Time.now.to_i)
       end
       # sleep rand(0.2..2)
     end
