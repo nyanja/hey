@@ -67,6 +67,11 @@ pseudo_targets:
 explore_deepness_sample:
   - 1
 
+# Дополнительное время клика для нецелевых сайтов (c)
+pre_delay_non_target_range:
+  - 0.2
+  - 0.3
+
 # Минимальное время посещения (c)
 min_visit_non_target_range:  # нецелевого сайта
   - 60
