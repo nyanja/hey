@@ -159,7 +159,7 @@ module Bot
       driver.close_tab
     end
 
-    def visit result
+    def visit result, delay
       driver.scroll_to [(result.location.y - rand(140..300)), 0].max
       sleep 1
       begin
@@ -169,14 +169,15 @@ module Bot
       rescue Selenium::WebDriver::Error::NoSuchElementError
         puts "link not found"
       end
+      wait delay
       driver.switch_tab 1
     end
 
     def apply_good_behavior result, target_type
       n = determine_explore_deepness! target_type
       log :"#{target_type}_target", "глубина = #{n}"
-      visit result
-      return wait :pre_delay_target if n.zero?
+      visit result, :pre_delay_target
+      return if n.zero?
       n.times do |i|
         start_time = Time.now.to_i
         wait 3
@@ -216,8 +217,8 @@ module Bot
     def apply_bad_behavior result
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
-      visit result
-      return wait :pre_delay_non_target if scroll_percent.nil? || scroll_percent.zero?
+      visit result, :pre_delay_non_target
+      return if scroll_percent.nil? || scroll_percent.zero?
       start_time = Time.now.to_i
       wait 3
       print "  "
