@@ -179,12 +179,20 @@ module Bot
       wait :pre_delay_target
       return if n.zero?
       n.times do |i|
+        start_time = Time.now.to_i
         wait 3
         print "  "
         scroll while (driver.scroll_height - 10) >= driver.y_offset
         puts
+        rest = (start_time + config.min_visit_target) - Time.now.to_i
+        if rest.positive?
+          wait rest / 8
+          driver.scroll_to 0
+          rest = (start_time + config.min_visit_target) - Time.now.to_i
+          wait rest if rest.positive?
+        end
         if n != i.succ
-          wait(:explore_delay)
+          # wait(:explore_delay)
           visit_some_link
         end
       rescue Selenium::WebDriver::Error::NoSuchElementError
