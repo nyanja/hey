@@ -63,6 +63,14 @@ module Bot
 
         next if skip_result?(result)
 
+        begin
+          # ignore yandex turbo pages
+          result.find_element(class: "overlay_js_intend")
+          next
+        rescue Selenium::WebDriver::Error::NoSuchElementError
+          nil
+        end
+
         @actual_index += 1
         status = nil
         info = @actual_index
