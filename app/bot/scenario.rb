@@ -21,6 +21,7 @@ module Bot
       @last_target = nil
       @target_presence = nil
       @actual_index = 0
+      @targets_count = 0
     end
 
     def default
@@ -78,6 +79,7 @@ module Bot
         if result.text.match?(config.target)
           @target_presence = @actual_index
           @last_target = @actual_index
+          @targets_count += 1
           status = :main
         elsif @pseudo.first && @target_presence &&
               @pseudo.first == @actual_index - @last_target
@@ -95,8 +97,12 @@ module Bot
       if !@target_presence && config.query_skip_on_presence?
         log(:skip!, "Продвигаемого сайта нет на странице")
         defer_query
-      elsif @target_presence && @target_presence <= config.query_skip_on_position
-        log(:skip!, "Продвигаемый сайт уже на высокой позиции")
+        # elsif @target_presence && @target_presence <= config.query_skip_on_position
+      elsif @target_presence &&
+            ((config.query_skip_on_position_by_targets? &&
+              @target_presence == @targets_count) ||
+             (@target_presence <= config.query_skip_on_position_by_limit.to_i))
+        log(:skip!, "Продвигаемые сайты уже на высокой позиции")
         defer_query
       else
         @verified_results.each { |r| parse_result(*r) }

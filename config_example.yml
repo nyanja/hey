@@ -55,7 +55,7 @@ mobile_chance: 100
 # Целевые сайты
 target_patterns:
   - fermok
-  - gejzer
+  - ge
   - kakbiz
 
 # Дополнительные целевые сайты (позиции после основного)
