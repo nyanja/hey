@@ -19,9 +19,6 @@ module Bot
       loop do
         config.queries.each do |query|
           wait_for_connection
-
-          log(:query, query, "[#{driver.device}]")
-
           exit_code = perform_scenario query
           wait_for_new_ip if exit_code == :pass
 
@@ -55,6 +52,7 @@ module Bot
 
     def perform_scenario query
       @driver = Driver.new self
+      log(:query, query, "[#{driver.device}]")
       scn = Scenario.new self, query
       thr = Thread.new do
         loop do
