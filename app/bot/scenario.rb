@@ -43,7 +43,7 @@ module Bot
       return false unless ts.positive?
       time = ((Time.now - Time.at(ts)) / 60).round
       if time > config.query_skip_interval
-        Storage.del query
+        Storage.del "#{query} #{driver.device}"
         return false
       end
       driver.close
