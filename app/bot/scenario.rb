@@ -25,7 +25,6 @@ module Bot
     end
 
     def default
-      binding.pry
       return if delayed_query? && config.unique_query_ip?
       search
       wait(:min)
@@ -40,8 +39,8 @@ module Bot
     end
 
     def delayed_query?
-      ts = Storage.get(query).to_i
-      return false unless ts
+      ts = Storage.get("#{query} #{driver.device}").to_i
+      return false unless ts.positive?
       time = ((Time.now - Time.at(ts)) / 60).round
       if time > config.query_skip_interval
         Storage.del query
@@ -118,7 +117,7 @@ module Bot
 
     def defer_query
       log(:info, "Запрос отложен на #{config.query_skip_interval} мин.")
-      Storage.set query, Time.now.to_i
+      Storage.set "#{query} #{driver.device}", Time.now.to_i
     end
 
     def parse_result result, status, info
