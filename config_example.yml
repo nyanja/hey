@@ -33,8 +33,9 @@ check_ip_delay: 20
 error_delay: 10
 
 # Отложить обработку, если:
-query_skip_on_position: 2 # позиции целевых сайтов не ниже значения
-query_skip_on_presence?: false # целевого сайта нет в выдаче
+query_skip_on_position_by_targets?: true # если все целевые наверху
+# query_skip_on_position_by_limit: 2 # позиции целевых сайтов не ниже значения
+query_skip_on_presence?: false # целевых сайтов нет в выдаче
 
 # Учитывать количество целевых сайтов при откладывании (необязательно)
 # query_skip_targets_quantity: 2
