@@ -31,8 +31,8 @@ module Bot
       rescue Interrupt
         puts "\nВыход..."
         exit
-      rescue Net::ReadTimeout
-        log :error, "Что за фигня, селениум драйвер завис... Идем дальше"
+      rescue StandardError
+        sleep 5
         next
       end
     end

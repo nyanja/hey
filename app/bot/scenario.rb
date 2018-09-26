@@ -17,7 +17,7 @@ module Bot
       @query = query
 
       @verified_results = []
-      @pseudo = config.pseudo_targets.dup
+      @pseudo = config.pseudo_targets.dup || []
       @last_target = nil
       @target_presence = nil
       @actual_index = 0
