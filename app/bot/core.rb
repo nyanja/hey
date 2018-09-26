@@ -20,7 +20,7 @@ module Bot
         config.queries.each do |query|
           wait_for_connection
 
-          log(:query, query)
+          log(:query, query, "[#{driver.device}]")
 
           exit_code = perform_scenario query
           wait_for_new_ip if exit_code == :pass
