@@ -168,11 +168,9 @@ module Bot
       driver.scroll_to [(result.location.y - rand(140..300)), 0].max
       sleep 1
       begin
-        click({ class: "organic__url" }, result)
+        click({ css: ".organic__url, .organic__link, a" }, result)
       rescue Selenium::WebDriver::Error::NoSuchElementError
-        click({ class: "organic__link" }, result)
-      rescue Selenium::WebDriver::Error::NoSuchElementError
-        puts "link not found"
+        puts "element not found"
       end
       wait delay
       driver.switch_tab 1
