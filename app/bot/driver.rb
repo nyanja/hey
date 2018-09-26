@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require "browser"
+
 module Bot
   class Driver
-    attr_reader :driver, :core, :delay
+    attr_reader :driver, :core, :delay, :browser
 
     extend Forwardable
     def_delegator :core, :config
@@ -17,6 +19,7 @@ module Bot
 
     def driver_options
       user_agent = config.mobile ? config.mobile_ua : config.desktop_ua
+      @browser = Browser.new(user_agent)
 
       # opts = Selenium::WebDriver::Firefox::Options.new
       # opts.add_preference "general.useragent.override", user_agent
@@ -84,6 +87,24 @@ module Bot
 
     def click query, element = driver
       element.find_element(query).click
+    end
+
+    def mobile?
+      browser.device.mobile?
+    end
+
+    def tablet?
+      browser.device.tablet?
+    end
+
+    def device
+      if tablet?
+        "tablet"
+      elsif mobile?
+        "mobile"
+      else
+        "desktop"
+      end
     end
   end
 end

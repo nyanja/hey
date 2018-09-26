@@ -25,6 +25,7 @@ module Bot
     end
 
     def default
+      binding.pry
       return if delayed_query? && config.unique_query_ip?
       search
       wait(:min)
