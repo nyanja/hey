@@ -121,7 +121,7 @@ module Bot
     end
 
     def parse_result result, status, info
-      log(:visit, "##{info} #{result.text}")
+      log(:visit, "##{info} #{result.text}", "[#{driver.device}]")
 
       if config.skip && !status
         log(:skip, "Игнорирование ссылки")
