@@ -100,6 +100,9 @@ scroll_height_non_target_range:
   - 0
   - 0
 
+# Скорость прокрутки (по умолчанию 4)
+scroll_speed: 4
+
 # Диапазон задержки прокрутки (с)
 scroll_delay_range:
   - 0.2

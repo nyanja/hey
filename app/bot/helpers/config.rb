@@ -13,7 +13,8 @@ module Bot
                    check_ip_delay: BIG_WAIT,
                    query_delay: MEDIUM_WAIT,
                    "unique_visit_ip?": false,
-                   pseudo_targets: [] }.freeze
+                   pseudo_targets: [],
+                   scroll_speed: 4 }.freeze
 
       def initialize config
         @config = config

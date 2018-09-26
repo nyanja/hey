@@ -62,9 +62,9 @@ module Bot
     end
 
     def scroll_to position
-      (y_offset / 4).to_i.send((y_offset > position ? :downto : :upto),
-                               (position / 4).to_i) do |y|
-        js "window.scroll(\"0\", \"#{y * 4}\")"
+      (y_offset / config.scroll_speed).to_i.send((y_offset > position ? :downto : :upto),
+                                                 (position / config.scroll_speed).to_i) do |y|
+        js "window.scroll(\"0\", \"#{y * config.scroll_speed}\")"
       end
     end
 
