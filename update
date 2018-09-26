@@ -3,5 +3,3 @@
 git reset --hard
 git pull
 bundle
-
-redis-cli flushall
