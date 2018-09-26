@@ -41,7 +41,7 @@ module Bot
     def delayed_query?
       ts = Storage.get("#{query} #{driver.device}").to_i
       return false unless ts.positive?
-      time = ((Time.now - Time.at(ts)) / 60).round
+      time = ((Time.now.to_i - ts) / 60).round
       if time > config.query_skip_interval
         Storage.del "#{query} #{driver.device}"
         return false
