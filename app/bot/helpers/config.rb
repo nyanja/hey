@@ -14,7 +14,8 @@ module Bot
                    query_delay: MEDIUM_WAIT,
                    "unique_visit_ip?": false,
                    pseudo_targets: [],
-                   scroll_speed: 4 }.freeze
+                   scroll_speed: 4,
+                   results_limit: 100 }.freeze
 
       def initialize config
         @config = config

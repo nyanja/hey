@@ -73,6 +73,9 @@ module Bot
         end
 
         @actual_index += 1
+
+        break if @actual_index > config.results_limit
+
         status = nil
         info = @actual_index
 
@@ -155,9 +158,7 @@ module Bot
     rescue Selenium::WebDriver::Error::UnknownError
       log :error, e.inspect
     rescue StandardError => e
-      if e.class == HTTP::ConnectionError
-        raise e.class
-      end
+      raise e.class if e.class == HTTP::ConnectionError
       puts
       log :error, "Ошибка на странице результата", e.inspect
     ensure
