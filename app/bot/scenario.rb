@@ -89,6 +89,8 @@ module Bot
           @pseudo.shift
           @last_target = @actual_index
           status = :pseudo
+        elsif config.non_target && result.text.match?(config.non_target)
+          status = :bad
         elsif @actual_index > config.results_count
           status = :skip
         end
@@ -126,7 +128,7 @@ module Bot
     def parse_result result, status, info
       log(:visit, "##{info} #{result.text}", "[#{driver.device}]")
 
-      if config.skip && !status
+      if (config.skip && status == :bad)
         log(:skip, "Игнорирование ссылки")
       elsif status == :skip
         log(:skip, "Лимит обрабатываемых результатов превышен")
@@ -141,10 +143,12 @@ module Bot
     end
 
     def parse_result_page result, status
-      if status
+      if status == :bad || (status.nil? && !config.non_target)
+        apply_bad_behavior result
+      elsif status
         apply_good_behavior result, status
       else
-        apply_bad_behavior result
+        log :skip, "Нейтральный сайт"
       end
     rescue Selenium::WebDriver::Error::NoSuchElementError => e
       puts e.inspect

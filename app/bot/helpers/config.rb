@@ -38,7 +38,9 @@ module Bot
       end
 
       def patterns_value method
-        Regexp.new(@config["#{method}_patterns"].join("|"), "i")
+        p = @config["#{method}_patterns"]
+        return nil unless p
+        Regexp.new(p.join("|"), "i")
       end
 
       def sample_value method
