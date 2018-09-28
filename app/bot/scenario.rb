@@ -182,6 +182,10 @@ module Bot
     end
 
     def apply_good_behavior result, target_type
+      if config.skip_target && !result.text.match?(config.target_patterns.first)
+        log :"#{target_type}_target", "Пропуск неосновного сайта"
+        return
+      end
       n = determine_explore_deepness! result
       log :"#{target_type}_target", "глубина = #{n}"
       visit result, :pre_delay_target
