@@ -128,7 +128,7 @@ module Bot
     def parse_result result, status, info
       log(:visit, "##{info} #{result.text}", "[#{driver.device}]")
 
-      if (config.skip && status == :bad)
+      if config.skip && (status == :bad || !config.non_target)
         log(:skip, "Игнорирование ссылки")
       elsif status == :skip
         log(:skip, "Лимит обрабатываемых результатов превышен")
