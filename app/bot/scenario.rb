@@ -182,7 +182,7 @@ module Bot
     end
 
     def apply_good_behavior result, target_type
-      n = determine_explore_deepness! target_type
+      n = determine_explore_deepness! result
       log :"#{target_type}_target", "глубина = #{n}"
       visit result, :pre_delay_target
       return if n.zero?
@@ -208,16 +208,14 @@ module Bot
       end
     end
 
-    def determine_explore_deepness! target_type
+    def determine_explore_deepness! result
       n = config.explore_deepness
       return n if config.unique_visit_ip? == false || n.zero?
-      if Ip.same?
+      if Ip.current == Storage.get(result.text[0, 20])
         log(:info, "Посещение с таким IP уже было. Глубина установлена на 0")
         return 0
       else
-        log(:info, "IP изменился. Посещение разрешено")
-        # Ip.refresh!
-        Storage.set "refresh_ip", true if target_type == :main
+        Storage.set(result.text[0, 20], Ip.current)
         return n
       end
     end
@@ -225,8 +223,18 @@ module Bot
     def apply_bad_behavior result
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
-      visit result, :pre_delay_non_target
       return if scroll_percent.nil? || scroll_percent.zero?
+
+      if config.unique_visit_ip?
+        if Ip.current == Storage.get(result.text[0, 20])
+          log(:info, "Посещение с таким IP уже было")
+          return
+        else
+          Storage.set(result.text[0, 20], Ip.current)
+        end
+      end
+
+      visit result, :pre_delay_non_target
       start_time = Time.now.to_i
       wait 3
       print "  "

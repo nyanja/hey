@@ -18,14 +18,9 @@ module Bot
       Thread.abort_on_exception = true
       loop do
         config.queries.each do |query|
+          refresh_ip
           wait_for_connection
-          exit_code = perform_scenario query
-          wait_for_new_ip if exit_code == :pass
-
-          if Storage.get "refresh_ip"
-            Storage.del "refresh_ip"
-            refresh_ip
-          end
+          perform_scenario query
         end
 
       rescue Interrupt
@@ -71,16 +66,6 @@ module Bot
       handle_exception e
     ensure
       thr&.kill
-    end
-
-    def wait_for_new_ip
-      while Ip.same? && config.unique_query_ip?
-        log(:info, "Ожидание смены IP", Ip.current)
-        wait(:check_ip_delay)
-      end
-    rescue HTTP::ConnectionError
-      handle_no_connection
-      retry
     end
   end
 end
