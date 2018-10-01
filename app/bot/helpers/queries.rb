@@ -21,6 +21,7 @@ module Bot
         return true if t && t.to_i < Time.now.to_i
         Bot::Storage.del("delay//#{query}")
         Bot::Storage.del("delay//#{query} #{driver.device}")
+        Bot::Storage.del("qc//#{query}")
         false
       end
     end
