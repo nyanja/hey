@@ -8,10 +8,10 @@ require_relative "bot/storage"
 require_relative "bot/ip"
 
 require_relative "bot/helpers/config"
+require_relative "bot/helpers/queries"
 require_relative "bot/scenario"
 require_relative "bot/driver"
 require_relative "bot/core"
-require_relative "bot/helpers/queries"
 
 # require "require_all"
 # require_rel "bot/"
