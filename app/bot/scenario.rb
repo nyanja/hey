@@ -26,10 +26,15 @@ module Bot
     end
 
     def default
-      return if delayed_query? && config.unique_query_ip?
+      # return if delayed_query? && config.unique_query_ip?
+
+      if query_delayed?
+        log :skip, "Запрос отложен"
+        return
+      end
 
       if query_limited?
-        log :skip, "Запрос отложен из-за отсутствия прогресса"
+        log :skip, "Продвижение неэффективно. Отложим до лучших времен..."
         return
       end
 
