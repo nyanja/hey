@@ -11,6 +11,7 @@ module Bot
     include Helpers::Logger
     include Helpers::Wait
     include Helpers::Sites
+    include Helpers::Queries
 
     def initialize core, query
       @core = core
@@ -26,6 +27,12 @@ module Bot
 
     def default
       return if delayed_query? && config.unique_query_ip?
+
+      if query_limited?
+        log :skip, "Запрос отложен из-за отсутствия прогресса"
+        return
+      end
+
       search
       wait(:min)
       exit_code = handle_results
@@ -109,9 +116,14 @@ module Bot
         log(:skip!, "Продвигаемые сайты уже на высокой позиции")
         defer_query
       else
-        @verified_results.each { |r| parse_result(*r) }
-        :pass
+        process_query
       end
+    end
+
+    def process_query
+      count_this_query
+      @verified_results.each { |r| parse_result(*r) }
+      :pass
     end
 
     def skip_result? result
