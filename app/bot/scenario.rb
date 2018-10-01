@@ -26,15 +26,17 @@ module Bot
     end
 
     def default
-      # return if delayed_query? && config.unique_query_ip?
-
       if query_delayed?
         log :skip, "Запрос отложен"
+        driver.quit
+        wait(:query_delay)
         return
       end
 
       if query_limited?
         log :skip, "Продвижение неэффективно. Отложим до лучших времен..."
+        driver.quit
+        wait(:query_delay)
         return
       end
 
@@ -48,21 +50,6 @@ module Bot
       log(:error, "Нетипичная страница поиска")
       puts e.inspect
       driver.quit
-    end
-
-    def delayed_query?
-      ts = Storage.get("#{query} #{driver.device}").to_i
-      return false unless ts.positive?
-      time = ((Time.now.to_i - ts) / 60).round
-      if time > config.query_skip_interval
-        Storage.del "#{query} #{driver.device}"
-        return false
-      end
-      driver.close
-      log(:skip!, "Запрос отложен. Осталось " \
-                  "#{config.query_skip_interval - time} мин.")
-      wait(:query_delay)
-      true
     end
 
     def search
@@ -139,7 +126,8 @@ module Bot
 
     def defer_query
       log(:info, "Запрос отложен на #{config.query_skip_interval} мин.")
-      Storage.set "#{query} #{driver.device}", Time.now.to_i
+      Storage.set "delay//#{query} #{driver.device}",
+                  Time.now.to_i + config.query_skip_interval
     end
 
     def parse_result result, status, info
