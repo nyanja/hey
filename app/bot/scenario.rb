@@ -26,8 +26,8 @@ module Bot
     end
 
     def default
-      if query_delayed?
-        log :skip, "Запрос отложен"
+      if (t = query_delayed?)
+        log :skip, "Запрос отложен. Осталось #{t} мин."
         driver.quit
         wait(:query_delay)
         return
@@ -127,7 +127,7 @@ module Bot
     def defer_query
       log(:info, "Запрос отложен на #{config.query_skip_interval} мин.")
       Storage.set "delay//#{query} #{driver.device}",
-                  Time.now.to_i + config.query_skip_interval
+                  Time.now.to_i + config.query_skip_interval * 60
     end
 
     def parse_result result, status, info
