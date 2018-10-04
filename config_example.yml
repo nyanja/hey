@@ -37,9 +37,9 @@ error_delay: 10
 
 # Отложить обработку, если:
 query_skip_on_position_by_targets?: false # если все целевые наверху
-query_skip_on_position_by_limit: 4 # позиции целевых сайтов не ниже значения
+query_skip_on_position_by_limit: 0 # позиции целевых сайтов не ниже значения
 query_skip_on_presence?: false # целевых сайтов нет в выдаче
-query_skip_on_limit: 2 # отложить из-за отсутствия прогресса
+query_skip_on_limit: 20 # отложить из-за отсутствия прогресса
 
 
 
@@ -58,7 +58,7 @@ mobile_chance: 0
 
 # Целевые сайты. Первый - основной, остальные - второстепенные
 target_patterns:
-  - busi
+  - .
   # - kakb
 
 # Процент пропуска второстепенных целевых
@@ -79,7 +79,7 @@ pseudo_targets:
 
 # Диапазон глубины просмотра целевого сайта (количество переходов по ссылкам)
 explore_deepness_sample:
-  - 1
+  - 0
 
 # Дополнительное время клика для нецелевых сайтов (c)
 pre_delay_non_target_range:

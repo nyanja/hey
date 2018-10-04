@@ -2,7 +2,7 @@
 
 module Bot
   class Scenario
-    attr_reader :core, :query
+    attr_reader :core, :query, :t
 
     extend Forwardable
     def_delegators :core, :driver, :config
@@ -172,6 +172,11 @@ module Bot
       log :error, "Ошибка на странице результата", e.inspect
     ensure
       driver.close_tab
+      if @t
+        d = Time.now - @t
+        log :info, "Задержка: #{d}"
+        @t = nil
+      end
     end
 
     def visit result, delay
@@ -179,10 +184,11 @@ module Bot
       sleep 1
       begin
         click({ css: ".organic__url, .organic__link, a" }, result)
+        @t = Time.now
       rescue Selenium::WebDriver::Error::NoSuchElementError
         puts "element not found"
       end
-      wait delay
+      wait delay if delay.positive?
       driver.switch_tab 1
     end
 
@@ -190,10 +196,10 @@ module Bot
       if config.skip_target && !result.text.match?(config.target_patterns.first)
         log :"#{target_type}_target", "Пропуск неосновного сайта"
         return
-      end
+        end
       n = determine_explore_deepness! result
       log :"#{target_type}_target", "глубина = #{n}"
-      visit result, :pre_delay_target
+      visit result, config.pre_delay_target
       return if n.zero?
       n.times do |i|
         start_time = Time.now.to_i
@@ -242,7 +248,7 @@ module Bot
         end
       end
 
-      visit result, :pre_delay_non_target
+      visit result, config.pre_delay_non_target
       return if scroll_percent.nil? || scroll_percent.zero?
       start_time = Time.now.to_i
       wait 3
