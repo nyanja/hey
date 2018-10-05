@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "yaml"
-
 module Bot
   class Core
     attr_reader :config, :driver
@@ -11,7 +9,7 @@ module Bot
     include Helpers::Logger
 
     def initialize path_to_config
-      @config = Helpers::Config.new(YAML.load_file(path_to_config))
+      @config = Helpers::Config.new(path_to_config)
     end
 
     def execute

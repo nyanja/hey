@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "yaml"
+
 module Bot
   module Helpers
     class Config
@@ -17,8 +19,8 @@ module Bot
                    scroll_speed: 4,
                    results_limit: 100 }.freeze
 
-      def initialize config
-        @config = config
+      def initialize path_to_config
+        @config = YAML.load_file(path_to_config)
       end
 
       def respond_to_missing?

@@ -42,7 +42,7 @@ module Bot
 
       search
       wait(:min)
-      exit_code = handle_results
+      exit_code = handle_results search_results
       driver.quit
       wait(:query_delay)
       exit_code
@@ -52,13 +52,13 @@ module Bot
       driver.quit
     end
 
-    def handle_results
-      search_results.each_with_index do |result, i|
+    def handle_results results
+      results.each_with_index do |result, i|
         break if i > config.results_count.to_i && @pseudo.empty? &&
                  @target_presence
 
-        next if skip_result?(result)
-        next_if_invalid result
+        next if skip_result? result
+        next if invalid? result
         @actual_index += 1
         break if @actual_index > config.results_limit
         status = target?(result) ||
@@ -118,10 +118,10 @@ module Bot
       :skip
     end
 
-    def next_if_invalid result
+    def invalid? result
       # ignore yandex turbo pages
       result.find_element(class: "overlay_js_intend")
-      next
+      true
     rescue Selenium::WebDriver::Error::NoSuchElementError
       nil
     end
