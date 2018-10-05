@@ -62,6 +62,7 @@ module Bot
         @actual_index += 1
         break if @actual_index > config.results_limit
         status = target?(result) ||
+                 skip_by_pattern?(result) ||
                  pseudo? ||
                  rival?(result) ||
                  skip?
@@ -89,6 +90,14 @@ module Bot
       @last_target = @actual_index
       @targets_count += 1
       :main
+    end
+
+    def skip_by_pattern result
+      return unless result.text.match?(config.skip_site)
+      if pseudo? && @pseudo.first != @actual_index - @last_target + 1
+        @pseudo.unshift(@actual_index - @last_target + 1)
+      end
+      :skip
     end
 
     def pseudo?
@@ -201,7 +210,7 @@ module Bot
       if config.skip_target && !result.text.match?(config.target_patterns.first)
         log :"#{target_type}_target", "Пропуск неосновного сайта"
         return
-        end
+      end
       n = determine_explore_deepness! result
       log :"#{target_type}_target", "глубина = #{n}"
       visit result, config.pre_delay_target
