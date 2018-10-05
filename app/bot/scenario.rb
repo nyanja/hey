@@ -85,6 +85,7 @@ module Bot
         log(:skip!, "Продвигаемого сайта нет на странице")
         defer_query
       elsif @target_presence &&
+            @target_presence != 0 &&
             ((config.query_skip_on_position_by_targets? &&
               @target_presence == @targets_count) ||
              (@target_presence <= config.query_skip_on_position_by_limit.to_i))
