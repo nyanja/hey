@@ -54,6 +54,13 @@ module Bot
     end
 
     def parse_results results
+      has_target = results.reduce(false) do |acc, r|
+        acc ||= r.text.match?(config.target)
+      end
+      if !has_target && !config.query_skip_on_presence?
+        @target_presence = 0
+        @last_target = 0
+      end
       results.each_with_index do |result, i|
         break if i > config.results_count.to_i && @pseudo.empty? &&
                  @target_presence

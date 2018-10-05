@@ -2,6 +2,7 @@
 
 require "minitest/autorun"
 require "selenium-webdriver"
+require "pry"
 
 require_relative "../bot/helpers/logger"
 require_relative "../bot/helpers/wait"
