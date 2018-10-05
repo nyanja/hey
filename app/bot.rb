@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "selenium-webdriver"
+
 require_relative "bot/helpers/logger"
 require_relative "bot/helpers/wait"
 require_relative "bot/helpers/exception_handler"

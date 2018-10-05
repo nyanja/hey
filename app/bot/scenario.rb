@@ -42,7 +42,8 @@ module Bot
 
       search
       wait(:min)
-      exit_code = handle_results search_results
+      parse_results search_results
+      exit_code = handle_results
       driver.quit
       wait(:query_delay)
       exit_code
@@ -52,7 +53,7 @@ module Bot
       driver.quit
     end
 
-    def handle_results results
+    def parse_results results
       results.each_with_index do |result, i|
         break if i > config.results_count.to_i && @pseudo.empty? &&
                  @target_presence
@@ -69,7 +70,10 @@ module Bot
 
         @verified_results << [result, status, @actual_index]
       end
+      @verified_results
+    end
 
+    def handle_results
       if !@target_presence && config.query_skip_on_presence?
         log(:skip!, "Продвигаемого сайта нет на странице")
         defer_query
@@ -92,8 +96,8 @@ module Bot
       :main
     end
 
-    def skip_by_pattern result
-      return unless result.text.match?(config.skip_site)
+    def skip_by_pattern? result
+      return unless config.skip_site && result.text.match?(config.skip_site)
       if pseudo? && @pseudo.first != @actual_index - @last_target + 1
         @pseudo.unshift(@actual_index - @last_target + 1)
       end
@@ -114,15 +118,17 @@ module Bot
     end
 
     def skip?
-      return unless @actual_index > config.results_count
-      :skip
+      if @actual_index > config.results_count ||
+         (config.skip && !config.non_target)
+        :skip
+      end
     end
 
     def invalid? result
       # ignore yandex turbo pages
       result.find_element(class: "overlay_js_intend")
       true
-    rescue Selenium::WebDriver::Error::NoSuchElementError
+    rescue StandardError
       nil
     end
 
@@ -140,17 +146,15 @@ module Bot
 
     def defer_query
       log(:info, "Запрос отложен на #{config.query_skip_interval} мин.")
-      Storage.set "delay//#{query} #{driver.device}",
+      Storage.set "delay//#{query} #{driver&.device}",
                   Time.now.to_i + config.query_skip_interval * 60
     end
 
     def parse_result result, status, info
-      log(:visit, "##{info} #{result.text}", "[#{driver.device}]")
+      log(:visit, "##{info} #{result.text}", "[#{driver&.device}]")
 
-      if config.skip && (status == :rival || (status.nil? && !config.non_target))
-        log(:skip, "Игнорирование ссылки")
-      elsif status == :skip
-        log(:skip, "Лимит обрабатываемых результатов превышен")
+      if status == :skip
+        log(:skip, "Пропуск сайта")
       else
         parse_result_page(result, status)
       end
@@ -165,7 +169,7 @@ module Bot
       if status == :rival || (status.nil? && !config.non_target)
         apply_rival_behavior result
       elsif status
-        apply_good_behavior result, status
+        apply_target_behavior result, status
       else
         log :skip, "Нейтральный сайт"
       end
@@ -185,7 +189,7 @@ module Bot
       puts
       log :error, "Ошибка на странице результата", e.inspect
     ensure
-      driver.close_tab
+      driver&.close_tab
       if @t
         d = Time.now - @t
         log :info, "Задержка: #{d}"
@@ -206,7 +210,7 @@ module Bot
       driver.switch_tab 1
     end
 
-    def apply_good_behavior result, target_type
+    def apply_target_behavior result, target_type
       if config.skip_target && !result.text.match?(config.target_patterns.first)
         log :"#{target_type}_target", "Пропуск неосновного сайта"
         return
@@ -252,6 +256,11 @@ module Bot
     def apply_rival_behavior result
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
+
+      if config.skip
+        log :skip, "процент пропуска нецелевых"
+        return
+      end
 
       if config.unique_visit_ip?
         if Ip.current == Storage.get(result.text[0, 20])
