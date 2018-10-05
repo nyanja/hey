@@ -3,7 +3,7 @@
 module Bot
   module Helpers
     module Sites
-      def yandex_search
+      def search
         driver.navigate.to("https://yandex.ru")
         # wait(:min)
         # search_bar = driver.find_element(id: "text")
@@ -13,7 +13,7 @@ module Bot
         search_bar.submit
       end
 
-      def yandex_search_results
+      def search_results
         driver.find_element(class: "serp-list")
               .find_elements(class: "serp-item")
       end

@@ -2,7 +2,7 @@
 
 module Bot
   class Scenario
-    attr_reader :core, :query, :t
+    attr_reader :core, :query
 
     extend Forwardable
     def_delegators :core, :driver, :config
@@ -52,50 +52,21 @@ module Bot
       driver.quit
     end
 
-    def search
-      yandex_search
-    end
-
     def handle_results
-      yandex_search_results.each_with_index do |result, i|
+      search_results.each_with_index do |result, i|
         break if i > config.results_count.to_i && @pseudo.empty? &&
                  @target_presence
 
         next if skip_result?(result)
-
-        begin
-          # ignore yandex turbo pages
-          result.find_element(class: "overlay_js_intend")
-          next
-        rescue Selenium::WebDriver::Error::NoSuchElementError
-          nil
-        end
-
+        next_if_invalid result
         @actual_index += 1
-
         break if @actual_index > config.results_limit
+        status = target?(result) ||
+                 pseudo? ||
+                 rival?(result) ||
+                 skip?
 
-        status = nil
-        info = @actual_index
-
-        if result.text.match?(config.target)
-          @target_presence = @actual_index
-          @last_target = @actual_index
-          @targets_count += 1
-          status = :main
-        elsif @pseudo.first && @target_presence &&
-              @pseudo.first == @actual_index - @last_target
-          @pseudo.shift
-          @last_target = @actual_index
-          status = :pseudo
-        elsif config.non_target && result.text.match?(config.non_target)
-          status = :bad
-        elsif @actual_index > config.results_count
-          status = :skip
-        end
-
-        # TODO: Separate class for each result
-        @verified_results << [result, status, info]
+        @verified_results << [result, status, @actual_index]
       end
 
       if !@target_presence && config.query_skip_on_presence?
@@ -110,6 +81,40 @@ module Bot
       else
         process_query
       end
+    end
+
+    def target? result
+      return unless result.text.match?(config.target)
+      @target_presence = @actual_index
+      @last_target = @actual_index
+      @targets_count += 1
+      :main
+    end
+
+    def pseudo?
+      return unless @pseudo.first && @target_presence &&
+                    @pseudo.first == @actual_index - @last_target
+      @pseudo.shift
+      @last_target = @actual_index
+      :pseudo
+    end
+
+    def rival? result
+      return unless config.non_target && result.text.match?(config.non_target)
+      :rival
+    end
+
+    def skip?
+      return unless @actual_index > config.results_count
+      :skip
+    end
+
+    def next_if_invalid result
+      # ignore yandex turbo pages
+      result.find_element(class: "overlay_js_intend")
+      next
+    rescue Selenium::WebDriver::Error::NoSuchElementError
+      nil
     end
 
     def process_query
@@ -133,7 +138,7 @@ module Bot
     def parse_result result, status, info
       log(:visit, "##{info} #{result.text}", "[#{driver.device}]")
 
-      if config.skip && (status == :bad || (status.nil? && !config.non_target))
+      if config.skip && (status == :rival || (status.nil? && !config.non_target))
         log(:skip, "Игнорирование ссылки")
       elsif status == :skip
         log(:skip, "Лимит обрабатываемых результатов превышен")
@@ -148,8 +153,8 @@ module Bot
     end
 
     def parse_result_page result, status
-      if status == :bad || (status.nil? && !config.non_target)
-        apply_bad_behavior result
+      if status == :rival || (status.nil? && !config.non_target)
+        apply_rival_behavior result
       elsif status
         apply_good_behavior result, status
       else
@@ -235,7 +240,7 @@ module Bot
       end
     end
 
-    def apply_bad_behavior result
+    def apply_rival_behavior result
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
 
