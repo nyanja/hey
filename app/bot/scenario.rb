@@ -70,7 +70,7 @@ module Bot
         @actual_index += 1
         break if @actual_index > config.results_limit
         status = target?(result) ||
-                 skip_by_pattern?(result) ||
+                 non_pseudo?(result) ||
                  pseudo? ||
                  rival?(result) ||
                  skip?
@@ -80,7 +80,7 @@ module Bot
       @verified_results
     end
 
-    def try_to_defer_query results = @verified_results
+    def try_to_defer_query
       return unless no_target_on_the_page? ||
                     targets_on_top? ||
                     non_targets_below_pseudo?
@@ -119,13 +119,13 @@ module Bot
       :main
     end
 
-    def skip_by_pattern? result
+    def non_pseudo? result
       return unless config.skip_site && result.text.match?(config.skip_site)
       @skips_above_pseudo = true unless @first_pseudo
       if pseudo? && @pseudo.first != @actual_index - @last_target + 1
         @pseudo.unshift(@actual_index - @last_target + 1)
       end
-      :skip
+      nil
     end
 
     def pseudo?

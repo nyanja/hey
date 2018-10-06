@@ -76,7 +76,7 @@ skip_target_chance: 30
 non_target_patterns:
   # - bsdfa
 
-# Сайты к пропуску
+# не могут ыть щцелевыми
 skip_site_patterns:
   - nyan
 

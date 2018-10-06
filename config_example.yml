@@ -68,7 +68,7 @@ skip_target_chance: 20
 non_target_patterns:
   - bsdfa
 
-# Сайты к пропуску
+# Не могут быть целевыми
 skip_site_patterns:
   - ferm
 
