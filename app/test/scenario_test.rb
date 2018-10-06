@@ -36,7 +36,12 @@ class ScenarioTest < Minitest::Test
     @res = @s.parse_results(@results)
   end
 
-  def test_handle_results
+  # def test_handle_results
+    # puts @res.map(&:inspect)
+  # end
+
+  def test_common
     puts @res.map(&:inspect)
+    puts @s.try_to_defer_query.inspect
   end
 end

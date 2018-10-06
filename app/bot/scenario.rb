@@ -43,7 +43,7 @@ module Bot
       search
       wait(:min)
       parse_results search_results
-      exit_code = handle_results
+      exit_code = try_to_defer_query || process_query
       driver.quit
       wait(:query_delay)
       exit_code
@@ -80,20 +80,35 @@ module Bot
       @verified_results
     end
 
-    def handle_results
-      if !@target_presence && config.query_skip_on_presence?
-        log(:skip!, "Продвигаемого сайта нет на странице")
-        defer_query
-      elsif @target_presence &&
-            @target_presence != 0 &&
-            ((config.query_skip_on_position_by_targets? &&
-              @target_presence == @targets_count) ||
-             (@target_presence <= config.query_skip_on_position_by_limit.to_i))
-        log(:skip!, "Продвигаемые сайты уже на высокой позиции")
-        defer_query
-      else
-        process_query
-      end
+    def try_to_defer_query results = @verified_results
+      return unless no_target_on_the_page? ||
+                    targets_on_top? ||
+                    non_targets_below_pseudo?
+      defer_query
+      true
+    end
+
+    def no_target_on_the_page?
+      return unless !@target_presence && config.query_skip_on_presence?
+      log(:skip!, "Продвигаемого сайта нет на странице")
+      true
+    end
+
+    def targets_on_top?
+      return unless @target_presence &&
+                    @target_presence != 0 &&
+                    ((config.query_skip_on_position_by_targets? &&
+                      @target_presence == @targets_count) ||
+                      (@target_presence <= config.query_skip_on_position_by_limit.to_i))
+      log(:skip!, "Продвигаемые сайты уже на высокой позиции")
+      true
+    end
+
+    def non_targets_below_pseudo?
+      return unless config.query_skip_on_non_targets_below_pseudo? &&
+                    !@skips_above_pseudo
+      log(:skip!, "Сайты к пропуску ниже доп. целевого")
+      true
     end
 
     def target? result
@@ -106,6 +121,7 @@ module Bot
 
     def skip_by_pattern? result
       return unless config.skip_site && result.text.match?(config.skip_site)
+      @skips_above_pseudo = true unless @first_pseudo
       if pseudo? && @pseudo.first != @actual_index - @last_target + 1
         @pseudo.unshift(@actual_index - @last_target + 1)
       end
@@ -117,6 +133,7 @@ module Bot
                     @pseudo.first == @actual_index - @last_target
       @pseudo.shift
       @last_target = @actual_index
+      @first_pseudo = @actual_index unless @first_pseudo
       :pseudo
     end
 
