@@ -46,7 +46,7 @@ error_delay: 10
 # Отложить обработку, если:
 query_skip_on_position_by_targets?: false # если все целевые наверху
 query_skip_on_position_by_limit: 2 # позиции целевых сайтов не ниже значения
-query_skip_on_presence?: true # целевых сайтов нет в выдаче
+query_skip_on_presence?: false # целевых сайтов нет в выдаче
 query_skip_on_limit: 20 # отложить из-за отсутствия прогресса
 query_skip_on_non_targets_below_pseudo?: true # сайты к пропуску ниже доп. целевого
 
@@ -67,8 +67,8 @@ mobile_chance: 0
 
 # Целевые сайты. Первый - основной, остальные - второстепенные
 target_patterns:
-  - meow
-  - grach
+  - meoww
+  - grachw
 
 # Процент пропуска второстепенных целевых
 skip_target_chance: 30
@@ -84,11 +84,13 @@ skip_site_patterns:
 # Процент пропуска нецелевых сайтов
 skip_chance: 10
 
-# Дополнительные целевые сайты (позиции после основного)
-pseudo_targets:
+# Дополнительные целевые сайты
+pseudo_targets: # если есть целевой сайт на странице
   - 2
   - 3
-  # - 1
+sole_pseudo_targets: # если целевого сайта нет на странице
+  - 3
+  - 2
 
 # Диапазон глубины просмотра целевого сайта (количество переходов по ссылкам)
 explore_deepness_sample:

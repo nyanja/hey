@@ -18,7 +18,6 @@ module Bot
       @query = query
 
       @verified_results = []
-      @pseudo = config.pseudo_targets.dup || []
       @last_target = nil
       @target_presence = nil
       @actual_index = 0
@@ -57,6 +56,11 @@ module Bot
       has_target = results.reduce(false) do |acc, r|
         acc ||= r.text.match?(config.target)
       end
+      @pseudo = if has_target
+                  config.pseudo_targets
+                else
+                  config.sole_pseudo_targets || pseudo_targets
+                end || []
       if !has_target && !config.query_skip_on_presence?
         @target_presence = 0
         @last_target = 0
