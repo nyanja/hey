@@ -95,12 +95,10 @@ module Bot
     end
 
     def targets_on_top?
-      return unless @target_presence &&
-                    @target_presence != 0 &&
-                    ((config.query_skip_on_position_by_targets? &&
-                      @target_presence == @targets_count) ||
-                      (@target_presence <= config.query_skip_on_position_by_limit.to_i))
-      log(:skip!, "Продвигаемые сайты уже на высокой позиции")
+      return unless @first_target &&
+                    config.query_skip_on_position_by_limit &&
+                    @first_target <= config.query_skip_on_position_by_limit.to_i
+      log(:skip!, "Продвигаемый сайт уже на высокой позиции")
       true
     end
 
@@ -115,6 +113,7 @@ module Bot
       return unless result.text.match?(config.target)
       @target_presence = @actual_index
       @last_target = @actual_index
+      @first_target ||= @actual_index
       @targets_count += 1
       :main
     end
