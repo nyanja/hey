@@ -48,6 +48,11 @@ module Bot
 
     def perform_scenario query
       @driver = Driver.new self
+      driver.network_conditions = {
+        offline: false,
+        latency: (config.throttling_latency || 0),
+        throughput: 1024 * (config.throttling_trhoughput || 500)
+      }
       log(:query, query, "[#{driver.device}]")
       scn = Scenario.new self, query
       thr = Thread.new do

@@ -150,6 +150,12 @@ ignore_patterns:
 # Использовать прокси? (true = да, false = нет)
 use_proxy?: false
 
+# Задержка сетевого соединения (ms)
+throttling_latency: 1000
+
+# Пропускная способность (0 - 500)
+throttling_trhoughput: 500
+
 # Прокси серверы
 proxy_sample:
   - 31.44.88.1:49503
