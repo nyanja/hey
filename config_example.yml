@@ -59,7 +59,7 @@ mobile_chance: 0
 
 # Целевые сайты. Первый - основной, остальные - второстепенные
 target_patterns:
-  - bussdfsdfi
+  - bu
 
 # Процент пропуска второстепенных целевых
 skip_target_chance: 20

@@ -216,6 +216,7 @@ module Bot
       raise e.class if e.class == HTTP::ConnectionError
       puts
       log :error, "Ошибка на странице результата", e.inspect
+      puts e.backtrace
     ensure
       driver&.close_tab
       if @t
