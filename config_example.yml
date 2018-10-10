@@ -151,7 +151,7 @@ ignore_patterns:
 use_proxy?: false
 
 # Задержка сетевого соединения (ms)
-throttling_latency: 1000
+throttling_latency: 0
 
 # Пропускная способность (0 - 500)
 throttling_trhoughput: 500
