@@ -31,8 +31,8 @@ results_limit: 100
 
 # Диапазон количества обрабатываемых результатов на один поисковой запрос
 results_count_range:
-  - 2
-  - 2
+  - 7
+  - 7
 
 # Осуществлять переходы только с уникальным ip
 unique_visit_ip?: true
@@ -67,7 +67,7 @@ mobile_chance: 0
 
 # Целевые сайты. Первый - основной, остальные - второстепенные
 target_patterns:
-  - meow
+  - meoww
   - grachw
 
 # Процент пропуска второстепенных целевых
@@ -75,11 +75,11 @@ skip_target_chance: 30
 
 # Нецелевые сайты
 non_target_patterns:
-  # - bsdfa
+  - gr
 
 # не могут ыть щцелевыми
 skip_site_patterns:
-  - nyane
+  - nyan
 
 # Процент пропуска нецелевых сайтов
 skip_chance: 10
