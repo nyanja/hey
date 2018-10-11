@@ -45,8 +45,7 @@ module Bot
 
       search
       wait(:min)
-      parse_results search_results
-      exit_code = try_to_defer_query || process_query
+      parse_results(search_results) && process_query
       driver.quit
       wait(:query_delay)
       exit_code
@@ -77,6 +76,8 @@ module Bot
 
       next_pseudo!
 
+      return if try_to_defer_query
+
       results.each_with_index do |result, i|
         @actual_index = i + 1
         break if @actual_index > config.results_count.to_i &&
@@ -106,7 +107,6 @@ module Bot
       else
         @pseudos = [np]
       end
-      puts @rivals, @pseudos
     end
 
     def remove_skips_from! results
@@ -125,15 +125,15 @@ module Bot
     end
 
     def no_target_on_the_page?
-      return unless !@target_presence && config.query_skip_on_presence?
+      return unless @targets.empty? && config.query_skip_on_presence?
       log(:skip!, "Продвигаемого сайта нет на странице")
       true
     end
 
     def targets_on_top?
-      return unless @first_target &&
+      return unless @targets.first &&
                     config.query_skip_on_position_by_limit &&
-                    @first_target <= config.query_skip_on_position_by_limit.to_i
+                    @targets.first <= config.query_skip_on_position_by_limit.to_i
       log(:skip!, "Продвигаемый сайт уже на высокой позиции")
       true
     end
