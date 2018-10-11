@@ -119,7 +119,7 @@ module Bot
     def try_to_defer_query
       return unless no_target_on_the_page? ||
                     targets_on_top? ||
-                    non_targets_below_pseudo?
+                    non_pseudos_below_pseudo?
       defer_query
       true
     end
@@ -143,9 +143,9 @@ module Bot
       end
     end
 
-    def non_targets_below_pseudo?
-      return unless config.query_skip_on_non_targets_below_pseudo? &&
-                    !@skips_above_pseudo
+    def non_pseudos_below_pseudo?
+      return unless config.query_skip_on_non_pseudos_below_pseudo? &&
+                    @targets.last.to_i + @pseudo.max.to_i <= @non_pseudos.min
       log(:skip!, "Сайты к пропуску ниже доп. целевого")
       true
     end
