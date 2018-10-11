@@ -25,6 +25,7 @@ module Bot
 
       @non_pseudos = []
       @targets = []
+      @rivals = []
     end
 
     def default
@@ -63,6 +64,8 @@ module Bot
           @non_pseudos << i
         elsif result.text.match?(config.target)
           @targets << i
+        elsif config.non_target && result.text.match?(config.non_target)
+          @rivals << i
         end
       end
 
@@ -75,11 +78,11 @@ module Bot
       next_pseudo!
 
       results.each_with_index do |result, i|
-        break if i > config.results_count.to_i &&
-                 @pseudo_presence &&
+        @actual_index = i + 1
+        break if @actual_index > config.results_count.to_i &&
+                 !@pseudos.empty? &&
                  !@targets.empty?
 
-        @actual_index = i + 1
         break if @actual_index > config.results_limit
 
         status = target?(i) ||
@@ -95,10 +98,9 @@ module Bot
     def next_pseudo!
       key = !@targets.empty? ? "spsdk" : "psdk"
       p = [Storage.get(key).to_i, @pseudo.min - 1].max
-      puts p
       np = p + 1 > @pseudo.max ? @pseudo.min : (p + 1)
       Storage.set(key, np)
-      if @non_pseudos.include? np
+      if @non_pseudos.include?(np - 1) || @rivals.include?(np)
         next_pseudo!
       else
         @pseudos = [np]
@@ -150,8 +152,8 @@ module Bot
       config.skip_site && result.text.match?(config.skip_site)
     end
 
-    def pseudo?(i)
-      return unless @pseudos.include? i - @targets.last.to_i
+    def pseudo? i
+      return unless @pseudos.include? i - (@targets.last || -1)
       :pseudo
     end
 
