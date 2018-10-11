@@ -61,11 +61,11 @@ module Bot
 
       results.each_with_index do |result, i|
         if non_pseudo?(result)
-          @non_pseudos << i
+          @non_pseudos << i + 1
         elsif result.text.match?(config.target)
-          @targets << i
+          @targets << i + 1
         elsif config.non_target && result.text.match?(config.non_target)
-          @rivals << i
+          @rivals << i + 1
         end
       end
 
@@ -85,8 +85,8 @@ module Bot
 
         break if @actual_index > config.results_limit
 
-        status = target?(i) ||
-                 pseudo?(i) ||
+        status = target? ||
+                 pseudo? ||
                  rival?(result) ||
                  skip?
 
@@ -100,11 +100,13 @@ module Bot
       p = [Storage.get(key).to_i, @pseudo.min - 1].max
       np = p + 1 > @pseudo.max ? @pseudo.min : (p + 1)
       Storage.set(key, np)
-      if @non_pseudos.include?(np - 1) || @rivals.include?(np)
+      actual = np + @targets.last.to_i
+      if @non_pseudos.include?(actual) || @rivals.include?(actual)
         next_pseudo!
       else
         @pseudos = [np]
       end
+      puts @rivals, @pseudos
     end
 
     def remove_skips_from! results
@@ -143,8 +145,8 @@ module Bot
       true
     end
 
-    def target? i
-      return unless @targets.include? i
+    def target?
+      return unless @targets.include? @actual_index
       :main
     end
 
@@ -152,8 +154,8 @@ module Bot
       config.skip_site && result.text.match?(config.skip_site)
     end
 
-    def pseudo? i
-      return unless @pseudos.include? i - (@targets.last || -1)
+    def pseudo?
+      return unless @pseudos.include? @actual_index - @targets.last.to_i
       :pseudo
     end
 
