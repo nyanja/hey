@@ -44,13 +44,13 @@ check_ip_delay: 20
 error_delay: 10
 
 # Отложить обработку, если:
-query_skip_on_position_by_targets?: false # если все целевые наверху
 query_skip_on_position_by_limit: 2 # позиции целевых сайтов не ниже значения
 query_skip_on_presence?: false # целевых сайтов нет в выдаче
 query_skip_on_limit: 20 # отложить из-за отсутствия прогресса
 query_skip_on_non_targets_below_pseudo?: false # сайты к пропуску ниже доп. целевого
 
-
+# Отложить после обработки запроса, если целевые наверху
+query_skip_after_perform?: true
 
 # Отложить обработку на время (минут)
 query_skip_interval: 2
@@ -67,7 +67,7 @@ mobile_chance: 0
 
 # Целевые сайты. Первый - основной, остальные - второстепенные
 target_patterns:
-  - gwe
+  - meo
   - grachw
 
 # Процент пропуска второстепенных целевых

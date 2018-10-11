@@ -135,7 +135,12 @@ module Bot
                     config.query_skip_on_position_by_limit &&
                     @targets.first <= config.query_skip_on_position_by_limit.to_i
       log(:skip!, "Продвигаемый сайт уже на высокой позиции")
-      true
+      if config.query_skip_after_perform?
+        defer_query
+        nil
+      else
+        true
+      end
     end
 
     def non_targets_below_pseudo?
