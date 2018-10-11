@@ -39,7 +39,7 @@ error_delay: 10
 query_skip_on_position_by_limit: 0 # позиции целевых сайтов не ниже значения
 query_skip_on_presence?: false # целевых сайтов нет в выдаче
 query_skip_on_limit: 20 # отложить из-за отсутствия прогресса
-query_skip_on_non_targets_below_pseudo?: true # сайты к пропуску ниже доп. целевого
+query_skip_on_non_pseudos_below_pseudo?: true # сайты к пропуску ниже доп. целевого
 
 # Отложить после обработки запроса, если целевые наверху
 query_skip_after_perform?: true
