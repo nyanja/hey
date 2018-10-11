@@ -22,6 +22,9 @@ module Bot
       @target_presence = nil
       @actual_index = 0
       @targets_count = 0
+
+      @non_pseudos = []
+      @targets = []
     end
 
     def default
@@ -53,35 +56,60 @@ module Bot
     end
 
     def parse_results results
-      has_target = results.reduce(false) do |acc, r|
-        acc ||= r.text.match?(config.target)
+      results = remove_skips_from!(results)
+
+      results.each_with_index do |result, i|
+        if non_pseudo?(result)
+          @non_pseudos << i
+        elsif result.text.match?(config.target)
+          @targets << i
+        end
       end
-      @pseudo = if has_target
+
+      @pseudo = if !@targets.empty?
                   config.pseudo_targets
                 else
                   config.sole_pseudo_targets || pseudo_targets
                 end || []
-      if !has_target && !config.query_skip_on_presence?
-        @target_presence = 0
-        @last_target = 0
-      end
-      results.each_with_index do |result, i|
-        break if i > config.results_count.to_i && @pseudo.empty? &&
-                 @target_presence
 
-        next if skip_result? result
-        next if invalid? result
-        @actual_index += 1
+      next_pseudo!
+
+      results.each_with_index do |result, i|
+        break if i > config.results_count.to_i &&
+                 @pseudo_presence &&
+                 !@targets.empty?
+
+        @actual_index = i + 1
         break if @actual_index > config.results_limit
-        status = target?(result) ||
-                 non_pseudo?(result) ||
-                 pseudo? ||
+
+        status = target?(i) ||
+                 pseudo?(i) ||
                  rival?(result) ||
                  skip?
 
         @verified_results << [result, status, @actual_index]
       end
       @verified_results
+    end
+
+    def next_pseudo!
+      key = !@targets.empty? ? "spsdk" : "psdk"
+      p = [Storage.get(key).to_i, @pseudo.min - 1].max
+      puts p
+      np = p + 1 > @pseudo.max ? @pseudo.min : (p + 1)
+      Storage.set(key, np)
+      if @non_pseudos.include? np
+        next_pseudo!
+      else
+        @pseudos = [np]
+      end
+    end
+
+    def remove_skips_from! results
+      results.reduce([]) do |acc, result|
+        next acc if skip_result?(result) || invalid?(result)
+        acc << result
+      end
     end
 
     def try_to_defer_query
@@ -113,30 +141,17 @@ module Bot
       true
     end
 
-    def target? result
-      return unless result.text.match?(config.target)
-      @target_presence = @actual_index
-      @last_target = @actual_index
-      @first_target ||= @actual_index
-      @targets_count += 1
+    def target? i
+      return unless @targets.include? i
       :main
     end
 
     def non_pseudo? result
-      return unless config.skip_site && result.text.match?(config.skip_site)
-      @skips_above_pseudo = true unless @first_pseudo
-      if pseudo? && @pseudo.first != @actual_index - @last_target + 1
-        @pseudo.unshift(@actual_index - @last_target + 1)
-      end
-      nil
+      config.skip_site && result.text.match?(config.skip_site)
     end
 
-    def pseudo?
-      return unless @pseudo.first && @target_presence &&
-                    @pseudo.first == @actual_index - @last_target
-      @pseudo.shift
-      @last_target = @actual_index
-      @first_pseudo = @actual_index unless @first_pseudo
+    def pseudo?(i)
+      return unless @pseudos.include? i - @targets.last.to_i
       :pseudo
     end
 
