@@ -145,7 +145,7 @@ module Bot
 
     def non_pseudos_below_pseudo?
       return unless config.query_skip_on_non_pseudos_below_pseudo? &&
-                    @targets.last.to_i + @pseudo.max.to_i <= @non_pseudos.min
+                    @targets.last.to_i + @pseudo.max.to_i <= @non_pseudos.min.to_i
       log(:skip!, "Сайты к пропуску ниже доп. целевого")
       true
     end
@@ -310,10 +310,10 @@ module Bot
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
 
-      if config.skip
-        log :skip, "процент пропуска нецелевых"
-        return
-      end
+      # if config.skip
+      #   log :skip, "процент пропуска нецелевых"
+      #   return
+      # end
 
       if config.unique_visit_ip?
         if Ip.current == Storage.get(result.text[0, 20])

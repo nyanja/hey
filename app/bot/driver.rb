@@ -18,7 +18,11 @@ module Bot
     end
 
     def driver_options
-      user_agent = config.mobile ? config.mobile_ua : config.desktop_ua
+      user_agent = if config.use_real_ua?
+                     config.real_ua
+                   else
+                     config.mobile ? config.mobile_ua : config.desktop_ua
+                   end
       @browser = Browser.new(user_agent)
 
       # opts = Selenium::WebDriver::Firefox::Options.new
