@@ -76,6 +76,7 @@ skip_target_chance: 30
 
 # Нецелевые сайты
 non_target_patterns:
+
   # - khajiit
 
 # не могут ыть щцелевыми

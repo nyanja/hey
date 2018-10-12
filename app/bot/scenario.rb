@@ -94,14 +94,16 @@ module Bot
       @verified_results
     end
 
-    def next_pseudo!
+    def next_pseudo! last_index = nil
       key = !@targets.empty? ? "spsdk" : "psdk"
       p = [Storage.get(key).to_i, @pseudo.min - 1].max
       np = p + 1 > @pseudo.max ? @pseudo.min : (p + 1)
       Storage.set(key, np)
       actual = np + @targets.last.to_i
-      if @non_pseudos.include?(actual) || @rivals.include?(actual)
-        next_pseudo!
+      if last_index == np
+        @pseudos = []
+      elsif @non_pseudos.include?(actual) || @rivals.include?(actual)
+        next_pseudo! np
       else
         @pseudos = [np]
       end
