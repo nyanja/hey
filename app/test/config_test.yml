@@ -27,12 +27,12 @@ query_delay_range:
   - 8
 
 # Игнорировать целевые (все) сайты ниже следующей позиции
-results_limit: 100
+results_limit: 7
 
 # Диапазон количества обрабатываемых результатов на один поисковой запрос
 results_count_range:
-  - 6
-  - 7
+  - 4
+  - 4
 
 # Осуществлять переходы только с уникальным ip
 unique_visit_ip?: true
@@ -44,7 +44,7 @@ check_ip_delay: 20
 error_delay: 10
 
 # Отложить обработку, если:
-query_skip_on_position_by_limit: 0 # позиции целевых сайтов не ниже значения
+query_skip_on_position_by_limit: 10 # позиции целевых сайтов не ниже значения
 query_skip_on_presence?: false # целевых сайтов нет в выдаче
 query_skip_on_limit: 20 # отложить из-за отсутствия прогресса
 query_skip_on_non_pseudos_below_pseudo?: true # сайты к пропуску ниже доп. целевого
@@ -67,7 +67,8 @@ mobile_chance: 0
 
 # Целевые сайты. Первый - основной, остальные - второстепенные
 target_patterns:
-  - meo
+  - kosh
+  # - meo
   - grachw
 
 # Процент пропуска второстепенных целевых
@@ -75,11 +76,11 @@ skip_target_chance: 30
 
 # Нецелевые сайты
 non_target_patterns:
-  - khajiit
+  # - khajiit
 
 # не могут ыть щцелевыми
 skip_site_patterns:
-  - gr
+  # - gr
 
 # Процент пропуска нецелевых сайтов
 skip_chance: 10
@@ -87,7 +88,7 @@ skip_chance: 10
 # Дополнительные целевые сайты (диапазон)
 pseudo_targets: # если есть целевой сайт на странице
   - 1
-  - 3
+  - 1
 sole_pseudo_targets: # если целевого сайта нет на странице
   - 1
   - 3

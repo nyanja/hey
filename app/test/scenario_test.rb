@@ -13,6 +13,7 @@ require_relative "../bot/ip"
 
 require_relative "../bot/helpers/config"
 require_relative "../bot/helpers/queries"
+require_relative "../bot/helpers/results"
 require_relative "../bot/scenario"
 require_relative "../bot/driver"
 require_relative "../bot/core"

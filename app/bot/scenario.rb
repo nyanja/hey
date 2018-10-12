@@ -12,16 +12,14 @@ module Bot
     include Helpers::Wait
     include Helpers::Sites
     include Helpers::Queries
+    include Helpers::Results
 
     def initialize core, query
       @core = core
       @query = query
 
       @verified_results = []
-      @last_target = nil
-      @target_presence = nil
       @actual_index = 0
-      @targets_count = 0
 
       @non_pseudos = []
       @targets = []
@@ -57,7 +55,7 @@ module Bot
 
     def parse_results results
       results = remove_skips_from!(results)
-
+      results = results.take(config.results_limit || results.size)
       results.each_with_index do |result, i|
         if non_pseudo?(result)
           @non_pseudos << i + 1
@@ -80,11 +78,8 @@ module Bot
 
       results.each_with_index do |result, i|
         @actual_index = i + 1
-        break if @actual_index > config.results_count.to_i &&
-                 !@pseudos.empty? &&
-                 !@targets.empty?
 
-        break if @actual_index > config.results_limit
+        break if no_more_targets_below?
 
         status = target? ||
                  pseudo? ||
@@ -106,13 +101,6 @@ module Bot
         next_pseudo!
       else
         @pseudos = [np]
-      end
-    end
-
-    def remove_skips_from! results
-      results.reduce([]) do |acc, result|
-        next acc if skip_result?(result) || invalid?(result)
-        acc << result
       end
     end
 
@@ -194,12 +182,6 @@ module Bot
       return unless result.text.match?(config.ignore)
       log(:skip, result.text)
       true
-    end
-
-    def defer_query
-      log(:info, "Запрос отложен на #{config.query_skip_interval} мин.")
-      Storage.set "delay//#{query} #{driver&.device}",
-                  Time.now.to_i + config.query_skip_interval * 60
     end
 
     def parse_result result, status, info

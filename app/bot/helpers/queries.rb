@@ -18,12 +18,16 @@ module Bot
       def query_delayed?
         t = Bot::Storage.get("delay//#{query}") ||
             Bot::Storage.get("delay//#{query} #{driver.device}")
-        if t && t.to_i > Time.now.to_i
-          return (t.to_i - Time.now.to_i) / 60
-        end
+        return (t.to_i - Time.now.to_i) / 60 if t && t.to_i > Time.now.to_i
         Bot::Storage.del("delay//#{query}")
         Bot::Storage.del("delay//#{query} #{driver.device}")
         false
+      end
+
+      def defer_query
+        log(:info, "Запрос отложен на #{config.query_skip_interval} мин.")
+        Storage.set "delay//#{query} #{driver&.device}",
+                    Time.now.to_i + config.query_skip_interval * 60
       end
     end
   end
