@@ -38,7 +38,7 @@ check_ip_delay: 20
 error_delay: 10
 
 # Отложить обработку, если:
-query_skip_on_position_by_limit: 0 # позиции целевых сайтов не ниже значения
+query_skip_on_position_by_limit: 3 # позиции целевых сайтов не ниже значения
 query_skip_on_presence?: false # целевых сайтов нет в выдаче
 query_skip_on_limit: 20 # отложить из-за отсутствия прогресса
 query_skip_on_non_pseudos_below_pseudo?: true # сайты к пропуску ниже доп. целевого
@@ -64,7 +64,7 @@ use_real_ua?: true
 
 # Целевые сайты. Первый - основной, остальные - второстепенные
 target_patterns:
-  - bu
+  - fermok.ru
 
 # Процент пропуска неосновного целевого (не на первом месте)
 skip_target_chance: 80
@@ -75,7 +75,7 @@ non_target_patterns:
 
 # Не могут быть целевыми
 skip_site_patterns:
-  - ferm
+  # - fer
 
 # Процент пропуска нецелевых сайтов
 skip_chance: 80
@@ -101,11 +101,11 @@ pre_delay_target: 0 # для целевых сайтов
 
 # Минимальное время посещения (c)
 min_visit_non_target_range:  # нецелевого сайта
-  - 60
-  - 120
+  - 6
+  - 12
 min_visit_target_range:      # целевого сайта
-  - 60
-  - 120
+  - 5
+  - 12
 
 # Диапазон паузы между объявлениями (с)
 result_delay_range:

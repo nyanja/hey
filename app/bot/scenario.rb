@@ -46,7 +46,6 @@ module Bot
       parse_results(search_results) && process_query
       driver.quit
       wait(:query_delay)
-      exit_code
     rescue Selenium::WebDriver::Error::NoSuchElementError => e
       log(:error, "Нетипичная страница поиска")
       puts e.inspect
