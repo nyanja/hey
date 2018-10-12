@@ -65,11 +65,15 @@ module Bot
         end
       end
 
-      @pseudo = if !@targets.empty?
-                  config.pseudo_targets
-                else
-                  config.sole_pseudo_targets || pseudo_targets
-                end || []
+      @pseudo = (if !@targets.empty?
+                   config.pseudo_targets
+                 else
+                   config.sole_pseudo_targets || pseudo_targets
+                 end || []).map do |v|
+                   return v unless config.results_limit
+                   [v, config.results_limit].min
+                 end
+
 
       next_pseudo!
 
