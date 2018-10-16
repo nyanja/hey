@@ -11,6 +11,7 @@ module Bot
         driver.type search_bar, query
         wait(:min)
         search_bar.submit
+        wait(:min)
       end
 
       def search_results

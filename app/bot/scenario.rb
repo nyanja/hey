@@ -26,23 +26,23 @@ module Bot
       @rivals = []
     end
 
-    def default
-      if (t = query_delayed?)
-        log :skip, "Запрос отложен. Осталось #{t} мин."
-        driver.quit
-        wait(:query_delay)
-        return
-      end
+    def lite
+      return if query_delayed?
+      search
+      parse_results(search_results) && process_query
+      driver.quit
+      wait(:query_delay)
+    rescue Selenium::WebDriver::Error::NoSuchElementError => e
+      log(:error, "Нетипичная страница поиска")
+      puts e.inspect
+      driver.quit
+    end
 
-      if query_limited?
-        log :skip, "Продвижение неэффективно. Отложим до лучших времен..."
-        driver.quit
-        wait(:query_delay)
-        return
-      end
+    def default
+      return if query_delayed? ||
+                query_limited?
 
       search
-      wait(:min)
       parse_results(search_results) && process_query
       driver.quit
       wait(:query_delay)
