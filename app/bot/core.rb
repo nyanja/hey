@@ -61,7 +61,12 @@ module Bot
           sleep 10
         end
       end
-      scn.default
+      case config.mode
+      when 2
+        scn.lite
+      else
+        scn.default
+      end
     rescue HTTP::ConnectionError
       Storage.del "refresh_ip"
       handle_disconnect

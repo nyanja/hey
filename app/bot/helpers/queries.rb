@@ -12,16 +12,26 @@ module Bot
                          Time.now.to_i +
                            config.query_skip_on_limit_interval * 60)
         Bot::Storage.del("qc//#{query}")
+        log :skip, "Продвижение неэффективно. Отложим до лучших времен..."
+        driver.quit
+        wait(:query_delay)
         true
       end
 
       def query_delayed?
         t = Bot::Storage.get("delay//#{query}") ||
             Bot::Storage.get("delay//#{query} #{driver.device}")
-        return (t.to_i - Time.now.to_i) / 60 if t && t.to_i > Time.now.to_i
-        Bot::Storage.del("delay//#{query}")
-        Bot::Storage.del("delay//#{query} #{driver.device}")
-        false
+        if t && t.to_i > Time.now.to_i
+          log :skip, "Запрос отложен. Осталось #{tt} мин."
+          tt = (t.to_i - Time.now.to_i) / 60
+          driver.quit
+          wait(:query_delay)
+          true
+        else
+          Bot::Storage.del("delay//#{query}")
+          Bot::Storage.del("delay//#{query} #{driver.device}")
+          false
+        end
       end
 
       def defer_query
