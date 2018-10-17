@@ -29,7 +29,7 @@ module Bot
     def lite
       return if query_delayed?
       search
-      parse_results(search_results) && process_query
+      parse_results(search_results) && lite_process_query
       driver.quit
       wait(:query_delay)
     rescue Selenium::WebDriver::Error::NoSuchElementError => e
@@ -86,8 +86,8 @@ module Bot
 
         status = target? ||
                  pseudo? ||
-                 rival?(result) ||
-                 skip?
+                 (config.mode == 1 && rival?(result)) ||
+                 (config.mode == 1 && skip?)
 
         @verified_results << [result, status, @actual_index]
       end
@@ -112,7 +112,7 @@ module Bot
     def try_to_defer_query
       return unless no_target_on_the_page? ||
                     targets_on_top? ||
-                    non_pseudos_below_pseudo?
+                    (config.mode == 1 && non_pseudos_below_pseudo?)
       defer_query
       true
     end
@@ -183,6 +183,24 @@ module Bot
       :pass
     end
 
+    def lite_process_query
+      @verified_results.each do |(r, status, info)|
+        unless status
+          log :skip, domain(r)
+          next
+        end
+        log(:visit, "##{info} #{domain(r)}", "[#{driver&.device}]")
+        visit r, 0
+      ensure
+        driver&.close_tab
+        if @t
+          d = Time.now - @t
+          log :info, "Задержка: #{d}\n"
+          @t = nil
+        end
+      end
+    end
+
     def skip_result? result
       return unless result.text.match?(config.ignore)
       log(:skip, result.text)
@@ -205,7 +223,7 @@ module Bot
     end
 
     def parse_result_page result, status
-      if status == :rival || (status.nil? && !config.non_target)
+      if status == :rival || (!status && !config.non_target)
         apply_rival_behavior result
       elsif status
         apply_target_behavior result, status
