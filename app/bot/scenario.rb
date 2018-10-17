@@ -203,12 +203,12 @@ module Bot
 
     def skip_result? result
       return unless result.text.match?(config.ignore)
-      log(:skip, result.text)
+      log(:skip, domain(result))
       true
     end
 
     def parse_result result, status, info
-      log(:visit, "##{info} #{result.text}", "[#{driver&.device}]")
+      log(:visit, "##{info} #{domain(result)}", "[#{driver&.device}]")
 
       if status == :skip
         log(:skip, "Пропуск сайта")
