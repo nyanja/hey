@@ -195,7 +195,7 @@ module Bot
         driver&.close_tab
         if @t
           d = Time.now - @t
-          log :info, "Задержка: #{d}\n"
+          log :info, "Время: #{d}\n"
           @t = nil
         end
       end
@@ -250,7 +250,7 @@ module Bot
       driver&.close_tab
       if @t
         d = Time.now - @t
-        log :info, "Задержка: #{d}"
+        log :info, "Время: #{d}\n"
         @t = nil
       end
     end
