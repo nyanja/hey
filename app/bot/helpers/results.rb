@@ -13,6 +13,12 @@ module Bot
           (@pseudos.empty? || @pseudos.max < @actual_index - @targets.last.to_i) &&
           (@targets.empty? || @targets.max < @actual_index)
       end
+
+      def domain result
+        result.find_element(css: ".organic__subtitle .link b").text
+      rescue
+        result.find_element(css: ".organic__subtitle .link").text
+      end
     end
   end
 end

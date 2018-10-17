@@ -282,34 +282,15 @@ module Bot
     end
 
     def determine_explore_deepness! result
-      n = config.explore_deepness
-      return n if config.unique_visit_ip? == false || n.zero?
-      if Ip.current == Storage.get(result.text[0, 20])
-        log(:info, "Посещение с таким IP уже было. Глубина установлена на 0")
-        return 0
-      else
-        Storage.set(result.text[0, 20], Ip.current)
-        return n
-      end
+      return 0 unless unique_ip? result
+      config.explore_deepness
     end
 
     def apply_rival_behavior result
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
 
-      # if config.skip
-      #   log :skip, "процент пропуска нецелевых"
-      #   return
-      # end
-
-      if config.unique_visit_ip?
-        if Ip.current == Storage.get(result.text[0, 20])
-          log(:info, "Посещение с таким IP уже было")
-          return
-        else
-          Storage.set(result.text[0, 20], Ip.current)
-        end
-      end
+      return unless unique_ip? result
 
       visit result, config.pre_delay_non_target
       return if scroll_percent.nil? || scroll_percent.zero?
@@ -322,6 +303,19 @@ module Bot
         wait((config.min_visit_non_target + start_time) - Time.now.to_i)
       end
       # sleep rand(0.2..2)
+    end
+
+    def unique_ip? result
+      return unless config.unique_visit_ip?
+      d = domain(result)
+      if Ip.current == Storage.get(d)
+        log(:info, "#{d}: Посещение с таким IP уже было")
+        false
+      else
+        Storage.set(d, Ip.current)
+        true
+      end
+
     end
 
     def visit_some_link
