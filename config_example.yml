@@ -22,9 +22,9 @@ mode: 1
 
 # Поисковые запросы
 queries:
+  - планета
   - мастер на час
   - повесить люстру
-  - планета
 
 # Диапазон паузы между поисковыми запросами (с)
 query_delay_range:
@@ -40,7 +40,7 @@ results_count_range:
   - 10
 
 # Осуществлять переходы только с уникальным ip
-unique_visit_ip?: true
+unique_visit_ip?: false
 
 # Пауза между проверками ip (межу запросами) (c)
 check_ip_delay: 20
@@ -82,7 +82,7 @@ skip_target_chance: 0
 
 # Нецелевые сайты
 non_target_patterns:
-  # - bs
+  - auto
 
 # Не могут быть целевыми
 skip_site_patterns:

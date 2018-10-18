@@ -256,6 +256,7 @@ module Bot
     end
 
     def visit result, delay
+      # driver.manage.timeouts.page_load = 1
       driver.scroll_to [(result.location.y - rand(140..300)), 0].max
       sleep 1
       begin
@@ -266,6 +267,9 @@ module Bot
       end
       wait delay if delay.positive?
       driver.switch_tab 1
+      rescue Selenium::WebDriver::Error::TimeOutError
+        puts "stop"
+        nil
     end
 
     def apply_target_behavior result, target_type
@@ -305,17 +309,16 @@ module Bot
     end
 
     def apply_rival_behavior result
+      return unless unique_ip? result
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
-
-      return unless unique_ip? result
-
       visit result, config.pre_delay_non_target
+      driver.js "window.stop()"
       return if scroll_percent.nil? || scroll_percent.zero?
       start_time = Time.now.to_i
       wait 5
       print "  "
-      scroll while (driver.scroll_height * 0.01 * scroll_percent) >= driver.y_offset
+      scroll while (driver.scroll_height * 0.01 * scroll_percent) > driver.y_offset
       puts
       if config.min_visit_non_target + start_time > Time.now.to_i
         wait((config.min_visit_non_target + start_time) - Time.now.to_i)
@@ -324,7 +327,7 @@ module Bot
     end
 
     def unique_ip? result
-      return unless config.unique_visit_ip?
+      return true unless config.unique_visit_ip?
       d = domain(result)
       if Ip.current == Storage.get(d)
         log(:info, "#{d}: Посещение с таким IP уже было")
@@ -346,7 +349,6 @@ module Bot
     end
 
     def scroll
-      sleep config.scroll_delay
       amount = if config.scroll_threshold &.< driver.scroll_height
                  config.scroll_amount * config.scroll_multiplier
                else
@@ -354,6 +356,9 @@ module Bot
                end
       driver.scroll_by amount
       print "."
+      sleep config.scroll_delay
+    rescue Selenium::WebDriver::Error::TimeOutError
+      print "x"
     end
   end
 end
