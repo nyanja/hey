@@ -313,7 +313,7 @@ module Bot
       visit result, config.pre_delay_non_target
       return if scroll_percent.nil? || scroll_percent.zero?
       start_time = Time.now.to_i
-      wait 3
+      wait 5
       print "  "
       scroll while (driver.scroll_height * 0.01 * scroll_percent) >= driver.y_offset
       puts
