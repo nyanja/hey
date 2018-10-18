@@ -15,9 +15,11 @@ module Bot
       end
 
       def domain result
-        result.find_element(css: ".organic__subtitle .link b").text
-      rescue
-        result.find_element(css: ".organic__subtitle .link").text
+        result.find_element(css: ".organic__subtitle .link b, .organic__subtitle .link, .serp-title_type_subtitle .link").text
+      rescue Selenium::WebDriver::Error::NoSuchElementError => e
+        log :error, "Нетипичная ссылка #{self.class}"
+        puts e.backtrace
+        "unknow"
       end
     end
   end

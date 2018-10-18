@@ -75,7 +75,7 @@ use_real_ua?: true
 
 # Целевые сайты. Первый - основной, остальные - второстепенные
 target_patterns:
-  # - fermok.ru
+  - hello
 
 # Процент пропуска неосновного и доп целевого
 skip_target_chance: 0

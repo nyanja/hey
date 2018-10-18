@@ -203,7 +203,7 @@ module Bot
 
     def skip_result? result
       return unless result.text.match?(config.ignore)
-      log(:skip, domain(result))
+      log(:skip, result.text)
       true
     end
 
@@ -347,7 +347,12 @@ module Bot
 
     def scroll
       sleep config.scroll_delay
-      driver.scroll_by config.scroll_amount
+      amount = if config.scroll_threshold &.< driver.scroll_height
+                 config.scroll_amount * config.scroll_multiplier
+               else
+                 config.scroll_amount
+               end
+      driver.scroll_by amount
       print "."
     end
   end
