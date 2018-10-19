@@ -131,8 +131,8 @@ explore_delay_range:
 
 # Диапазон высоты прокрутки нецелевых сайтов (%)
 scroll_height_non_target_range:
-  - 0
-  - 0
+  - 20
+  - 20
 
 # Скорость прокрутки (по умолчанию 4)
 scroll_speed: 4
@@ -155,7 +155,7 @@ scroll_threshold: 1800
 # Для целевых: кликать по последнему элементу пути
 last_path_link_target?: true
 # Для нецелевых: кликать по последнему элементу пути
-last_path_link_rival?: true
+last_path_link_rival?: false
 
 
 

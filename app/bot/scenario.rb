@@ -255,11 +255,11 @@ module Bot
       end
     end
 
-    def visit result, delay, css = ".organic__url, .organic__link, a"
+    def visit result, delay, css = nil
       driver.scroll_to [(result.location.y - rand(140..300)), 0].max
       sleep 1
       begin
-        click({ css: css }, result)
+        click({ css: (css || ".organic__url, .organic__link, a") }, result)
         @t = Time.now
       rescue Selenium::WebDriver::Error::NoSuchElementError
         puts "element not found"
