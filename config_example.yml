@@ -152,8 +152,10 @@ scroll_multiplier: 2.5
 # если сайт длиннее (px):
 scroll_threshold: 1800
 
+# Для целевых: кликать по последнему элементу пути
+last_path_link_target?: true
 # Для нецелевых: кликать по последнему элементу пути
-last_path_link?: true
+last_path_link_rival?: true
 
 
 
