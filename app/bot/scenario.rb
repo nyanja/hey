@@ -255,12 +255,12 @@ module Bot
       end
     end
 
-    def visit result, delay
+    def visit result, delay, css = ".organic__url, .organic__link, a"
       # driver.manage.timeouts.page_load = 1
       driver.scroll_to [(result.location.y - rand(140..300)), 0].max
       sleep 1
       begin
-        click({ css: ".organic__url, .organic__link, a" }, result)
+        click({ css: css }, result)
         @t = Time.now
       rescue Selenium::WebDriver::Error::NoSuchElementError
         puts "element not found"
@@ -312,7 +312,10 @@ module Bot
       return unless unique_ip? result
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
-      visit result, config.pre_delay_non_target
+      css = if config.last_path_link?
+              ".organic__path .link:last-of-type"
+            end
+      visit result, config.pre_delay_non_target, css
       driver.js "window.stop()"
       return if scroll_percent.nil? || scroll_percent.zero?
       start_time = Time.now.to_i

@@ -92,6 +92,7 @@ module Bot
 
     def click query, element = driver
       element.find_element(query).click
+      # puts "click #{element.find_element(query).text}"
     end
 
     def mobile?

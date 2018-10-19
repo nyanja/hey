@@ -22,6 +22,7 @@ mode: 1
 
 # Поисковые запросы
 queries:
+  - сборка мебели москва
   - планета
   - мастер на час
   - повесить люстру
@@ -82,7 +83,7 @@ skip_target_chance: 0
 
 # Нецелевые сайты
 non_target_patterns:
-  - auto
+  # - auto
 
 # Не могут быть целевыми
 skip_site_patterns:
@@ -150,6 +151,9 @@ scroll_amount_range:
 scroll_multiplier: 2.5
 # если сайт длиннее (px):
 scroll_threshold: 1800
+
+# Для нецелевых: кликать по последнему элементу пути
+last_path_link?: true
 
 
 
