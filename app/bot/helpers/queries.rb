@@ -22,8 +22,8 @@ module Bot
         t = Bot::Storage.get("delay//#{query}") ||
             Bot::Storage.get("delay//#{query} #{driver.device}")
         if t && t.to_i > Time.now.to_i
-          log :skip, "Запрос отложен. Осталось #{tt} мин."
           tt = (t.to_i - Time.now.to_i) / 60
+          log :skip, "Запрос отложен. Осталось #{tt} мин."
           driver.quit
           wait(:query_delay)
           true
