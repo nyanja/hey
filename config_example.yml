@@ -131,8 +131,8 @@ explore_delay_range:
 
 # Диапазон высоты прокрутки нецелевых сайтов (%)
 scroll_height_non_target_range:
-  - 20
-  - 50
+  - 0
+  - 0
 
 # Скорость прокрутки (по умолчанию 4)
 scroll_speed: 4

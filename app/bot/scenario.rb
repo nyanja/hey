@@ -318,8 +318,8 @@ module Bot
               ".organic__path .link:last-of-type"
             end
       visit result, config.pre_delay_non_target, css
-      driver.js "window.stop()"
       return if scroll_percent.nil? || scroll_percent.zero?
+      driver.js "window.stop()"
       start_time = Time.now.to_i
       wait 5
       print "  "
