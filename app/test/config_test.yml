@@ -51,7 +51,7 @@ query_skip_on_limit: 20 # отложить из-за отсутствия про
 query_skip_on_non_pseudos_below_pseudo?: true # сайты к пропуску ниже доп. целевого
 
 # Отложить после обработки запроса, если целевые наверху
-query_skip_after_perform?: true
+query_skip_after_perform?: false
 
 # Отложить обработку на время (минут)
 query_skip_interval: 2

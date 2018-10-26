@@ -2,6 +2,8 @@
 
 require "browser"
 
+require "./ua.rb"
+
 module Bot
   class Driver
     attr_reader :driver, :core, :delay, :browser
@@ -19,7 +21,7 @@ module Bot
 
     def driver_options
       user_agent = if config.use_real_ua?
-                     config.real_ua
+                     UA.sample
                    else
                      config.mobile ? config.mobile_ua : config.desktop_ua
                    end
