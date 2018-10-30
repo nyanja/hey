@@ -19,14 +19,13 @@ module Bot
           refresh_ip
           wait_for_connection
           perform_scenario query
+        rescue Interrupt
+          puts "\nВыход..."
+          exit
+        rescue StandardError
+          sleep 5
+          next
         end
-
-      rescue Interrupt
-        puts "\nВыход..."
-        exit
-      rescue StandardError
-        sleep 5
-        next
       end
     end
 

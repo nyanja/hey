@@ -319,9 +319,9 @@ module Bot
             end
       visit result, config.pre_delay_non_target, css
       return if scroll_percent.nil? || scroll_percent.zero?
-      driver.js "window.stop()"
       start_time = Time.now.to_i
       wait 5
+      driver.js "window.stop()"
       print "  "
       scroll while (driver.scroll_height * 0.01 * scroll_percent) > driver.y_offset
       puts

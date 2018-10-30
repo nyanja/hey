@@ -1,5 +1,9 @@
-# oct 26 2018 15:20 MSK
+# 2018 10 30 ?
+UA_ = [
 
+]
+
+# oct 26 2018 15:20 MSK
 UA = [
 "Apache-HttpClient/4.5.3 (Java/1.8.0_171)",
 "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.81 Safari/537.36",
