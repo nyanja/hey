@@ -292,7 +292,7 @@ module Bot
         start_time = Time.now.to_i
         wait 3
         print "  "
-        scroll while (driver.scroll_height - 10) >= driver.y_offset
+        scroll(:target) while (driver.scroll_height - 10) >= driver.y_offset
         puts
         rest = (start_time + config.min_visit_target) - Time.now.to_i
         if rest.positive?
@@ -358,15 +358,16 @@ module Bot
       link.click
     end
 
-    def scroll
+    def scroll type = nil
+      scroll_amount = type == :target ? config.scroll_amount_target : config.scroll_amount
       amount = if config.scroll_threshold &.< driver.scroll_height
-                 config.scroll_amount * config.scroll_multiplier
+                 scroll_amount * config.scroll_multiplier
                else
-                 config.scroll_amount
+                 scroll_amount
                end
       driver.scroll_by amount
       print "."
-      sleep config.scroll_delay
+      sleep type == :target ? config.scroll_delay_target : config.scroll_delay
     rescue Selenium::WebDriver::Error::TimeOutError
       print "x"
     end

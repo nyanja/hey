@@ -134,13 +134,29 @@ scroll_speed: 4
 scroll_delay_range:
   - 0.2
   - 3.8
+# для целевых
+scroll_delay_target_range:
+  - 0.2
+  - 3.8
 
 # Диапазон величины прокрутки за раз (px)
 scroll_amount_range:
   - 20
   - 180
+# для целевых
+scroll_amount_target_range:
+  - 20
+  - 180
 
+# Множитель величины прокрутки:
+scroll_multiplier: 2.5
+# если сайт длиннее (px):
+scroll_threshold: 1800
 
+# Для целевых: кликать по последнему элементу пути
+last_path_link_target?: true
+# Для нецелевых: кликать по последнему элементу пути
+last_path_link_rival?: true
 
 
 ################################################################################
