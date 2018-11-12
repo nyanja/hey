@@ -79,6 +79,8 @@ module Bot
 
       return if try_to_defer_query
 
+      main = []
+
       results.each_with_index do |result, i|
         @actual_index = i + 1
 
@@ -88,10 +90,13 @@ module Bot
                  pseudo? ||
                  (config.mode == 1 && rival?(result)) ||
                  (config.mode == 1 && skip?)
-
-        @verified_results << [result, status, @actual_index]
+        if status == :main
+          main << [result, status, @actual_index]
+        else
+          @verified_results << [result, status, @actual_index]
+        end
       end
-      @verified_results
+      @verified_results += main
     end
 
     def next_pseudo! last_index = nil
