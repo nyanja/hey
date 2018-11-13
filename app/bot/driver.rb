@@ -67,16 +67,16 @@ module Bot
       js "return window.pageYOffset"
     end
 
-    def scroll_to position
-      speed = config.scroll_speed
+    def scroll_to position, is_target = nil
+      speed = is_target ? config.scroll_speed_target : config.scroll_speed
       (y_offset / speed).to_i.send((y_offset > position ? :downto : :upto),
                                    (position / speed).to_i) do |y|
         js "window.scroll(\"0\", \"#{y * speed}\")"
       end
     end
 
-    def scroll_by offset
-      scroll_to y_offset + offset
+    def scroll_by offset, is_target = nil
+      scroll_to y_offset + offset, is_target
     end
 
     def scroll_height

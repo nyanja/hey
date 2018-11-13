@@ -358,16 +358,16 @@ module Bot
       link.click
     end
 
-    def scroll type = nil
-      scroll_amount = type == :target ? config.scroll_amount_target : config.scroll_amount
+    def scroll is_target = nil
+      scroll_amount = is_target ? config.scroll_amount_target : config.scroll_amount
       amount = if config.scroll_threshold &.< driver.scroll_height
                  scroll_amount * config.scroll_multiplier
                else
                  scroll_amount
                end
-      driver.scroll_by amount
+      driver.scroll_by amount, is_target
       print "."
-      sleep type == :target ? config.scroll_delay_target : config.scroll_delay
+      sleep is_target ? config.scroll_delay_target : config.scroll_delay
     rescue Selenium::WebDriver::Error::TimeOutError
       print "x"
     end
