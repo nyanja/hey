@@ -41,7 +41,11 @@ module Bot
     end
 
     def default_scenario
-      return single_scenario if query.match?(/^https?:\/\//)
+      if query.match?(/^https?:\/\//)
+        single_scenario
+        wait(:query_delay)
+        return
+      end
 
       return if query_delayed? ||
                 query_limited?
