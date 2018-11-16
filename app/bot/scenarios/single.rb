@@ -4,8 +4,9 @@ module Bot
       def single_scenario link = query
         scroll_percent = config.scroll_height_link ||
                          config.scroll_height_non_target
-        log(:non_target, "прокрутка #{scroll_percent}%")
+        log(:link, "прокрутка #{scroll_percent}%")
         driver.navigate.to(link)
+        wait config.pre_delay_link
         return if scroll_percent.nil? || scroll_percent.zero?
         wait 10
         driver.js "window.stop()"

@@ -27,7 +27,7 @@ queries:
   - что-то
   - установка лампы москва
 
-# Дополнительные страницы для нецелевого
+# Дополнительные ссылки для нецелевого
 additional_visits:
   - http://google.com
   - http://onhour.ru
@@ -56,7 +56,7 @@ check_ip_delay: 20
 error_delay: 10
 
 # Отложить обработку, если:
-query_skip_on_position_by_limit: 1 # позиции целевых сайтов не ниже значения
+query_skip_on_position_by_limit: 0 # позиции целевых сайтов не ниже значения
 query_skip_on_presence?: false # целевых сайтов нет в выдаче
 query_skip_on_limit: 20 # отложить из-за отсутствия прогресса
 query_skip_on_non_pseudos_below_pseudo?: true # сайты к пропуску ниже доп. целевого
@@ -116,6 +116,7 @@ pre_delay_non_target_range:
   - 0.2
   - 0.3
 pre_delay_target: 0 # для целевых сайтов
+pre_delay_link: 0 # для ссылок
 
 # Минимальное время посещения (c)
 min_visit_non_target_range:  # нецелевого сайта
