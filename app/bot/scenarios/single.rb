@@ -5,7 +5,9 @@ module Bot
         scroll_percent = config.scroll_height_link ||
                          config.scroll_height_non_target
         log(:link, "прокрутка #{scroll_percent}%")
-        driver.navigate.to(link)
+        Thread.new do
+          driver.navigate.to(link)
+        end
         wait config.pre_delay_link
         return if scroll_percent.nil? || scroll_percent.zero?
         wait 10
