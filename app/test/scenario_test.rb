@@ -14,7 +14,8 @@ require_relative "../bot/ip"
 require_relative "../bot/helpers/config"
 require_relative "../bot/helpers/queries"
 require_relative "../bot/helpers/results"
-require_relative "../bot/scenario"
+require_relative "../bot/scenarios/single"
+require_relative "../bot/runner"
 require_relative "../bot/driver"
 require_relative "../bot/core"
 
@@ -33,7 +34,7 @@ class ScenarioTest < Minitest::Test
       Result.new("pálka")
     ]
     core = Bot::Core.new("./app/test/config_test.yml")
-    @s = Bot::Scenario.new core, "query"
+    @s = Bot::Runner.new core, "query"
     @res = @s.parse_results(@results)
   end
 

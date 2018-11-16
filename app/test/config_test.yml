@@ -22,6 +22,11 @@ mode: 2
 queries:
   - как построить ферму
 
+# Дополнительные страницы для нецелевого
+additional_visits:
+  - http://google.com
+  - http://onhour.ru
+
 # Диапазон паузы между поисковыми запросами (с)
 query_delay_range:
   - 4
@@ -127,8 +132,10 @@ scroll_height_non_target_range:
   - 20
   - 50
 
-# Скорость прокрутки (по умолчанию 4)
+# Скорость прокрутки для нецелевых (по умолчанию 4)
 scroll_speed: 4
+# для целевого
+scroll_speed_target: 1
 
 # Диапазон задержки прокрутки (с)
 scroll_delay_range:

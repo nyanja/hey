@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Bot
-  class Scenario
+  class Runner
     attr_reader :core, :query
 
     extend Forwardable
@@ -13,6 +13,8 @@ module Bot
     include Helpers::Sites
     include Helpers::Queries
     include Helpers::Results
+
+    include Scenarios::Single
 
     def initialize core, query
       @core = core
@@ -26,7 +28,7 @@ module Bot
       @rivals = []
     end
 
-    def lite
+    def lite_scenario
       return if query_delayed?
       search
       parse_results(search_results) && lite_process_query
@@ -38,7 +40,9 @@ module Bot
       driver.quit
     end
 
-    def default
+    def default_scenario
+      return single_scenario if query.match?(/^https?:\/\//)
+
       return if query_delayed? ||
                 query_limited?
 
@@ -229,7 +233,7 @@ module Bot
 
     def parse_result_page result, status
       if status == :rival || (!status && !config.non_target)
-        apply_rival_behavior result
+        apply_rival_behavior result, status
       elsif status
         apply_target_behavior result, status
       else
@@ -315,7 +319,7 @@ module Bot
       config.explore_deepness
     end
 
-    def apply_rival_behavior result
+    def apply_rival_behavior result, status
       return unless unique_ip? result
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
@@ -325,7 +329,7 @@ module Bot
       visit result, config.pre_delay_non_target, css
       return if scroll_percent.nil? || scroll_percent.zero?
       start_time = Time.now.to_i
-      wait 5
+      wait 10
       driver.js "window.stop()"
       print "  "
       scroll while (driver.scroll_height * 0.01 * scroll_percent) > driver.y_offset
@@ -333,7 +337,8 @@ module Bot
       if config.min_visit_non_target + start_time > Time.now.to_i
         wait((config.min_visit_non_target + start_time) - Time.now.to_i)
       end
-      # sleep rand(0.2..2)
+
+      additional_visits if status == :rival
     end
 
     def unique_ip? result

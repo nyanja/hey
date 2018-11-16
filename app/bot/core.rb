@@ -53,7 +53,7 @@ module Bot
         throughput: 1024 * (config.throttling_trhoughput || 500)
       }
       log(:query, query, "[#{driver.device}]")
-      scn = Scenario.new self, query
+      run = Bot::Runner.new self, query
       thr = Thread.new do
         loop do
           Ip.ping
@@ -62,9 +62,9 @@ module Bot
       end
       case config.mode
       when 2
-        scn.lite
+        run.lite_scenario
       else
-        scn.default
+        run.default_scenario
       end
     rescue HTTP::ConnectionError
       Storage.del "refresh_ip"
