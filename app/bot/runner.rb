@@ -49,7 +49,6 @@ module Bot
         return
       when %r{\/}
         right_clicks_scenario
-        driver.quit
         wait(:query_delay)
         return
       end
