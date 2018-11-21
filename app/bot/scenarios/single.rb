@@ -7,14 +7,19 @@ module Bot
         log(:link, "прокрутка #{scroll_percent}%")
         Thread.new do
           driver.navigate.to(link)
+        rescue Exception
+          nil
         end
-        wait config.pre_delay_link
+        wait :pre_delay_link
         return if scroll_percent.nil? || scroll_percent.zero?
         wait 10
         driver.js "window.stop()"
         print "  "
         scroll while (driver.scroll_height * 0.01 * scroll_percent) > driver.y_offset
         puts
+
+      ensure
+        driver.quit
       end
 
       def additional_visits
@@ -34,19 +39,30 @@ module Bot
         end
         return log(:error, "Нет подходящего сайта") unless r
 
+        driver.scroll_to [(r.location.y - rand(300..600)), 0].max
+
         amount.to_i.times do
           driver.action.context_click(r.find_element(css: "a")).perform
           right_clicks << r.find_element(css: "a").attribute(:href)
-          sleep 1
+          sleep config.links_harvest_delay
         end
 
         ua = driver.js "return navigator.userAgent"
         driver.quit
+        # binding.pry
+
         right_clicks.each do |link|
-          core.driver = Driver.new core, user_agent: ua
+          core.driver = Bot::Driver.new core, user_agent: ua
+          driver.network_conditions = {
+            offline: false,
+            latency: (config.throttling_latency || 0),
+            throughput: 1024 * (config.throttling_trhoughput || 500)
+          }
           single_scenario link
+        rescue Exception
+          nil
+        ensure
           wait :links_delay
-          driver.quit
         end
       end
     end

@@ -22,10 +22,8 @@ mode: 1
 
 # Поисковые запросы
 queries:
-  - http://onhour.ru
-  - муж на час в москве
-  - что-то/podskajem/8
-  - установка лампы москва
+  - что-то/podskajem/5
+  - установка лампы
 
 # Дополнительные ссылки для нецелевого
 additional_visits:
@@ -41,6 +39,11 @@ query_delay_range:
 # Пауза между переходами по ссылкам
 links_delay_range:
   - 2.0
+  - 3
+
+# Задержка сбора ссылок
+links_harvest_delay_range:
+  - 1.0
   - 3
 
 # Игнорировать целевые сайты ниже следующей позиции
@@ -121,7 +124,7 @@ pre_delay_non_target_range:
   - 0.2
   - 0.3
 pre_delay_target: 0 # для целевых сайтов
-pre_delay_link: 0.2 # для ссылок
+pre_delay_link: 0 # для ссылок
 
 # Минимальное время посещения (c)
 min_visit_non_target_range:  # нецелевого сайта
@@ -205,7 +208,7 @@ ignore_patterns:
 use_proxy?: false
 
 # Задержка сетевого соединения (ms)
-throttling_latency: 200
+throttling_latency: 0
 
 # Пропускная способность (0 - 500)
 throttling_trhoughput: 500
