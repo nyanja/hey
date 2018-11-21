@@ -45,9 +45,11 @@ module Bot
       when %r{^https?:\/\/}
         single_scenario
         wait(:query_delay)
+        driver.quit
         return
       when %r{\/}
         right_clicks_scenario
+        driver.quit
         wait(:query_delay)
         return
       end
