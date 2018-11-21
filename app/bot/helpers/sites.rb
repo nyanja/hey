@@ -3,12 +3,12 @@
 module Bot
   module Helpers
     module Sites
-      def search
+      def search q = query
         driver.navigate.to("https://yandex.ru")
         # wait(:min)
         # search_bar = driver.find_element(id: "text")
         search_bar = wait_until { driver.find_element(name: "text") }
-        driver.type search_bar, query
+        driver.type search_bar, q
         wait(:min)
         search_bar.submit
         wait(:min)

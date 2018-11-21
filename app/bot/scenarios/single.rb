@@ -24,6 +24,31 @@ module Bot
           end
         end
       end
+
+      def right_clicks_scenario
+        q, site, amount = query.split("/")
+        right_clicks = []
+        search q
+        r = search_results.reduce do |_, s|
+          break s if s.text.match? Regexp.new site
+        end
+        return log(:error, "Нет подходящего сайта") unless r
+
+        amount.to_i.times do
+          driver.action.context_click(r.find_element(css: "a")).perform
+          right_clicks << r.find_element(css: "a").attribute(:href)
+          sleep 1
+        end
+
+        ua = driver.js "return navigator.userAgent"
+        driver.quit
+        right_clicks.each do |link|
+          core.driver = Driver.new core, user_agent: ua
+          single_scenario link
+          wait :links_delay
+          driver.quit
+        end
+      end
     end
   end
 end

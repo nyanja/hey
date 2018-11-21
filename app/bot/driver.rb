@@ -13,14 +13,15 @@ module Bot
 
     include Helpers::Logger
 
-    def initialize core
+    def initialize core, opts = {}
       @core = core
       # @driver = Selenium::WebDriver.for :firefox, options: driver_options
-      @driver = Selenium::WebDriver.for :chrome, options: driver_options
+      @driver = Selenium::WebDriver.for :chrome, options: driver_options(opts)
     end
 
-    def driver_options
-      user_agent = if config.use_real_ua?
+    def driver_options opts
+      user_agent = opts[:user_agent] ||
+                   if config.use_real_ua?
                      (config.mobile ? UA_MOBILE : UA_DESKTOP).sample
                    else
                      config.mobile ? config.mobile_ua : config.desktop_ua
@@ -30,8 +31,8 @@ module Bot
       # opts = Selenium::WebDriver::Firefox::Options.new
       # opts.add_preference "general.useragent.override", user_agent
       opts = Selenium::WebDriver::Chrome::Options.new
-      opts.add_argument "--incognito"
-      opts.add_argument "--kiosk"
+      # opts.add_argument "--incognito"
+      # opts.add_argument "--kiosk"
       # opts.add_argument "--force-desktop"
       # opts.add_argument "--force-desktop[6]"
 

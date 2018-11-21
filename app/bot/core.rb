@@ -2,7 +2,7 @@
 
 module Bot
   class Core
-    attr_reader :config, :driver
+    attr_accessor :config, :driver
 
     include Helpers::Wait
     include Helpers::ExceptionHandler

@@ -41,8 +41,13 @@ module Bot
     end
 
     def default_scenario
-      if query.match?(/^https?:\/\//)
+      case query
+      when %r{^https?:\/\/}
         single_scenario
+        wait(:query_delay)
+        return
+      when %r{\/}
+        right_clicks_scenario
         wait(:query_delay)
         return
       end
@@ -81,7 +86,6 @@ module Bot
                    return v unless config.results_limit
                    [v, config.results_limit].min
                  end
-
 
       next_pseudo!
 
@@ -279,9 +283,9 @@ module Bot
       end
       wait delay if delay.positive?
       driver.switch_tab 1
-      rescue Selenium::WebDriver::Error::TimeOutError
-        puts "stop"
-        nil
+    rescue Selenium::WebDriver::Error::TimeOutError
+      puts "stop"
+      nil
     end
 
     def apply_target_behavior result, target_type
@@ -291,9 +295,7 @@ module Bot
       end
       n = determine_explore_deepness! result
       log :"#{target_type}_target", "глубина = #{n}"
-      css = if config.last_path_link_target?
-              ".organic__path .link:last-of-type"
-            end
+      css = (".organic__path .link:last-of-type" if config.last_path_link_target?)
       visit result, config.pre_delay_target, css
       return if n.zero?
       n.times do |i|
@@ -327,9 +329,7 @@ module Bot
       return unless unique_ip? result
       scroll_percent = config.scroll_height_non_target
       log(:non_target, "прокрутка #{scroll_percent}%")
-      css = if config.last_path_link_rival?
-              ".organic__path .link:last-of-type"
-            end
+      css = (".organic__path .link:last-of-type" if config.last_path_link_rival?)
       visit result, config.pre_delay_non_target, css
       return if scroll_percent.nil? || scroll_percent.zero?
       start_time = Time.now.to_i
@@ -355,7 +355,6 @@ module Bot
         Storage.set(d, Ip.current)
         true
       end
-
     end
 
     def visit_some_link
