@@ -52,8 +52,6 @@ module Bot
         latency: (config.throttling_latency || 0),
         throughput: 1024 * (config.throttling_trhoughput || 500)
       }
-      log(:query, query, "[#{driver.device}]")
-      run = Bot::Runner.new self, query
       thr = Thread.new do
         loop do
           Ip.ping
@@ -62,8 +60,16 @@ module Bot
       end
       case config.mode
       when 2
+        log(:query, query, "[#{driver.device}]")
+        run = Bot::Runner.new self, query
         run.lite_scenario
+      when 3
+        loop do
+          raise Interrupt unless @driver.window_handles.count >= 1
+        end
       else
+        log(:query, query, "[#{driver.device}]")
+        run = Bot::Runner.new self, query
         run.default_scenario
       end
     rescue HTTP::ConnectionError
