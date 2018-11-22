@@ -65,7 +65,7 @@ module Bot
         run.lite_scenario
       when 3
         loop do
-          raise Interrupt unless @driver.window_handles.count >= 1
+          break unless @driver.window_handles.count >= 1
         end
       else
         log(:query, query, "[#{driver.device}]")
