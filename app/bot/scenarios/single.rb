@@ -8,7 +8,7 @@ module Bot
                          config.scroll_height_non_target
         log(:link, "прокрутка #{scroll_percent}%")
         thr = Thread.new do
-          if config.pre_delay_link > 0
+          if config.pre_delay_link.positive && scroll_percent == 0
             driver.manage.timeouts.page_load = config.pre_delay_link
           end
           driver.navigate.to(link)
