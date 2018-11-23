@@ -7,6 +7,7 @@ module Bot
       def handle_no_connection
         # puts thread
         log(:error, "Нет соединения. Ожидание подключения...")
+        raise Interrupt if config.mode == 3
         wait(:check_ip_delay)
         # retry after each `handle_no_connection` call
       end
@@ -15,6 +16,7 @@ module Bot
       def handle_disconnect
         log(:error, "Потеря соединения")
         driver&.quit
+        raise Interrupt if config.mode == 3
       end
 
       # Core.perform_scenario
