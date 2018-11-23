@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Bot
   module Scenarios
     module Single
@@ -5,19 +7,21 @@ module Bot
         scroll_percent = config.scroll_height_link ||
                          config.scroll_height_non_target
         log(:link, "прокрутка #{scroll_percent}%")
-        Thread.new do
+        thr = Thread.new do
+          if config.pre_delay_link > 0
+            driver.manage.timeouts.page_load = config.pre_delay_link
+          end
           driver.navigate.to(link)
         rescue Exception
           nil
         end
         wait :pre_delay_link
-        return if scroll_percent.nil? || scroll_percent.zero?
+        return thr.join if scroll_percent.nil? || scroll_percent.zero?
         wait 10
         driver.js "window.stop()"
         print "  "
         scroll while (driver.scroll_height * 0.01 * scroll_percent) > driver.y_offset
         puts
-
       ensure
         driver.quit
       end
