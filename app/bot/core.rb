@@ -33,14 +33,14 @@ module Bot
 
     def refresh_ip
       log(:ip, Ip.refresh!)
-    rescue HTTP::ConnectionError
+    rescue Typhoeus::TyphoeusError # HTTP::ConnectionError
       handle_no_connection
       retry
     end
 
     def wait_for_connection
       Ip.ping
-    rescue HTTP::ConnectionError
+    rescue Typhoeus::TyphoeusError # HTTP::ConnectionError
       handle_no_connection
       retry
     end
@@ -66,6 +66,7 @@ module Bot
       when 3
         loop do
           break unless @driver.window_handles.count >= 1
+          sleep 1
         end
       else
         log(:query, query, "[#{driver.device}]")
