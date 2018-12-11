@@ -125,7 +125,7 @@ pre_delay_non_target_range:
   - 0.2
   - 0.3
 pre_delay_target: 0 # для целевых сайтов
-pre_delay_link: 0.3 # для ссылок
+pre_delay_link: 1 # для ссылок
 
 # Минимальное время посещения (c)
 min_visit_non_target_range:  # нецелевого сайта
