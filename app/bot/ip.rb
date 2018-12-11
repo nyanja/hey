@@ -28,9 +28,15 @@ module Bot
 
       def fetch_ip
         # `curl -s 'http://canhazip.com'`
-        Typhoeus.get("http://canhazip.com").body
+        # Typhoeus.get("http://canhazip.com").body
         # HTTP.get("http://canhazip.com").to_s
         # YAML.load_file("./config_example.yml")["test_ip"]
+
+        res = Typhoeus.get("http://canhazip.com", timeout: 3)
+        unless res.success?
+          raise Typhoeus::Errors::TyphoeusError
+        end
+        res.body
       end
     end
   end

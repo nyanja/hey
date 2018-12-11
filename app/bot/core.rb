@@ -22,7 +22,7 @@ module Bot
         rescue Interrupt
           puts "\nВыход..."
           exit
-        rescue StandardError
+        rescue StandardError => e
           sleep 5
           next
         end
@@ -33,14 +33,14 @@ module Bot
 
     def refresh_ip
       log(:ip, Ip.refresh!)
-    rescue Typhoeus::TyphoeusError # HTTP::ConnectionError
+    rescue Typhoeus::Errors::TyphoeusError # HTTP::ConnectionError
       handle_no_connection
       retry
     end
 
     def wait_for_connection
       Ip.ping
-    rescue Typhoeus::TyphoeusError # HTTP::ConnectionError
+    rescue Typhoeus::Errors::TyphoeusError # HTTP::ConnectionError
       handle_no_connection
       retry
     end
@@ -55,7 +55,7 @@ module Bot
       thr = Thread.new do
         loop do
           Ip.ping
-          sleep 10
+          sleep 4
         end
       end
       case config.mode
@@ -73,7 +73,7 @@ module Bot
         run = Bot::Runner.new self, query
         run.default_scenario
       end
-    rescue HTTP::ConnectionError
+    rescue Typhoeus::Errors::TyphoeusError # HTTP::ConnectionError
       Storage.del "refresh_ip"
       handle_disconnect
     rescue StandardError => e
