@@ -8,10 +8,12 @@ module Bot
                          config.scroll_height_non_target
         log(:link, "прокрутка #{scroll_percent}%")
         thr = Thread.new do
-          if config.pre_delay_link.positive && scroll_percent == 0
+          if config.pre_delay_link.positive? && scroll_percent == 0
             driver.manage.timeouts.page_load = config.pre_delay_link
           end
           driver.navigate.to(link)
+        rescue Interrupt
+          exit
         rescue Exception
           nil
         end
@@ -22,6 +24,9 @@ module Bot
         print "  "
         scroll while (driver.scroll_height * 0.01 * scroll_percent) > driver.y_offset
         puts
+      rescue Interrupt
+        thr&.join
+        exit
       ensure
         driver.quit
       end
