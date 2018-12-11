@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require "http"
+# require "http"
+require 'typhoeus'
 
 module Bot
   module Ip
@@ -26,7 +27,9 @@ module Bot
       private
 
       def fetch_ip
-        HTTP.get("http://canhazip.com").to_s
+        # `curl -s 'http://canhazip.com'`
+        Typhoeus.get("http://canhazip.com").body
+        # HTTP.get("http://canhazip.com").to_s
         # YAML.load_file("./config_example.yml")["test_ip"]
       end
     end
