@@ -16,7 +16,16 @@ module Bot
     def initialize core, opts = {}
       @core = core
       # @driver = Selenium::WebDriver.for :firefox, options: driver_options
-      @driver = Selenium::WebDriver.for :chrome, options: driver_options(opts)
+      client = Selenium::WebDriver::Remote::Http::Default.new
+      client.timeout = 200 # seconds
+      @driver = Selenium::WebDriver.for :chrome,
+                                        options: driver_options(opts),
+                                        http_client: client
+      @driver.network_conditions = { offline: false,
+                                     latency: config.throttling_latency,
+                                     throughput:
+                                      1024 * config.throttling_trhoughput }
+      @driver
     end
 
     def driver_options opts

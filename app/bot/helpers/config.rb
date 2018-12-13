@@ -16,6 +16,8 @@ module Bot
                    query_delay: MEDIUM_WAIT,
                    "unique_visit_ip?": false,
                    pseudo_targets: [],
+                   throttling_latency: 0,
+                   throttling_trhoughput: 500,
                    scroll_speed: 4,
                    results_limit: 100 }.freeze
 
