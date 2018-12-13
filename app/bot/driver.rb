@@ -17,7 +17,8 @@ module Bot
       @core = core
       # @driver = Selenium::WebDriver.for :firefox, options: driver_options
       client = Selenium::WebDriver::Remote::Http::Default.new
-      client.timeout = 200 # seconds
+      client.open_timeout = 200 # seconds
+      client.read_timeout = 200
       @driver = Selenium::WebDriver.for :chrome,
                                         options: driver_options(opts),
                                         http_client: client
