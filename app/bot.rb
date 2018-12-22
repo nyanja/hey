@@ -2,6 +2,13 @@
 
 require "selenium-webdriver"
 
+# TODO: split this list in to logical modules which will be required.
+# require_relative "bot/helpers"
+# require_relative "bot/base" ?
+
+require_relative "bot/errors"
+require_relative "bot/actions"
+
 require_relative "bot/helpers/logger"
 require_relative "bot/helpers/wait"
 require_relative "bot/helpers/exception_handler"
@@ -16,9 +23,6 @@ require_relative "bot/scenarios/single"
 require_relative "bot/runner"
 require_relative "bot/driver"
 require_relative "bot/core"
-
-# require "require_all"
-# require_rel "bot/"
 
 module Bot
   def self.execute file_name

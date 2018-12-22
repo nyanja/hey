@@ -26,7 +26,6 @@ module Bot
                                      latency: config.throttling_latency,
                                      throughput:
                                       1024 * config.throttling_trhoughput }
-      @driver
     end
 
     def driver_options opts
@@ -42,7 +41,7 @@ module Bot
       # opts.add_preference "general.useragent.override", user_agent
       opts = Selenium::WebDriver::Chrome::Options.new
       opts.add_argument "--incognito"
-      opts.add_argument "--kiosk" unless config.mode == 3
+      opts.add_argument "--kiosk" # unless config.mode == 3
       # opts.add_argument "--force-desktop"
       # opts.add_argument "--force-desktop[6]"
 

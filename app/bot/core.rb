@@ -7,6 +7,7 @@ module Bot
     include Helpers::Wait
     include Helpers::ExceptionHandler
     include Helpers::Logger
+    include Actions
 
     def initialize path_to_config
       @config = Helpers::Config.new(path_to_config)
@@ -60,6 +61,7 @@ module Bot
         run.lite_scenario
       when 3
         loop do
+          binding.pry
           break unless @driver.window_handles.count >= 1
           sleep 1
         end
