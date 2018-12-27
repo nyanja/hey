@@ -6,25 +6,25 @@ module Bot
       def perform
         assign_coordinates
         @speed = config.scroll_speed(@options[:target])
-        @offset = y_offset
+        @offset = driver.y_offset
 
         action
       end
 
       def system_action
         loop do
-          break if y_vision?(@y)
+          break if driver.y_vision?(@y)
 
           system("xdotool click #{@offset < @y ? 5 : 4} --sync " \
                  "--repeat #{@speed}")
-          Actions.random_mouse_move(config)
+          Actions.random_mouse_move(driver, config)
         end
       end
 
       def selenium_action
         (@offet / @speed).to_i.send((@offset > @y ? :downto : :upto),
                                     (@y / @speed).to_i) do |pixels|
-          js "window.scroll(\"0\", \"#{pixels * @speed}\")"
+          driver.js "window.scroll(\"0\", \"#{pixels * @speed}\")"
         end
       end
 
