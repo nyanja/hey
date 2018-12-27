@@ -8,19 +8,19 @@ module Bot
     require_relative "actions/random_mouse_move"
 
     def mouse_move opt = {}
-      MouseMove.new(driver, config, opt).perform
+      MouseMove.new(config, opt).perform
     end
 
     def random_mouse_move opt = {}
-      RandomMouseMove.new(driver, config, opt).perform
+      RandomMouseMove.new(config, opt).perform
     end
 
     def scroll_to opt = {}
-      Scroll.new(driver, config, opt).perform
+      Scroll.new(config, opt).perform
     end
 
     def click opt = {}
-      Click.new(driver, config, opt).perform
+      Click.new(config, opt).perform
     end
   end
 end

@@ -13,7 +13,7 @@ module Bot
       end
 
       def selenium_action
-        driver.move_to(@options[:element]) if @options[:element]
+        move_to(@options[:element]) if @options[:element]
       end
 
       def system?
