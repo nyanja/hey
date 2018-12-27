@@ -54,6 +54,10 @@ module Bot
       def chance_value method
         @config["#{method}_chance"] > rand(0..100)
       end
+
+      def scroll_speed target = nil
+        target ? scroll_speed_target : @config["scroll_speed"]
+      end
     end
   end
 end

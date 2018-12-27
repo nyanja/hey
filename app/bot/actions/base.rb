@@ -3,14 +3,11 @@ module Bot
     class Base
       attr_reader :driver, :config, :options
 
-      def initialize driver, config
+      def initialize driver, config, options = {}
         @driver = driver
         @config = config
-      end
-
-      def perform options
         @options = options
-        logic
+        # @@browser_offset
       end
 
       def action *args
@@ -38,8 +35,8 @@ module Bot
           @x = point.x + point.width / 2
           @y = point.y + point.height / 2
         elsif @options[:percent] # or config.scroll_percents ?
-          @y = page_height * @options[:percent] / 100
-          @x = page_width / 2
+          @y = driver.page_height * @options[:percent] / 100
+          @x = driver.page_width / 2
         end
       end
 
@@ -47,17 +44,9 @@ module Bot
         @element = element
       end
 
-      def current_position_on_page
-        driver.y_offset
-      end
-
-      def page_height
-        @page_height ||= driver.find_element(:tag_name, "body").attribute("scrollHeight").to_i
-      end
-
-      def page_width
-        @page_width ||= driver.find_element(:tag_name, "body").attribute("scrollWidth").to_i
-      end
+      # def current_position_on_page
+      # driver.y_offset
+      # end
     end
   end
 end

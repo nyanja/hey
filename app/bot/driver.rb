@@ -12,6 +12,7 @@ module Bot
     def_delegator :core, :config
 
     include Helpers::Logger
+    include Actions
 
     def initialize core, opts = {}
       @core = core
@@ -26,6 +27,11 @@ module Bot
                                      latency: config.throttling_latency,
                                      throughput:
                                       1024 * config.throttling_trhoughput }
+
+      window = @driver.manage.window.size
+      @screen_height = window.height
+      @screen_width = window.width
+      # @driver.manage.window.maximize
     end
 
     def driver_options opts
@@ -77,18 +83,36 @@ module Bot
       js "return window.pageYOffset"
     end
 
-    def scroll_to position, is_target = nil
-      speed = is_target ? config.scroll_speed_target : config.scroll_speed
-      (y_offset / speed).to_i.send((y_offset > position ? :downto : :upto),
-                                   (position / speed).to_i) do |y|
-        js "window.scroll(\"0\", \"#{y * speed}\")"
-      end
+    def y_point
+      y_offet + @screen_height / 2
     end
 
-    def scroll_by offset, is_target = nil
-      scroll_to y_offset + offset, is_target
+    def y_vision? y
+      offset = y_offset
+      y > offset && y + @screen_height < offset
     end
 
+    def page_height
+      driver.find_element(:tag_name, "body").attribute("scrollHeight").to_i
+    end
+
+    def page_width
+      driver.find_element(:tag_name, "body").attribute("scrollWidth").to_i
+    end
+
+    # def scroll_to position, is_target = nil
+    # speed = config.scroll_speed(is_target)
+    # (y_offset / speed).to_i.send((y_offset > position ? :downto : :upto),
+    # (position / speed).to_i) do |y|
+    # js "window.scroll(\"0\", \"#{y * speed}\")"
+    # end
+    # end
+
+    # def scroll_by offset, is_target = nil
+    # scroll_to y_offset + offset, is_target
+    # end
+
+    # wtf? innerHeight == browser screen for site - without bars and so on.
     def scroll_height
       js "return document.body.scrollHeight - window.innerHeight"
     end
@@ -104,7 +128,6 @@ module Bot
 
     def click query, element = driver
       element.find_element(query).click
-      # puts "click #{element.find_element(query).text}"
     end
 
     def mobile?
