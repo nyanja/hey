@@ -11,7 +11,7 @@ module Bot
       # end
 
       def selenium_action
-        (@options[:element] || driver).find_element(@options[:query]).click
+        element.click
       end
 
       def system?

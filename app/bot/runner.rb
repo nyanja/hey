@@ -6,7 +6,7 @@ module Bot
 
     extend Forwardable
     def_delegators :core, :driver, :config
-    def_delegators :driver, :click
+    # def_delegators :driver, :click
 
     include Helpers::Logger
     include Helpers::Wait
@@ -276,7 +276,8 @@ module Bot
       driver.scroll_to [(result.location.y - rand(140..300)), 0].max
       sleep 1
       begin
-        click({ css: (css || ".organic__url, .organic__link, a") }, result)
+        driver.click(query: { css: (css || ".organic__url, .organic__link, a") },
+                     element: result)
         @t = Time.now
       rescue Selenium::WebDriver::Error::NoSuchElementError
         puts "element not found"

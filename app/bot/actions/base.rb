@@ -44,6 +44,20 @@ module Bot
         @element = element
       end
 
+      def assign_element
+        if @options[:query]
+          (@options[:element] || driver).find_element(@options[:query])
+        elsif @options[:element]
+          @options[:element]
+        else
+          raise Errors::NotFound, "Element was not found"
+        end
+      end
+
+      def element
+        @element ||= assign_element
+      end
+
       # def current_position_on_page
       # driver.y_offset
       # end

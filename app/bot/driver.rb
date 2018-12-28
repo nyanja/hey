@@ -127,9 +127,9 @@ module Bot
       switch_tab 0
     end
 
-    def click query, element = driver
-      element.find_element(query).click
-    end
+    # def click query, element = driver
+    # element.find_element(query).click
+    # end
 
     def mobile?
       browser.device.mobile?
