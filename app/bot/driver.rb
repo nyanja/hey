@@ -89,7 +89,8 @@ module Bot
 
     def y_vision? y
       offset = y_offset
-      y > offset && y + @screen_height < offset
+      puts "#{y} > #{offset} && #{offset} + #{@screen_height} > #{y}"
+      y > offset && offset + @screen_height > y
     end
 
     def page_height

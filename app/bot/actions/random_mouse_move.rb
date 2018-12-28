@@ -5,13 +5,14 @@ module Bot
     class RandomMouseMove < Base
       def perform
         assign_coordinates
+        puts "Here, coordinates: #{@x}, #{@y}"
 
         action
       end
 
       def system_action
         moving_iterations.times do
-          `xdotool mousemove_relative #{x} #{y} --sync`
+          `xdotool mousemove_relative --sync -- #{@x} #{@y}`
         end
       end
 
