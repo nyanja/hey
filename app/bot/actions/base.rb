@@ -72,6 +72,11 @@ module Bot
         @system_position = {x: match[1], y: match[2]}
       end
 
+      def correct_position?
+        assign_system_position
+        @system_position[:x] == system_x && @system_position[:y] == system_y
+      end
+
       # def current_position_on_page
       # driver.y_offset
       # end
