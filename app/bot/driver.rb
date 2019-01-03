@@ -89,8 +89,9 @@ module Bot
 
     def y_vision? y
       offset = y_offset
-      puts "#{y} > #{offset} && #{offset} + #{@screen_height} > #{y}"
-      y > offset && offset + @screen_height > y
+      s_height = @screen_height / 2
+      # puts "#{y} > #{offset} && #{offset} + #{@screen_height} > #{y}"
+      y > offset + s_height - 150 && offset + s_height + 150 > y
     end
 
     def page_height
@@ -100,18 +101,6 @@ module Bot
     def page_width
       driver.find_element(:tag_name, "body").attribute("scrollWidth").to_i
     end
-
-    # def scroll_to position, is_target = nil
-    # speed = config.scroll_speed(is_target)
-    # (y_offset / speed).to_i.send((y_offset > position ? :downto : :upto),
-    # (position / speed).to_i) do |y|
-    # js "window.scroll(\"0\", \"#{y * speed}\")"
-    # end
-    # end
-
-    # def scroll_by offset, is_target = nil
-    # scroll_to y_offset + offset, is_target
-    # end
 
     # wtf? innerHeight == browser screen for site - without bars and so on.
     def scroll_height

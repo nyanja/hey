@@ -7,8 +7,12 @@ module Bot
         action
       end
 
-      # def system_action
-      # end
+      def system_action
+        assign_coordinates
+        driver.mouse_move(x: @x, y: @y) unless correct_position?
+
+        `xdotool click 1`
+      end
 
       def selenium_action
         element.click

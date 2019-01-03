@@ -9,7 +9,9 @@ module Bot
 
       def system_action
         assign_coordinates
-        `xdotool mousemove #{x} #{y}`
+        driver.scroll(x: @x, y: @y) unless driver.y_vision?
+
+        `xdotool mousemove #{system_x} #{system_y}`
       end
 
       def selenium_action

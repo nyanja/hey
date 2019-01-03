@@ -3,6 +3,7 @@
 module Bot
   module Actions
     require_relative "actions/base"
+    require_relative "actions/click"
     require_relative "actions/scroll"
     require_relative "actions/mouse_move"
     require_relative "actions/random_mouse_move"

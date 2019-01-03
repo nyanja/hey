@@ -58,6 +58,20 @@ module Bot
         @element ||= assign_element
       end
 
+      def system_x
+        @x - js("window.pageXOffset")
+      end
+
+      def system_y
+        @y - y_offset # - bars_height
+      end
+
+      def assign_system_position
+        cords = `xdotool getmouselocation` # "x:123 y:321 screen:0 window:123142132"
+        match = cords.match(/x:(\d+) y:(\d+)/)
+        @system_position = {x: match[1], y: match[2]}
+      end
+
       # def current_position_on_page
       # driver.y_offset
       # end

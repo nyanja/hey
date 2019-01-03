@@ -56,7 +56,8 @@ module Bot
       end
 
       def scroll_speed target = nil
-        target ? scroll_speed_target : @config["scroll_speed"]
+        speed = target ? scroll_speed_target : @config["scroll_speed"]
+        speed > 100 ? 100 : speed
       end
     end
   end

@@ -22,8 +22,19 @@ module Bot
 
       def assign_coordinates
         # TODO: take in to consideration page limits (width, height)
+        # check in which side more space
+        # move in that side
+        # for values from configs
         @x = random_coord
         @y = random_coord
+      end
+
+      def x_coords
+        rand config.x_random_range
+      end
+
+      def y_coords
+        rand config.y_random_range
       end
 
       def random_coord
