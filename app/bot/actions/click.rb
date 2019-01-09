@@ -10,6 +10,7 @@ module Bot
       def system_action
         assign_coordinates
         driver.mouse_move(x: @x, y: @y) unless correct_position?
+        puts "System Click"
 
         `xdotool click 1`
       end
@@ -19,7 +20,7 @@ module Bot
       end
 
       def system?
-        false # config.system_mouse_move
+        config.system_click
       end
     end
   end

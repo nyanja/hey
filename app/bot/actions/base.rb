@@ -59,11 +59,11 @@ module Bot
       end
 
       def system_x
-        @x - js("window.pageXOffset")
+        @x - (driver.js("window.pageXOffset") || 0)
       end
 
       def system_y
-        @y - y_offset # - bars_height
+        @y - driver.y_offset # - bars_height
       end
 
       def assign_system_position

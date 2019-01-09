@@ -9,8 +9,11 @@ module Bot
 
       def system_action
         assign_coordinates
-        driver.scroll(x: @x, y: @y) unless driver.y_vision?
+        unless driver.y_vision?(@y)
+          driver.scroll_to(x: @x, y: @y)
+        end
 
+        puts "System Mouse Move #{system_x} #{system_y}"
         `xdotool mousemove #{system_x} #{system_y}`
       end
 
@@ -19,7 +22,7 @@ module Bot
       end
 
       def system?
-        config.system_mouse_move
+        config.system_scroll
       end
     end
   end

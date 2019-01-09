@@ -12,7 +12,7 @@ module Bot
       end
 
       def system_action
-        puts "Offset: #{@offset}, Speed: #{@speed}, Y: #{@y}"
+        puts "System Scroll. Offset: #{@offset}, Speed: #{@speed}, Y: #{@y}"
         loop do
           break if driver.y_vision?(@y)
 
