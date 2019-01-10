@@ -69,7 +69,7 @@ module Bot
       def assign_system_position
         cords = `xdotool getmouselocation` # "x:123 y:321 screen:0 window:123142132"
         match = cords.match(/x:(\d+) y:(\d+)/)
-        @system_position = {x: match[1], y: match[2]}
+        @system_position = {x: match[1].to_i, y: match[2].to_i}
       end
 
       def correct_position?

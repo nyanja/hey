@@ -1,3 +1,4 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
@@ -77,6 +78,13 @@ module Bot
       handle_exception e
     ensure
       thr&.kill
+    end
+
+    def check_on_yandex
+      driver.navigate.to "https://yandex.ru"
+      wait 5
+      element = driver.find_element(:class, "iceboarding-view__title")
+      driver.click(element: element)
     end
   end
 end

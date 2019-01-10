@@ -6,7 +6,7 @@ require "./sort_ua.rb"
 
 module Bot
   class Driver
-    attr_reader :driver, :core, :delay, :browser
+    attr_reader :driver, :core, :delay, :browser, :screen_height, :screen_width
 
     extend Forwardable
     def_delegator :core, :config
