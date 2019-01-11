@@ -7,19 +7,14 @@ module Bot
         return unless system?
 
         assign_coordinates
-        assign_system_position
-        puts "System Cords: #{@system_position.inspect}, " \
-             "Screen Height: #{driver.screen_height / 4} ? #{@system_position[:y]}, " \
-             "Screen Width: #{driver.screen_width / 4} ? #{@system_position[:x]}"
-        swap_limits
-
-        puts "Random Mouse Move coordinates: #{@x}, #{@y}"
 
         action
       end
 
+      private
+
       def system_action
-        moving_iterations.times do
+        config.random_moving_iterations.times do
           `xdotool mousemove_relative --sync -- #{@x} #{@y}`
         end
       end
@@ -29,41 +24,28 @@ module Bot
       end
 
       def assign_coordinates
-        # TODO: take in to consideration page limits (width, height)
-        # check in which side more space
-        # move in that side
-        # for values from configs
-        @x = random_coord
-        @y = random_coord
+        @x = config.random_move_by_x
+        @y = config.random_move_by_y
+
+        assign_system_position
+        swap_limits
+
+        puts "Random Mouse Move: {x: #{@x}, y: #{@y}}"
       end
 
       def swap_limits
         if @system_position[:x] < driver.screen_width / 3 && @x.negative? ||
            @system_position[:x] > (driver.screen_width / 3) * 2 && @x.positive?
-          puts "Swapping #{@x}"
-          @x * -1
+          puts "Swapping X #{@x}, position: #{@system_position[:x]}, " \
+               "size: #{driver.screen_width / 3}"
+          @x *= -1
         end
-        if @system_position[:y] > driver.screen_height / 3 && @y.negative? ||
-           @system_position[:y] < (driver.screen_height / 3) * 2 && @y.positive?
-          puts "Swapping #{@y}"
-          @y * -1
+        if @system_position[:y] < driver.screen_height / 3 && @y.negative? ||
+           @system_position[:y] > (driver.screen_height / 3) * 2 && @y.positive?
+          puts "Swapping Y #{@y}, position: #{@system_position[:y]}, " \
+               "size: #{driver.screen_height / 3}"
+          @y *= -1
         end
-      end
-
-      def x_coords
-        rand config.x_random_range
-      end
-
-      def y_coords
-        rand config.y_random_range
-      end
-
-      def random_coord
-        rand(-5..5)
-      end
-
-      def moving_iterations
-        rand(2..10)
       end
 
       def system?

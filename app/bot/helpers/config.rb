@@ -19,7 +19,10 @@ module Bot
                    throttling_latency: 0,
                    throttling_trhoughput: 500,
                    scroll_speed: 4,
-                   results_limit: 100 }.freeze
+                   results_limit: 100,
+                   random_moving_iterations: [1, 10],
+                   random_move_by_x: [-5, 5],
+                   random_move_by_y: [-5, 5] }.freeze
 
       def initialize path_to_config
         @config = YAML.load_file(path_to_config)
@@ -38,7 +41,8 @@ module Bot
       end
 
       def range_value method
-        rand Range.new(*@config["#{method}_range"])
+        value = "#{method}_range"
+        rand Range.new(*(@config[value] || DEFAULTS[value.to_sym]))
       end
 
       def patterns_value method
