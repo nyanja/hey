@@ -7,9 +7,11 @@ module Bot
         action
       end
 
+      private
+
       def system_action
         assign_coordinates
-        driver.mouse_move(x: @x, y: @y) unless correct_position?
+        driver.mouse_move(x: @page_x, y: @page_y) unless correct_position?
         puts "System Click"
 
         `xdotool click 1`

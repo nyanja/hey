@@ -34,15 +34,15 @@ module Bot
       end
 
       def swap_limits
-        if @system_position[:x] < driver.screen_width / 3 && @x.negative? ||
-           @system_position[:x] > (driver.screen_width / 3) * 2 && @x.positive?
-          puts "Swapping X #{@x}, position: #{@system_position[:x]}, " \
+        if system_position_x < driver.screen_width / 3 && @x.negative? ||
+           system_position_x > (driver.screen_width / 3) * 2 && @x.positive?
+          puts "Swapping X #{@x}, position: #{system_position_x}, " \
                "size: #{driver.screen_width / 3}"
           @x *= -1
         end
-        if @system_position[:y] < driver.screen_height / 3 && @y.negative? ||
-           @system_position[:y] > (driver.screen_height / 3) * 2 && @y.positive?
-          puts "Swapping Y #{@y}, position: #{@system_position[:y]}, " \
+        if system_position_y < driver.screen_height / 3 && @y.negative? ||
+           system_position_y > (driver.screen_height / 3) * 2 && @y.positive?
+          puts "Swapping Y #{@y}, position: #{system_position_y}, " \
                "size: #{driver.screen_height / 3}"
           @y *= -1
         end

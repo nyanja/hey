@@ -22,7 +22,9 @@ module Bot
                    results_limit: 100,
                    random_moving_iterations: [1, 10],
                    random_move_by_x: [-5, 5],
-                   random_move_by_y: [-5, 5] }.freeze
+                   random_move_by_y: [-5, 5],
+                   system_mouse_move: [1, 5],
+                   system_mouse_move_delay: [0.05, 0.15] }.freeze
 
       def initialize path_to_config
         @config = YAML.load_file(path_to_config)

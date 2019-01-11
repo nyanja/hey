@@ -11,6 +11,8 @@ module Bot
         action
       end
 
+      private
+
       def system_action
         puts "System Scroll. Offset: #{@offset}, Speed: #{@speed}, Y: #{@y}"
         loop do

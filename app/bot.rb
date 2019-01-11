@@ -7,6 +7,7 @@ require "selenium-webdriver"
 # require_relative "bot/base" ?
 
 require_relative "bot/errors"
+require_relative "bot/helpers/coordinates"
 require_relative "bot/actions"
 
 require_relative "bot/helpers/logger"

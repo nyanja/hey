@@ -24,7 +24,7 @@ module Bot
         rescue Interrupt
           puts "\nВыход..."
           exit
-        rescue StandardError => e
+        rescue StandardError => _e
           sleep 5
           next
         end

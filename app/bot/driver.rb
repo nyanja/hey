@@ -31,7 +31,7 @@ module Bot
       window = @driver.manage.window.size
       @screen_height = window.height
       @screen_width = window.width
-      # @driver.manage.window.maximize
+      # @driver.manage.window.maximize # some issue with system controls
     end
 
     def driver_options opts
@@ -80,7 +80,11 @@ module Bot
     end
 
     def y_offset
-      js "return window.pageYOffset"
+      js("return window.pageYOffset") || 0
+    end
+
+    def x_offset
+      js("window.pageXOffset") || 0
     end
 
     def y_point
@@ -90,7 +94,6 @@ module Bot
     def y_vision? y
       offset = y_offset
       s_height = @screen_height / 2
-      # puts "#{y} > #{offset} && #{offset} + #{@screen_height} > #{y}"
       y > offset + s_height - 150 && offset + s_height + 150 > y
     end
 
