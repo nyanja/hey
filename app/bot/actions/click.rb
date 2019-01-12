@@ -3,10 +3,6 @@
 module Bot
   module Actions
     class Click < Base
-      def perform
-        action
-      end
-
       private
 
       def system_action
