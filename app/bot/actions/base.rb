@@ -11,6 +11,10 @@ module Bot
         @options = options
       end
 
+      def perform *args
+        action(*args)
+      end
+
       private
 
       def action *args

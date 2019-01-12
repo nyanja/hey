@@ -6,7 +6,7 @@ module Bot
       end
 
       def real_y
-        @page_y - driver.y_offset # - bars_height
+        @page_y - driver.y_offset + driver.bars_height
       end
 
       def system_position_x

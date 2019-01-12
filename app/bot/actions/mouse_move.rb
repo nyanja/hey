@@ -3,24 +3,21 @@
 module Bot
   module Actions
     class MouseMove < Base
-      def perform
-        action
-      end
-
       private
 
       def system_action
         assign_coordinates
 
-        puts "System Mouse Move #{real_x} #{real_y}"
         loop do
-          break unless @y_iterations.positive? && @x_iterations.positive?
+          break unless @y_iterations.positive? || @x_iterations.positive?
 
           `xdotool mousemove_relative --sync -- #{x_move} #{y_move}`
           sleep config.system_mouse_move_delay
         end
+        assign_system_position
+
         # make sure that it located correctly
-        `xdotool mousemove #{real_x} #{real_y}`
+        `xdotool mousemove --sync #{real_x} #{real_y}`
       end
 
       def selenium_action
@@ -30,7 +27,10 @@ module Bot
       def assign_coordinates
         super
 
-        driver.scroll_to(x: @page_x, y: @page_y) unless y_vision?
+        unless y_vision?
+          driver.scroll_to(x: @page_x, y: @page_y)
+          sleep 0.5
+        end
 
         assign_system_position
         assign_offsets
@@ -38,8 +38,8 @@ module Bot
       end
 
       def assign_offsets
-        @offset_x = system_position_x - real_x
-        @offset_y = system_position_y - real_y
+        @offset_x = real_x - system_position_x
+        @offset_y = real_y - system_position_y
       end
 
       def assign_iterations
@@ -52,14 +52,14 @@ module Bot
       end
 
       def y_move
-        return 0 if @y_iterations.zero?
+        return 0 unless @y_iterations.positive?
 
         @y_iterations -= 1
         @y_step
       end
 
       def x_move
-        return 0 if @x_iterations.zero?
+        return 0 unless @x_iterations.positive?
 
         @x_iterations -= 1
         @x_step

@@ -61,8 +61,8 @@ module Bot
         run = Bot::Runner.new self, query
         run.lite_scenario
       when 3
+        binding.pry
         loop do
-          binding.pry
           break unless @driver.window_handles.count >= 1
           sleep 1
         end

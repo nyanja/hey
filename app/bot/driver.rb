@@ -6,7 +6,8 @@ require "./sort_ua.rb"
 
 module Bot
   class Driver
-    attr_reader :driver, :core, :delay, :browser, :screen_height, :screen_width
+    attr_reader :driver, :core, :delay, :browser, :screen_height, :screen_width,
+                :bars_height
 
     extend Forwardable
     def_delegator :core, :config
@@ -31,6 +32,7 @@ module Bot
       window = @driver.manage.window.size
       @screen_height = window.height
       @screen_width = window.width
+      @bars_height = @screen_height - inner_height
       # @driver.manage.window.maximize # some issue with system controls
     end
 
@@ -139,6 +141,10 @@ module Bot
       else
         "desktop"
       end
+    end
+
+    def inner_height
+      driver.find_element(:tag_name, "html").attribute("clientHeight").to_i
     end
   end
 end

@@ -20,14 +20,21 @@ module Bot
                    throttling_trhoughput: 500,
                    scroll_speed: 4,
                    results_limit: 100,
-                   random_moving_iterations: [1, 10],
-                   random_move_by_x: [-5, 5],
-                   random_move_by_y: [-5, 5],
-                   system_mouse_move: [1, 5],
-                   system_mouse_move_delay: [0.05, 0.15] }.freeze
+                   random_moving_iterations_range: [1, 10],
+                   random_move_by_x_range: [-5, 5],
+                   random_move_by_y_range: [-5, 5],
+                   system_mouse_move_range: [3, 5],
+                   system_mouse_move_delay_range: [0.008, 0.012] }.freeze
 
       def initialize path_to_config
-        @config = YAML.load_file(path_to_config)
+        @config = DEFAULTS.transform_keys(&:to_s)
+                          .merge(load_config(path_to_config))
+      end
+
+      private
+
+      def load_config path_to_config
+        YAML.load_file(path_to_config)
       end
 
       def respond_to_missing?
@@ -36,9 +43,9 @@ module Bot
 
       def method_missing method, *_args
         method = method.to_s
-        return @config[method] if @config.key?(method)
-        key = VALUES.select { |value| @config.key?("#{method}_#{value}") }.first
-        return DEFAULTS[method.to_sym] unless key
+        return @config[method] if @config[method]
+        key = VALUES.find { |v| @config.key?("#{method}_#{v}") }
+        return nil unless key
         send("#{key}_value", method)
       end
 
