@@ -11,6 +11,12 @@ module Bot
         action
       end
 
+      # scroll_percent = scroll_height_link || scroll_height_non_target
+      # depending on target or no there is some configs:
+      # scroll_amount_target : scroll_amount
+      # scroll_threashold & < scroll_height => amount * scroll_multiplier
+      # scroll_delay_target : scroll_delay
+
       private
 
       def system_action

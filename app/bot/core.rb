@@ -1,4 +1,3 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
@@ -35,56 +34,57 @@ module Bot
 
     def refresh_ip
       log(:ip, Ip.refresh!)
-    rescue Typhoeus::Errors::TyphoeusError # HTTP::ConnectionError
+    rescue Typhoeus::Errors::TyphoeusError
       handle_no_connection
       retry
     end
 
     def wait_for_connection
       Ip.ping
-    rescue Typhoeus::Errors::TyphoeusError # HTTP::ConnectionError
+    rescue Typhoeus::Errors::TyphoeusError
       handle_no_connection
       retry
     end
 
     def perform_scenario query
+      @query = query
       @driver = Driver.new self
-      thr = Thread.new do
-        loop do
-          Ip.ping
-          sleep 4
-        end
-      end
-      case config.mode
-      when 2
-        log(:query, query, "[#{driver.device}]")
-        run = Bot::Runner.new self, query
-        run.lite_scenario
-      when 3
-        binding.pry
-        loop do
-          break unless @driver.window_handles.count >= 1
-          sleep 1
-        end
-      else
-        log(:query, query, "[#{driver.device}]")
-        run = Bot::Runner.new self, query
-        run.default_scenario
-      end
-    rescue Typhoeus::Errors::TyphoeusError # HTTP::ConnectionError
+      initialize_ip_check_thread
+
+      launch_mode
+    rescue Typhoeus::Errors::TyphoeusError
       Storage.del "refresh_ip"
       handle_disconnect
     rescue StandardError => e
       handle_exception e
     ensure
-      thr&.kill
+      @thread&.kill
     end
 
-    def check_on_yandex
-      driver.navigate.to "https://yandex.ru"
-      wait 5
-      element = driver.find_element(:class, "iceboarding-view__title")
-      driver.click(element: element)
+    def initialize_ip_check_thread
+      @thread = Thread.new do
+        loop do
+          Ip.ping
+          sleep 4
+        end
+      end
+    end
+
+    def launch_mode
+      return manual_mode if config.mode == 3
+
+      log(:query, @query, "[#{driver.device}]")
+      run = Bot::Runner.new self, @query
+      config.mode == 2 ? run.lite_scenario : run.default_scenario
+    end
+
+    def manual_mode
+      loop do
+        break unless @driver.window_handles.count >= 1
+
+        sleep 1
+      end
+      raise Interrupt # no need in custom error... for now...
     end
   end
 end

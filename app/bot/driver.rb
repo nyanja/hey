@@ -7,7 +7,7 @@ require "./sort_ua.rb"
 module Bot
   class Driver
     attr_reader :driver, :core, :delay, :browser, :screen_height, :screen_width,
-                :bars_height
+                :bars_height, :user_agent
 
     extend Forwardable
     def_delegator :core, :config
@@ -37,13 +37,13 @@ module Bot
     end
 
     def driver_options opts
-      user_agent = opts[:user_agent] ||
-                   if config.use_real_ua?
-                     (config.mobile ? UA_MOBILE : UA_DESKTOP).sample
-                   else
-                     config.mobile ? config.mobile_ua : config.desktop_ua
-                   end
-      @browser = Browser.new(user_agent)
+      @user_agent = opts[:user_agent] ||
+                    if config.use_real_ua?
+                      (config.mobile ? UA_MOBILE : UA_DESKTOP).sample
+                    else
+                      config.mobile ? config.mobile_ua : config.desktop_ua
+                    end
+      @browser = Browser.new(@user_agent)
 
       # opts = Selenium::WebDriver::Firefox::Options.new
       # opts.add_preference "general.useragent.override", user_agent
@@ -56,8 +56,8 @@ module Bot
       # opts.add_argument "--proxy-server=185.14.6.134:8080"
       opts.add_argument "--proxy-server=#{config.proxy}" if config.use_proxy?
 
-      puts "  %s" % user_agent
-      opts.add_argument "--user-agent=#{user_agent}"
+      puts "  %s" % @user_agent
+      opts.add_argument "--user-agent=#{@user_agent}"
       opts
     end
 

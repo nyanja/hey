@@ -44,19 +44,22 @@ module Bot
       def method_missing method, *_args
         method = method.to_s
         return @config[method] if @config[method]
+
         key = VALUES.find { |v| @config.key?("#{method}_#{v}") }
         return nil unless key
+
         send("#{key}_value", method)
       end
 
       def range_value method
         value = "#{method}_range"
-        rand Range.new(*(@config[value] || DEFAULTS[value.to_sym]))
+        rand Range.new(*@config[value])
       end
 
       def patterns_value method
         p = @config["#{method}_patterns"]
         return nil unless p
+
         Regexp.new(p.join("|"), "i")
       end
 
@@ -71,6 +74,27 @@ module Bot
       def scroll_speed target = nil
         speed = target ? scroll_speed_target : @config["scroll_speed"]
         speed > 100 ? 100 : speed
+      end
+
+      # TODO: relocate in class variable when will implement results
+      def pseudo
+        @pseudo ||= assign_pseudo
+      end
+
+      def solo_pseudo
+        @solo_pseudo ||= assign_pseudo true
+      end
+
+      def assign_pseudo solo = false
+        pseudo = if solo
+                   config.sole_pseudo_targets || config.pseudo_targets
+                 else
+                   config.pseudo_targets
+                 end
+        # массив с разбросом возможных позиций псевдо
+        (pseudo || []).map do |v|
+          config.results_limit ? [v, config.results_limit].min : v
+        end
       end
     end
   end
