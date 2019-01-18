@@ -43,7 +43,7 @@ module Bot
         @links.each do |link|
           core.driver = Bot::Driver.new core, user_agent: @user_agent
           # REPLACE
-          Scenarios.single link
+          perform_single_visit link
         rescue StandardError
           nil
         ensure

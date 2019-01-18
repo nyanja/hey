@@ -197,6 +197,17 @@ module Bot
       rescue StandardError
         nil
       end
+
+      def domain result = @result
+        result.find_element(css: ".organic__subtitle .link b, " \
+                                 ".organic__subtitle .link, " \
+                                 ".serp-title_type_subtitle .link").text
+      rescue Selenium::WebDriver::Error::NoSuchElementError => e
+        # binding.pry
+        log :error, "Нетипичная ссылка #{self.class}"
+        puts e.backtrace
+        "unknow"
+      end
     end
   end
 end

@@ -3,10 +3,12 @@
 module Bot
   class Core
     attr_accessor :config, :driver
+    attr_reader :query
 
     include Helpers::Wait
     include Helpers::ExceptionHandler
     include Helpers::Logger
+    include Helpers::Queries
     include Actions
 
     def initialize path_to_config
@@ -19,7 +21,7 @@ module Bot
         config.queries.each do |query|
           refresh_ip
           wait_for_connection
-          perform_scenario query
+          prepare_for_scenario query
         rescue Interrupt
           puts "\nВыход..."
           exit
@@ -46,7 +48,7 @@ module Bot
       retry
     end
 
-    def perform_scenario query
+    def prepare_for_scenario query
       @query = query
       @driver = Driver.new self
       initialize_ip_check_thread
@@ -74,8 +76,8 @@ module Bot
       return manual_mode if config.mode == 3
 
       log(:query, @query, "[#{driver.device}]")
-      run = Bot::Runner.new self, @query
-      config.mode == 2 ? run.lite_scenario : run.default_scenario
+      # run = Bot::Runner.new self, @query
+      config.mode == 2 ? lite_scenario : select_scenario
     end
 
     def manual_mode
@@ -85,6 +87,10 @@ module Bot
         sleep 1
       end
       raise Interrupt # no need in custom error... for now...
+    end
+
+    def core
+      self
     end
   end
 end

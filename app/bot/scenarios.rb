@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
+# requires core and query methods to be available
 module Bot
   module Scenarios
-    def custom query
+    def select_scenario
       case query
       when %r{^https?:\/\/}
-        single query
+        Behaviors.perform_single_visit(core, link)
         wait(:query_delay)
         return
       when %r{\/}
-        right_clicks query
+        right_clicks_scenario
         wait(:query_delay)
         return
       end
@@ -17,29 +18,19 @@ module Bot
       return if query_delayed? ||
                 query_limited?
 
-      default
+      default_scenario
     end
 
-    # using query_delayed?, search, parse_results, search_results,
-    # +lite_process_query, +visit
-    def lite query
-      Lite.new(query)
+    def lite_scenario
+      Lite.new(core, query)
     end
 
-    # using: search, search_results, Scenarios.single, wait
-    def right_clicks query
-      RightClick.new(driver, query)
+    def right_clicks_scenario
+      RightClick.new(core, query)
     end
 
-    # using: search, parse_results, process_query
-    def default query
-      Default.new(driver, query)
-    end
-
-    # should separate it from base? It looks very independent.
-    # And called inside scenarios
-    def single link
-      Single.new(driver, link)
+    def default_scenario
+      Default.new(core, query)
     end
   end
 end

@@ -3,16 +3,20 @@
 module Bot
   module Scenarios
     class Base
-      attr_reader :driver, :query, :config
+      attr_reader :core, :query
+
+      extend Forwardable
+      def_delegator :core, :config, :driver
 
       include Helpers::Results
       include Helpers::Logger
       include Helpers::Wait
       include Helpers::Queries
 
-      def initialize driver, query
-        @driver = driver
-        @config = driver.config
+      include Behaviors
+
+      def initialize core, query
+        @core = core
         @query = query
       end
 
@@ -61,63 +65,21 @@ module Bot
         puts e.backtrace
       ensure
         driver&.close_tab
-        output_spent_time
       end
 
-      def additional_visits
-        return if config.additional_visits&.empty?
-
-        config.additional_visits.each do |link|
-          Scenarios.single link
-        end
-      end
-
-      def visit result, delay = nil, css = nil
-        # REPLACE
-        driver.scroll_to [(result.location.y - rand(140..300)), 0].max
-        sleep 1
-        visit_click(result, css)
-        wait delay if delay&.positive? # why this check not in wait???
-        driver.switch_tab 1
-      rescue Selenium::WebDriver::Error::TimeOutError
-        puts "stop"
-        nil
-      end
-
-      def visit_click result, css
-        check_time
-        # REPLACE
-        driver.click(query:
-                       { css: (css || ".organic__url, .organic__link, a") },
-                     element: result)
-      rescue Selenium::WebDriver::Error::NoSuchElementError
-        puts "element not found"
-      end
-
-      def check_time
-        @t = Time.now
-      end
-
-      def output_spent_time
-        return unless @t
-
-        log :info, "Время: #{Time.now - @t}\n"
-        @t = nil
-      end
-
-      def scroll _is_target = nil
-        # scroll_amount = is_target ? config.scroll_amount_target : config.scroll_amount
-        # amount = if config.scroll_threshold &.< driver.scroll_height
-        #            scroll_amount * config.scroll_multiplier
-        #          else
-        #            scroll_amount
-        #          end
-        # driver.scroll_by amount, is_target
-        print "."
-        # sleep is_target ? config.scroll_delay_target : config.scroll_delay
-      rescue Selenium::WebDriver::Error::TimeOutError
-        print "x"
-      end
+      # def scroll _is_target = nil
+      #   scroll_amount = is_target ? config.scroll_amount_target : config.scroll_amount
+      #   amount = if config.scroll_threshold &.< driver.scroll_height
+      #              scroll_amount * config.scroll_multiplier
+      #            else
+      #              scroll_amount
+      #            end
+      #   driver.scroll_by amount, is_target
+      #   print "."
+      #   sleep is_target ? config.scroll_delay_target : config.scroll_delay
+      # rescue Selenium::WebDriver::Error::TimeOutError
+      #   print "x"
+      # end
     end
   end
 end

@@ -7,7 +7,7 @@ module Bot
         return if query_delayed?
 
         search
-        parse_results(search_results) && process_results
+        parse_results && process_results
         driver.quit
         wait(:query_delay)
       rescue Selenium::WebDriver::Error::NoSuchElementError => e
@@ -18,16 +18,10 @@ module Bot
     end
 
     def process_results
-      @verified_results.each do |(r, status, info)|
-        unless status
-          log :skip, domain(r)
-          next
-        end
-        log(:visit, "##{info} #{domain(r)}", "[#{driver&.device}]")
-        visit r
+      @verified_results.each do |result, status, info|
+        apply_lite_behavior(result, status, info)
       ensure
         driver&.close_tab
-        output_spent_time
       end
     end
   end

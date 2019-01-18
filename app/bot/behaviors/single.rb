@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
 module Bot
-  module Scenarios
-    class Single
+  module Behaviors
+    class Single < Base
+      def initialize core, link
+        @core = core
+        @link = link
+      end
+
       def perform
         assign_scroll_percent
         initialize_thread
@@ -13,6 +18,7 @@ module Bot
         wait 10 # config for this wait?
         driver.js "window.stop()"
         print "  "
+        # REPLACE
         # scroll while (driver.scroll_height * 0.01 * scroll_percent) > driver.y_offset
         puts
       rescue Interrupt
@@ -39,7 +45,7 @@ module Bot
       # To controll page download time - it'll stop after 10s
       def initialize_thread
         @thread = Thread.new do
-          driver.navigate.to(link)
+          driver.navigate.to(@query)
         # rescue Interrupt # _rubocop:disable Layout/RescueEnsureAlignment
         # exit
         rescue StandardError # rubocop:disable Layout/RescueEnsureAlignment
