@@ -6,10 +6,9 @@ module Bot
     attr_reader :query
 
     include Helpers::Wait
-    include Helpers::ExceptionHandler
     include Helpers::Logger
-    include Helpers::Queries
-    include Actions
+    include Helpers::ExceptionHandler
+    include Scenarios
 
     def initialize path_to_config
       @config = Helpers::Config.new(path_to_config)

@@ -4,7 +4,7 @@ module Bot
   module Behaviors
     class Lite
       def perform index
-        unless status
+        unless @visit_type
           log :skip, domain(@result)
           next
         end

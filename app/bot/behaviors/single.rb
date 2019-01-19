@@ -10,7 +10,7 @@ module Bot
 
       def perform
         assign_scroll_percent
-        initialize_thread
+        navigate_inside_thread
 
         wait :pre_delay_link
         return kill_thread if @scroll_percent.nil? || @scroll_percent.zero?
@@ -43,7 +43,7 @@ module Bot
       end
 
       # To controll page download time - it'll stop after 10s
-      def initialize_thread
+      def navigate_inside_thread
         @thread = Thread.new do
           driver.navigate.to(@query)
         # rescue Interrupt # _rubocop:disable Layout/RescueEnsureAlignment

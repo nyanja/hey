@@ -1,15 +1,20 @@
 # frozen_string_literal: true
 
+# Модуль предназначенный для парсинга результатов поиска и их "представлении"
+# Предстоит разделить на объекты. Будет круто сделать `Query` объект
+# Query будет хранить в себе результаты и данные относящиеся к этому запросу.
+# Результаты будут представлены объектами `Target`, `Ignored`, `Rival`
+
 module Bot
   module Helpers
     module Results
+      # Парсит результаты поискового запроса
       def parse_results results = nil
         assign_variables(results)
         filter_results
         distribute_results
         assign_pseudo
 
-        # check where returns nil...
         return if try_to_defer_query
 
         build_result
@@ -65,7 +70,6 @@ module Bot
         @pseudo = real_index
       end
 
-      # Будет выполняться Пока не (нет цели на странице // цели в топе // mrgl)
       # не будет выполняться если нет цели на странице ИЛИ цели не в топе ИЛИ
       # первый мод И псевдо ниже игнорируемых О_о
       def try_to_defer_query
@@ -92,7 +96,7 @@ module Bot
             @verified_results << [result, status, @actual_index]
           end
         end
-        @verified_results += main # main results at the end
+        @verified_results += main # target results at the end
       end
 
       def next_pseudo # rubocop:disable Metrics/AbcSize

@@ -42,8 +42,7 @@ module Bot
       def perform_visits
         @links.each do |link|
           core.driver = Bot::Driver.new core, user_agent: @user_agent
-          # REPLACE
-          perform_single_visit link
+          perform_single_visit_behavior link
         rescue StandardError
           nil
         ensure

@@ -19,6 +19,8 @@ module Bot
         @visit_type = status
       end
 
+      private
+
       def unique_ip?
         return true unless config.unique_visit_ip?
 
@@ -38,6 +40,7 @@ module Bot
         sleep 1
         visit_click
         wait pre_delay if pre_delay&.positive? # why this check not in wait???
+        # what about depth visits for target and additional_visits for rival
         driver.switch_tab 1
       rescue Selenium::WebDriver::Error::TimeOutError
         puts "stop"
@@ -65,10 +68,6 @@ module Bot
         log :info, "Время: #{Time.now - @t}\n"
         @t = nil
       end
-
-      # def visit
-      # super(@result, pre_delay, link_css)
-      # end
 
       def link_css
         return ".organic__path .link:last-of-type" if last_path_link?

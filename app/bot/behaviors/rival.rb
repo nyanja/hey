@@ -33,7 +33,7 @@ module Bot
         return if config.additional_visits&.empty?
 
         config.additional_visits.each do |link|
-          Behaviors.perform_single_visit(core, link)
+          Behaviors.perform_single_visit_behavior(core, link)
         end
       end
 
