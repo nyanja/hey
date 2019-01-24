@@ -15,9 +15,18 @@ module Bot
         distribute_results
         assign_pseudo
 
+        puts "Target: #{@targets.join ', '}; Rivals: #{@rivals.join ', '}; Skip: #{@to_skip.join ', '}"
         return if try_to_defer_query
 
         build_result
+        # puts @verified_results
+        # binding.pry
+        # @verified_results
+      end
+
+      def assign_search_results results = nil
+        @search_results = results || driver.find_element(class: "serp-list")
+                                           .find_elements(class: "serp-item")
       end
 
       private
@@ -32,19 +41,14 @@ module Bot
         @rivals = []
       end
 
-      def assign_search_results results
-        @search_results = results || driver.find_element(class: "serp-list")
-                                           .find_elements(class: "serp-item")
-      end
-
       def filter_results
-        @search_results.select! { |r| !skip_result?(r) && !invalid?(r) }
-        @search_results = search_results.take(config.results_limit ||
-                                              results.size)
+        @search_results.select! { |r| !skip_result?(r) && result_is_valid?(r) }
+        @search_results = @search_results.take(config.results_limit ||
+                                               results.size)
       end
 
       def distribute_results
-        search_results.each_with_index do |result, i|
+        @search_results.each_with_index do |result, i|
           if to_skip?(result)
             @to_skip << i
           elsif target?(result)
@@ -60,7 +64,8 @@ module Bot
       # псевдо кешируется и на следующем запросе будет следующий индекс
       def assign_pseudo previous_iteration = nil
         next_index = next_pseudo
-        return if previous_iteration == next_index # when it can be?
+        return if !next_index ||
+                  previous_iteration == next_index # when it can be?
 
         # в конфигах последовательность с рассчетом начала от 1
         real_index = (next_index + @targets.max.to_i || 1) - 1
@@ -107,6 +112,8 @@ module Bot
           pseudos = config.pseudo
           key = "spsdk"
         end
+        return unless pseudos
+
         cached = Storage.get(key).to_i
         index = if cached >= pseudos.max || cached <= pseudos.min
                   pseudos.min
@@ -168,10 +175,10 @@ module Bot
         true
       end
 
-      def determine_status
+      def assign_status
         result_is_target? ||
           result_is_pseudo? ||
-          (config.mode == 1 && result_is_rival?(result)) ||
+          (config.mode == 1 && result_is_rival?) ||
           (config.mode == 1 && result_is_skip?)
       end
 
@@ -194,12 +201,12 @@ module Bot
         end
       end
 
-      def result_is_invalid? result
+      def result_is_valid? result
         # ignore yandex turbo pages
         result.find_element(class: "overlay_js_intend")
-        true
+        false
       rescue StandardError
-        nil
+        true
       end
 
       def domain result = @result

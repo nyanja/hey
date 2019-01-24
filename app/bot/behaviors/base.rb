@@ -11,7 +11,7 @@ module Bot
       include Helpers::Results # temporary... will hope=)
 
       extend Forwardable
-      def_delegator :core, :config, :driver
+      def_delegators :core, :config, :driver
 
       def initialize core, result, status
         @core = core
@@ -35,11 +35,10 @@ module Bot
       end
 
       def visit
-        # REPLACE
-        # driver.scroll_to [(result.location.y - rand(140..300)), 0].max
+        driver.scroll_to element: @result, behavior: behavior_name
         sleep 1
         visit_click
-        wait pre_delay if pre_delay&.positive? # why this check not in wait???
+        wait behavior_config(:pre_delay)
         # what about depth visits for target and additional_visits for rival
         driver.switch_tab 1
       rescue Selenium::WebDriver::Error::TimeOutError
@@ -51,9 +50,9 @@ module Bot
 
       def visit_click
         check_time
-        # REPLACE
-        # driver.click(query: { css: link_css },
-        #              element: @result)
+        driver.click(query: { css: link_css },
+                     element: @result,
+                     behavior: behavior_name)
       rescue Selenium::WebDriver::Error::NoSuchElementError
         puts "element not found"
       end
@@ -70,7 +69,9 @@ module Bot
       end
 
       def link_css
-        return ".organic__path .link:last-of-type" if last_path_link?
+        if nehavior_config(:last_path_link)
+          return ".organic__path .link:last-of-type"
+        end
 
         ".organic__url, .organic__link, a"
       end
@@ -80,7 +81,25 @@ module Bot
       end
 
       def rest_of_visit!
-        @rest_of_visit = (@start_time + min_visit) - Time.now.to_i
+        @rest_of_visit = (@start_time + behavior_config(:min_visit)) -
+                         Time.now.to_i
+      end
+
+      def scroll_percent
+        @scroll_percent ||= behavior_config(:scroll_height)
+      end
+
+      def behavior_config name, behavior = behavior_name
+        config.send("#{behavior}_#{name}")
+      end
+
+      def behavior_name
+        case @visit_type
+        when :pseudo, :main
+          :target
+        else
+          @visit_type
+        end
       end
     end
   end

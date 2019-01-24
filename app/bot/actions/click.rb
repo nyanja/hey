@@ -18,7 +18,7 @@ module Bot
       end
 
       def system?
-        config.system_click
+        behavior_config.system_click # config.system_click
       end
     end
   end

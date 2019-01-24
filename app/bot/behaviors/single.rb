@@ -6,20 +6,20 @@ module Bot
       def initialize core, link
         @core = core
         @link = link
+        @visit_type = :link
       end
 
-      def perform
+      def perform # rubocop:disable Metrics/AbcSize
         assign_scroll_percent
         navigate_inside_thread
 
         wait :pre_delay_link
-        return kill_thread if @scroll_percent.nil? || @scroll_percent.zero?
+        return kill_thread if scroll_percent.nil? || scroll_percent.zero?
 
         wait 10 # config for this wait?
         driver.js "window.stop()"
         print "  "
-        # REPLACE
-        # scroll while (driver.scroll_height * 0.01 * scroll_percent) > driver.y_offset
+        driver.scroll_to(percent: scroll_percent, behavior: behavior_name)
         puts
       rescue Interrupt
         kill_thread
@@ -29,23 +29,27 @@ module Bot
 
       private
 
+      def scroll_percent
+        @scroll_percent ||= behavior_config(:scroll_height) ||
+                            behavior_config(:scroll_height, :rival)
+      end
+
       def assign_scroll_percent
-        @scroll_percent = config.scroll_height_link ||
-                          config.scroll_height_non_target
-        log(:link, "прокрутка #{@scroll_percent}%")
+        log(:link, "Прокрутка #{scroll_percent}%")
         set_pre_delay
       end
 
       def set_pre_delay
-        return unless config.pre_delay_link.positive? && @scroll_percent.zero?
+        return unless behavior_config(:pre_delay).positive? &&
+                      scroll_percent.zero?
 
-        driver.manage.timeouts.page_load = config.pre_delay_link
+        driver.manage.timeouts.page_load = behavior_config(:pre_delay)
       end
 
       # To controll page download time - it'll stop after 10s
       def navigate_inside_thread
         @thread = Thread.new do
-          driver.navigate.to(@query)
+          driver.navigate.to(@link)
         # rescue Interrupt # _rubocop:disable Layout/RescueEnsureAlignment
         # exit
         rescue StandardError # rubocop:disable Layout/RescueEnsureAlignment

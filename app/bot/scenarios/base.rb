@@ -6,12 +6,13 @@ module Bot
       attr_reader :core, :query
 
       extend Forwardable
-      def_delegator :core, :config, :driver
+      def_delegators :core, :config, :driver
 
       include Helpers::Results
       include Helpers::Logger
       include Helpers::Wait
       include Helpers::Queries
+      include Helpers::Sites
 
       include Behaviors
 

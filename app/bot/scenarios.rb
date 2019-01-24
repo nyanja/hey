@@ -35,20 +35,20 @@ module Bot
 
     # Поисковый запрос -> парсинг результатов -> lite_behavior
     def lite_scenario
-      Lite.new(core, query)
+      Lite.new(core, query).perform
     end
 
     # Поисковый запрос -> поиск нужного результата по регекспу ->
     # сбор ссылок -> single_visit_behavior for each link
     def right_clicks_scenario
-      RightClick.new(core, query)
+      RightClick.new(core, query).perform
     end
 
     # Поисковый запрос -> парсинг результатов ->
     # применение различного `_behavior` для результатов
     # в зависимости от конфигов
     def default_scenario
-      Default.new(core, query)
+      Default.new(core, query).perform
     end
   end
 end

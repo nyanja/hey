@@ -23,7 +23,7 @@ module Bot
           @page_y = @options[:y]
         elsif element
           element_coordinates
-        elsif @options[:percent] # or config.scroll_percents ?
+        elsif @options[:percent]
           percent_coordinates
         else
           raise Errors::MissingAttribute, "There is no coordinates"
@@ -39,6 +39,9 @@ module Bot
       end
 
       def percent_coordinates
+        if @options[:percent].is_a?(TrueClass)
+          @options[:percent] = behavior_config(:scroll_height)
+        end
         @page_y = driver.page_height * @options[:percent] / 100
         @page_x = driver.page_width / 2
       end

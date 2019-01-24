@@ -14,7 +14,7 @@ module Bot
       private
 
       def system_action
-        config.random_moving_iterations.times do
+        behavior_config(:random_moving_iterations)&.times do
           `xdotool mousemove_relative --sync -- #{@x} #{@y}`
         end
       end
@@ -24,8 +24,8 @@ module Bot
       end
 
       def assign_coordinates
-        @x = config.random_move_by_x
-        @y = config.random_move_by_y
+        @x = behavior_config(:random_move_by_x)
+        @y = behavior_config(:random_move_by_y)
 
         assign_system_position
         swap_limits
@@ -36,20 +36,20 @@ module Bot
       def swap_limits
         if system_position_x < driver.screen_width / 3 && @x.negative? ||
            system_position_x > (driver.screen_width / 3) * 2 && @x.positive?
-          puts "Swapping X #{@x}, position: #{system_position_x}, " \
-               "size: #{driver.screen_width / 3}"
+          # puts "Swapping X #{@x}, position: #{system_position_x}, " \
+          # "size: #{driver.screen_width / 3}"
           @x *= -1
         end
         if system_position_y < driver.screen_height / 3 && @y.negative? ||
            system_position_y > (driver.screen_height / 3) * 2 && @y.positive?
-          puts "Swapping Y #{@y}, position: #{system_position_y}, " \
-               "size: #{driver.screen_height / 3}"
+          # puts "Swapping Y #{@y}, position: #{system_position_y}, " \
+          # "size: #{driver.screen_height / 3}"
           @y *= -1
         end
       end
 
       def system?
-        config.random_mouse_move
+        behavior_config(:random_mouse_move)
       end
     end
   end

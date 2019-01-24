@@ -15,7 +15,5 @@ module Bot
     include Helpers::Results
 
     # include Scenarios::Single
-
-    
   end
 end

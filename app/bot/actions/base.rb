@@ -23,8 +23,20 @@ module Bot
         selenium_action(*args)
       end
 
+      def behavior_config name
+        if @options[:behavior]
+          config.send "#{@options[:behavior]}_#{name}"
+        else
+          config.send name
+        end
+      end
+
       def system?
         config.system_actions
+      end
+
+      def target?
+        @options[:target]
       end
 
       def element

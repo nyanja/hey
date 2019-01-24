@@ -10,6 +10,7 @@ module Bot
       attr_reader :config
 
       VALUES = %w[range patterns sample chance].freeze
+      BEHAVIORS = /search|rival|target|link/.freeze
       DEFAULTS = { query_skip_on_position: 0,
                    result_delay: 2,
                    check_ip_delay: BIG_WAIT,
@@ -38,11 +39,21 @@ module Bot
       end
 
       def respond_to_missing?
-        true
+        false
       end
 
       def method_missing method, *_args
         method = method.to_s
+        return behavior_value(method) if method.match?(BEHAVIORS)
+
+        fetch_value(method)
+      end
+
+      def behavior_value method
+        fetch_value(method) || fetch_value(method.sub(/[^_]+_/, ""))
+      end
+
+      def fetch_value method
         return @config[method] if @config[method]
 
         key = VALUES.find { |v| @config.key?("#{method}_#{v}") }
@@ -69,11 +80,6 @@ module Bot
 
       def chance_value method
         @config["#{method}_chance"] > rand(0..100)
-      end
-
-      def scroll_speed target = nil
-        speed = target ? scroll_speed_target : @config["scroll_speed"]
-        speed > 100 ? 100 : speed
       end
 
       # TODO: relocate in class variable when will implement results

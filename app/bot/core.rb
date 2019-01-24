@@ -77,6 +77,9 @@ module Bot
       log(:query, @query, "[#{driver.device}]")
       # run = Bot::Runner.new self, @query
       config.mode == 2 ? lite_scenario : select_scenario
+    rescue StandardError => e # TODO: Remove
+      binding.pry
+      exit
     end
 
     def manual_mode

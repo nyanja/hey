@@ -6,7 +6,7 @@ module Bot
       def perform index
         unless @visit_type
           log :skip, domain(@result)
-          next
+          return
         end
         log(:visit, "##{index + 1} #{domain(@result)}", "[#{driver&.device}]")
         visit

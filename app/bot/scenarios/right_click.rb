@@ -12,6 +12,7 @@ module Bot
 
       def perform
         search
+        assign_search_results
         search_result
         return log(:error, "Нет подходящего сайта") unless @result
 
@@ -28,7 +29,7 @@ module Bot
       private
 
       def search_result
-        @result = search_results.find { |r| r.text.match?(Regexp.new(@site)) }
+        @result = @search_results.find { |r| r.text.match?(Regexp.new(@site)) }
       end
 
       def collect_links
