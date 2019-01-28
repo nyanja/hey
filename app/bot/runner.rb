@@ -25,6 +25,7 @@ module Bot
 
       @non_pseudos = []
       @targets = []
+      @target_domains = []
       @rivals = []
     end
 
@@ -98,7 +99,7 @@ module Bot
 
         break if no_more_targets_below?
 
-        status = target? ||
+        status = target?(result) ||
                  pseudo? ||
                  (config.mode == 1 && rival?(result)) ||
                  (config.mode == 1 && skip?)
@@ -160,8 +161,11 @@ module Bot
       true
     end
 
-    def target?
+    def target?(result)
       return unless @targets.include? @actual_index
+      d = domain(result)
+      return :skip if @target_domains.include? d
+      @target_domains << d
       :main
     end
 
