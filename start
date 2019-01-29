@@ -1,5 +1,17 @@
 #!/bin/bash
 
+if [ -z $Developer ]
+then
+   if [ -n "$1" ] # checks if any arg passed
+   then
+       branch=$1
+   else
+       branch='master'
+   fi
 
-git pull
+   git fetch origin
+   git checkout $branch
+   git pull origin $branch
+fi
+
 ruby start.rb
