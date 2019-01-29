@@ -21,7 +21,7 @@ module Bot
         build_result
         # puts @verified_results
         # binding.pry
-        # @verified_results
+        @verified_results
       end
 
       def assign_search_results results = nil
@@ -160,7 +160,7 @@ module Bot
       end
 
       def non_target? result
-        config.non_target && result.text.match?(config.non_target)
+        config.rival && result.text.match?(config.rival)
       end
 
       def to_skip? result
@@ -213,10 +213,8 @@ module Bot
         result.find_element(css: ".organic__subtitle .link b, " \
                                  ".organic__subtitle .link, " \
                                  ".serp-title_type_subtitle .link").text
-      rescue Selenium::WebDriver::Error::NoSuchElementError => e
-        # binding.pry
+      rescue Selenium::WebDriver::Error::NoSuchElementError
         log :error, "Нетипичная ссылка #{self.class}"
-        puts e.backtrace
         "unknow"
       end
     end

@@ -48,8 +48,8 @@ module Bot
           (@options[:element] || driver).find_element(@options[:query])
         elsif @options[:element]
           @options[:element]
-        else
-          raise Errors::NotFound, "Element was not found"
+          # else
+          # raise Errors::NotFound, "Element was not found"
         end
       end
     end

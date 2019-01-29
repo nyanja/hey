@@ -8,9 +8,10 @@ module Bot
       def query_limited?
         c = config.query_skip_on_limit
         return if c.nil? || c.zero? || Bot::Storage.get("qc//#{query}").to_i < c
+
         Bot::Storage.set("delay//#{query}",
                          Time.now.to_i +
-                           config.query_skip_on_limit_interval * 60)
+                         config.query_skip_on_limit_interval * 60)
         Bot::Storage.del("qc//#{query}")
         log :skip, "Продвижение неэффективно. Отложим до лучших времен..."
         driver.quit
@@ -21,7 +22,7 @@ module Bot
       def query_delayed?
         t = Bot::Storage.get("delay//#{query}") ||
             Bot::Storage.get("delay//#{query} #{driver.device}")
-        if t && t.to_i > Time.now.to_i
+        if t && t.to_i > Time.now.to_i && config.query_skip_on_limit
           tt = (t.to_i - Time.now.to_i) / 60
           log :skip, "Запрос отложен. Осталось #{tt} мин."
           driver.quit

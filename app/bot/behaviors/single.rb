@@ -3,9 +3,10 @@
 module Bot
   module Behaviors
     class Single < Base
-      def initialize core, link
+      def initialize core, link, options = {}
         @core = core
         @link = link
+        @options = options
         @visit_type = :link
       end
 
@@ -13,7 +14,7 @@ module Bot
         assign_scroll_percent
         navigate_inside_thread
 
-        wait :pre_delay_link
+        wait :link_pre_delay
         return kill_thread if scroll_percent.nil? || scroll_percent.zero?
 
         wait 10 # config for this wait?
@@ -23,8 +24,10 @@ module Bot
         puts
       rescue Interrupt
         kill_thread
+      # rescue StandardError => e
+      # binding.pry
       ensure
-        driver.quit
+        driver.quit if @options[:single_visit]
       end
 
       private
@@ -50,8 +53,8 @@ module Bot
       def navigate_inside_thread
         @thread = Thread.new do
           driver.navigate.to(@link)
-        # rescue Interrupt # _rubocop:disable Layout/RescueEnsureAlignment
-        # exit
+          # rescue Interrupt # _rubocop:disable Layout/RescueEnsureAlignment
+          # exit
         rescue StandardError # rubocop:disable Layout/RescueEnsureAlignment
           nil
         end

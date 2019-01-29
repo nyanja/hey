@@ -24,8 +24,8 @@ module Bot
                    random_moving_iterations_range: [1, 10],
                    random_move_by_x_range: [-5, 5],
                    random_move_by_y_range: [-5, 5],
-                   system_mouse_move_range: [3, 5],
-                   system_mouse_move_delay_range: [0.008, 0.012] }.freeze
+                   mouse_move_range: [3, 5],
+                   mouse_move_delay_range: [0.008, 0.012] }.freeze
 
       def initialize path_to_config
         @config = DEFAULTS.transform_keys(&:to_s)

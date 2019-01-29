@@ -82,29 +82,35 @@ module Bot
     end
 
     def y_offset
-      js("return window.pageYOffset") || 0
+      js("return window.pageYOffset")
     end
 
     def x_offset
-      js("window.pageXOffset") || 0
+      js("return window.pageXOffset")
     end
 
     def y_point
       y_offet + @screen_height / 2
     end
 
-    def y_vision? y
-      offset = y_offset
-      s_height = @screen_height / 2
-      y > offset + s_height - 150 && offset + s_height + 150 > y
+    def y_vision? y, opts = {}
+      offset = if opts[:percent]
+                 y_offset
+               else
+                 y_offset + @screen_height / 2
+               end
+      puts "Inside y_vision: y == #{y}, offset == #{offset}, opts == #{opts}"
+      y > offset && offset + 100 > y
     end
 
     def page_height
-      driver.find_element(:tag_name, "body").attribute("scrollHeight").to_i
+      wait_until { driver.find_element(:tag_name, "body") }
+        .attribute("scrollHeight").to_i
     end
 
     def page_width
-      driver.find_element(:tag_name, "body").attribute("scrollWidth").to_i
+      wait_until { driver.find_element(:tag_name, "body") }
+        .attribute("scrollWidth").to_i
     end
 
     # wtf? innerHeight == browser screen for site - without bars and so on.
@@ -144,7 +150,12 @@ module Bot
     end
 
     def inner_height
-      driver.find_element(:tag_name, "html").attribute("clientHeight").to_i
+      wait_until { driver.find_element(:tag_name, "html") }
+        .attribute("clientHeight").to_i
+    end
+
+    def wait_until time = 10
+      Selenium::WebDriver::Wait.new(timeout: time).until { yield }
     end
   end
 end

@@ -55,8 +55,9 @@ module Bot
       rescue Selenium::WebDriver::Error::NoSuchWindowError
         puts
         log :error, "Окно было закрыто"
-      rescue Selenium::WebDriver::Error::UnknownError
+      rescue Selenium::WebDriver::Error::UnknownError => e
         log :error, e.inspect
+        binding.pry
       rescue StandardError => e
         puts
         log :error, "Ошибка на странице результата", e.inspect

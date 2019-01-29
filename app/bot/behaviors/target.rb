@@ -2,13 +2,15 @@
 
 module Bot
   module Behaviors
-    class Target
+    class Target < Base
       def perform
+        binding.pry
         return if skip_target?
 
         assign_depth
 
         visit
+        view_page
         return unless @depth
 
         perform_depth_visits
@@ -35,7 +37,7 @@ module Bot
         return unless rest_of_visit!.positive?
 
         wait @rest_of_visit / 8
-        driver.scroll_to(percent: 1, behavior: behavior_name)
+        driver.scroll_to(percent: 0, behavior: behavior_name)
         wait @rest_of_visit if rest_of_visit!.positive?
       end
 

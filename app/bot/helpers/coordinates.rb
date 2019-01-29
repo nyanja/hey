@@ -59,7 +59,7 @@ module Bot
       end
 
       def y_vision? y = @page_y
-        driver.y_vision? y
+        driver.y_vision? y, percent: @options[:percent]
       end
     end
   end

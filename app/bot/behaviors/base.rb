@@ -35,8 +35,8 @@ module Bot
       end
 
       def visit
-        driver.scroll_to element: @result, behavior: behavior_name
-        sleep 1
+        # driver.scroll_to element: @result, behavior: :search
+        # sleep 1
         visit_click
         wait behavior_config(:pre_delay)
         # what about depth visits for target and additional_visits for rival
@@ -52,7 +52,7 @@ module Bot
         check_time
         driver.click(query: { css: link_css },
                      element: @result,
-                     behavior: behavior_name)
+                     behavior: :search)
       rescue Selenium::WebDriver::Error::NoSuchElementError
         puts "element not found"
       end
@@ -69,7 +69,7 @@ module Bot
       end
 
       def link_css
-        if nehavior_config(:last_path_link)
+        if behavior_config(:last_path_link)
           return ".organic__path .link:last-of-type"
         end
 

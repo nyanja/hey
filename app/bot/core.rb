@@ -83,6 +83,7 @@ module Bot
     end
 
     def manual_mode
+      binding.pry
       loop do
         break unless @driver.window_handles.count >= 1
 
