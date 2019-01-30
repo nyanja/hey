@@ -8,46 +8,33 @@ module Bot
         assign_scroll_speed
 
         action
+      rescue Errors::ScrollLoop
+        nil
       end
 
       private
 
-      # scroll_percent = scroll_height_link || scroll_height_non_target
-      # depending on target or no there is some configs:
-      # scroll_amount_target : scroll_amount
-      # scroll_threashold & < scroll_height => amount * scroll_multiplier
-      # scroll_delay_target : scroll_delay
-
       def system_action
-        loop do
-          break if driver.y_vision?(@page_y)
+        until y_vision?
+          command = "xdotool click #{click_button}"
 
-          system("xdotool click --repeat #{@speed} " \
-                 "--delay #{@delay} #{click_button}")
-          driver.random_mouse_move
+          puts "System scroll: `#{command}`"
+          @speed.to_i.times { system(command) }
+          driver.random_mouse_move(behavior: @options[:behavior])
+          sleep delay
         end
       end
 
       def selenium_action
         @offset = driver.y_offset
-        puts "............................"
-        puts "Scroll. Offset == #{@offset}, Speed == #{@speed}, Y == #{@page_y}"
-        puts "............................"
         (@offset / @speed).to_i.send((@offset > @page_y ? :downto : :upto),
                                      iterations) do |iteration|
-          # break if y_vision?
-          if y_vision?
-            puts "Stop scrolling because of vision. Iteration #{iteration} " \
-                 "of #{iterations}"
-            break
-          end
+          break if y_vision?
 
-          puts "    Scrolling to y == #{iteration * @speed}, offset: #{driver.y_offset}"
           driver.js "window.scroll({left: 0, top: #{iteration * @speed}, " \
                                    "behavior: 'smooth'})"
-          sleep delay || 0.1
+          sleep delay
         end
-        puts "Scroll finished y == #{@page_y}, offset: #{driver.y_offset} ............................."
       end
 
       def iterations
@@ -61,7 +48,14 @@ module Bot
       end
 
       def click_button
-        @offset < @page_y ? 5 : 4
+        click_button = driver.y_offset < @page_y ? 5 : 4
+        return @click_button = click_button unless @click_button
+
+        if click_button != @click_button
+          raise Errors::ScrollLoop if @speed <= 1
+          @speed /= 2
+        end
+        @click_button = click_button
       end
 
       def system?
@@ -69,25 +63,22 @@ module Bot
       end
 
       def assign_scroll_speed
-        if @options[:scroll_speed]
-          @speed = @options[:scroll_speed]
-          return
-        end
-
         @speed = behavior_config :scroll_speed
         check_speed_multiplier
         @speed = @speed > 150 ? 150 : @speed.to_i
       end
 
       def check_speed_multiplier
-        return unless behavior_config(:threshold) &&
-                      driver.page_height > behavior_config(:threshold).to_i
+        return unless behavior_config(:scroll_threshold) &&
+                      driver.page_height > behavior_config(:scroll_threshold).to_i
 
-        @speed *= if behavior_config(:multiplier)
-                    behavior_config(:multiplier).to_f
-                  else
-                    driver.page_height / behavior_config(:threshold).to_i
-                  end
+        multiplier = if behavior_config(:multiplier)
+                       behavior_config(:multiplier).to_f
+                     else
+                       driver.page_height / behavior_config(:scroll_threshold).to_i
+                     end
+        puts "Applying scroll multiplier: #{multiplier}, new speed: #{@speed * multiplier}"
+        @speed *= multiplier
       end
 
       def delay

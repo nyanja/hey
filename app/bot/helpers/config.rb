@@ -1,3 +1,4 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 require "yaml"
@@ -19,7 +20,9 @@ module Bot
                    pseudo_targets: [],
                    throttling_latency: 0,
                    throttling_trhoughput: 500,
+                   scroll_height: 0,
                    scroll_speed: 4,
+                   scroll_delay: 1,
                    results_limit: 100,
                    random_moving_iterations_range: [1, 10],
                    random_move_by_x_range: [-5, 5],

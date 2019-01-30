@@ -1,3 +1,4 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
@@ -55,7 +56,7 @@ module Bot
           driver.navigate.to(@link)
           # rescue Interrupt # _rubocop:disable Layout/RescueEnsureAlignment
           # exit
-        rescue StandardError # rubocop:disable Layout/RescueEnsureAlignment
+        rescue StandardError # _rubocop:disable Layout/RescueEnsureAlignment
           nil
         end
       end

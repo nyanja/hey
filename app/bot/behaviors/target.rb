@@ -1,10 +1,11 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
   module Behaviors
     class Target < Base
       def perform
-        binding.pry
+        # binding.pry
         return if skip_target?
 
         assign_depth

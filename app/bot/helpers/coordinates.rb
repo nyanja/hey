@@ -42,8 +42,17 @@ module Bot
         if @options[:percent].is_a?(TrueClass)
           @options[:percent] = behavior_config(:scroll_height)
         end
-        @page_y = driver.page_height * @options[:percent] / 100
+
+        @page_y = if @options[:percent] > page_footer_offset
+                    driver.page_height - driver.screen_height * 1.5
+                  else
+                    driver.page_height * @options[:percent] / 100
+                  end
         @page_x = driver.page_width / 2
+      end
+
+      def page_footer_offset
+        100 - driver.screen_height / (driver.page_height / 100)
       end
 
       def assign_system_position

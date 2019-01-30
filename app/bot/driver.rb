@@ -100,7 +100,7 @@ module Bot
                  y_offset + @screen_height / 2
                end
       puts "Inside y_vision: y == #{y}, offset == #{offset}, opts == #{opts}"
-      y > offset && offset + 100 > y
+      y > offset - 100 && offset + 100 > y
     end
 
     def page_height
@@ -122,9 +122,13 @@ module Bot
       switch_to.window(driver.window_handles[number])
     end
 
-    def close_tab
+    def close_tab second_call = nil
       driver.close if driver.window_handles.count > 1
       switch_tab 0
+    rescue IOError => e
+      raise e if second_call
+      sleep 1
+      close_tab true
     end
 
     # def click query, element = driver
