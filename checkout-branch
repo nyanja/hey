@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -n "$1" ] # checks if any arg passed
+then
+   branch=$1
+else
+   branch='master'
+fi
+
+git fetch origin
+git checkout $branch
+git pull origin $branch
