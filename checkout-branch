@@ -9,4 +9,6 @@ fi
 
 git fetch origin
 git checkout $branch
-git pull origin $branch
+git branch --set-upstream-to=gitlab/$branch
+
+git pull
