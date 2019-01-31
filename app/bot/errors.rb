@@ -6,5 +6,7 @@ module Bot
 
     class NotFound < CommonError; end
     class MissingAttribute < CommonError; end
+
+    class ScrollLoop < CommonError; end
   end
 end

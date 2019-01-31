@@ -14,11 +14,6 @@ module Bot
         wait(:min)
       end
 
-      def search_results
-        driver.find_element(class: "serp-list")
-              .find_elements(class: "serp-item")
-      end
-
       def some_link
         driver.find_element(class: config.nav_classes.sample)
               .find_elements(tag_name: :a).sample

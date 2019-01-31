@@ -12,7 +12,7 @@ module Bot
           break unless @y_iterations.positive? || @x_iterations.positive?
 
           `xdotool mousemove_relative --sync -- #{x_move} #{y_move}`
-          sleep config.system_mouse_move_delay
+          sleep behavior_config(:mouse_move_delay)
         end
         assign_system_position
 
@@ -21,14 +21,15 @@ module Bot
       end
 
       def selenium_action
-        driver.move_to(@options[:element]) if @options[:element]
+        driver.move_to(element)
       end
 
       def assign_coordinates
         super
 
         unless y_vision?
-          driver.scroll_to(x: @page_x, y: @page_y)
+          driver.scroll_to(x: @page_x, y: @page_y,
+                           behavior: @options[:behavior])
           sleep 0.5
         end
 
@@ -43,7 +44,7 @@ module Bot
       end
 
       def assign_iterations
-        step = config.system_mouse_move
+        step = behavior_config(:mouse_move)
         @y_iterations = (@offset_y / step).abs
         @x_iterations = (@offset_x / step).abs
 
@@ -66,7 +67,7 @@ module Bot
       end
 
       def system?
-        config.system_scroll
+        behavior_config(:system_scroll)
       end
     end
   end

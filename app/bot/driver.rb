@@ -7,7 +7,7 @@ require "./sort_ua.rb"
 module Bot
   class Driver
     attr_reader :driver, :core, :delay, :browser, :screen_height, :screen_width,
-                :bars_height
+                :bars_height, :user_agent
 
     extend Forwardable
     def_delegator :core, :config
@@ -37,13 +37,13 @@ module Bot
     end
 
     def driver_options opts
-      user_agent = opts[:user_agent] ||
-                   if config.use_real_ua?
-                     (config.mobile ? UA_MOBILE : UA_DESKTOP).sample
-                   else
-                     config.mobile ? config.mobile_ua : config.desktop_ua
-                   end
-      @browser = Browser.new(user_agent)
+      @user_agent = opts[:user_agent] ||
+                    if config.use_real_ua?
+                      (config.mobile ? UA_MOBILE : UA_DESKTOP).sample
+                    else
+                      config.mobile ? config.mobile_ua : config.desktop_ua
+                    end
+      @browser = Browser.new(@user_agent)
 
       # opts = Selenium::WebDriver::Firefox::Options.new
       # opts.add_preference "general.useragent.override", user_agent
@@ -56,8 +56,8 @@ module Bot
       # opts.add_argument "--proxy-server=185.14.6.134:8080"
       opts.add_argument "--proxy-server=#{config.proxy}" if config.use_proxy?
 
-      puts "  %s" % user_agent
-      opts.add_argument "--user-agent=#{user_agent}"
+      puts "  %s" % @user_agent
+      opts.add_argument "--user-agent=#{@user_agent}"
       opts
     end
 
@@ -82,29 +82,35 @@ module Bot
     end
 
     def y_offset
-      js("return window.pageYOffset") || 0
+      js("return window.pageYOffset")
     end
 
     def x_offset
-      js("window.pageXOffset") || 0
+      js("return window.pageXOffset")
     end
 
     def y_point
       y_offet + @screen_height / 2
     end
 
-    def y_vision? y
-      offset = y_offset
-      s_height = @screen_height / 2
-      y > offset + s_height - 150 && offset + s_height + 150 > y
+    def y_vision? y, opts = {}
+      offset = if opts[:percent]
+                 y_offset
+               else
+                 y_offset + @screen_height / 2
+               end
+      puts "Inside y_vision: y == #{y}, offset == #{offset}, opts == #{opts}"
+      y > offset - 100 && offset + 100 > y
     end
 
     def page_height
-      driver.find_element(:tag_name, "body").attribute("scrollHeight").to_i
+      wait_until { driver.find_element(:tag_name, "body") }
+        .attribute("scrollHeight").to_i
     end
 
     def page_width
-      driver.find_element(:tag_name, "body").attribute("scrollWidth").to_i
+      wait_until { driver.find_element(:tag_name, "body") }
+        .attribute("scrollWidth").to_i
     end
 
     # wtf? innerHeight == browser screen for site - without bars and so on.
@@ -116,9 +122,13 @@ module Bot
       switch_to.window(driver.window_handles[number])
     end
 
-    def close_tab
+    def close_tab second_call = nil
       driver.close if driver.window_handles.count > 1
       switch_tab 0
+    rescue IOError => e
+      raise e if second_call
+      sleep 1
+      close_tab true
     end
 
     # def click query, element = driver
@@ -144,7 +154,12 @@ module Bot
     end
 
     def inner_height
-      driver.find_element(:tag_name, "html").attribute("clientHeight").to_i
+      wait_until { driver.find_element(:tag_name, "html") }
+        .attribute("clientHeight").to_i
+    end
+
+    def wait_until time = 10
+      Selenium::WebDriver::Wait.new(timeout: time).until { yield }
     end
   end
 end

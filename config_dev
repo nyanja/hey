@@ -1,0 +1,4 @@
+#!/bin/bash
+
+git pull
+cp config_dev.yml config.yml

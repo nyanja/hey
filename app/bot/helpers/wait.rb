@@ -20,7 +20,8 @@ module Bot
                    else
                      time
                    end
-        return if interval.zero?
+        return unless interval&.positive?
+
         log :wait, interval
         sleep interval
       end
