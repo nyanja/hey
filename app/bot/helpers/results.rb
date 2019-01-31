@@ -39,6 +39,8 @@ module Bot
         @to_skip = []
         @targets = []
         @rivals = []
+
+        @target_domains = []
       end
 
       def filter_results
@@ -157,6 +159,11 @@ module Bot
 
       def target? result
         result.text.match?(config.target)
+        d = domain(result)
+        return if @target_domains.include? d
+
+        @target_domains << d
+        true
       end
 
       def non_target? result
@@ -210,11 +217,14 @@ module Bot
       end
 
       def domain result = @result
+        return result.domain unless result.respond_to? :find_element # for tests
+
         result.find_element(css: ".organic__subtitle .link b, " \
                                  ".organic__subtitle .link, " \
                                  ".serp-title_type_subtitle .link").text
-      rescue Selenium::WebDriver::Error::NoSuchElementError
-        log :error, "Нетипичная ссылка #{self.class}"
+      rescue Selenium::WebDriver::Error::NoSuchElementError => e
+        # binding.pry
+        log :error, "Нетипичная ссылка #{e.class}"
         "unknow"
       end
     end

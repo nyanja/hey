@@ -13,7 +13,5 @@ module Bot
     include Helpers::Sites
     include Helpers::Queries
     include Helpers::Results
-
-    # include Scenarios::Single
   end
 end

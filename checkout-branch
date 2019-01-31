@@ -7,6 +7,8 @@ else
    branch='master'
 fi
 
-git fetch origin
+git fetch gitlab
 git checkout $branch
-git pull origin $branch
+git branch --set-upstream-to=gitlab/$branch
+
+git pull
