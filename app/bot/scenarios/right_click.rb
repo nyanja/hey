@@ -16,7 +16,7 @@ module Bot
         search_result
         return log(:error, "Нет подходящего сайта") unless @result
 
-        driver.scroll_to element: @result
+        driver.scroll_to element: @result, behavior: :search
 
         collect_links
 
