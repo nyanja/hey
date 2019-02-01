@@ -25,8 +25,6 @@ module Bot
         puts
       rescue Interrupt
         kill_thread
-      # rescue StandardError => e
-      # binding.pry
       ensure
         driver.quit if @options[:single_visit]
       end

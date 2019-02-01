@@ -7,15 +7,12 @@ module Bot
         return unless unique_ip?
 
         log(:non_target, "прокрутка #{scroll_percent}%")
-        # binding.pry
         visit
         return if scroll_percent.nil? || scroll_percent.zero?
 
         view_page
 
         additional_visits if @visit_type == :rival
-        # rescue StandardError => e
-        # binding.pry
       end
 
       def view_page
@@ -24,7 +21,6 @@ module Bot
         # wait 10
         # driver.js "window.stop()"
         print "  "
-        # binding.pry
         driver.scroll_to(percent: scroll_percent, behavior: behavior_name)
         puts
         return unless rest_of_visit!.positive?

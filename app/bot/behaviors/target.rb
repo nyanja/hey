@@ -5,7 +5,6 @@ module Bot
   module Behaviors
     class Target < Base
       def perform
-        # binding.pry
         return if skip_target?
 
         assign_depth

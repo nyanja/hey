@@ -19,8 +19,6 @@ module Bot
         return if try_to_defer_query
 
         build_result
-        # puts @verified_results
-        # binding.pry
         @verified_results
       end
 
@@ -223,7 +221,6 @@ module Bot
                                  ".organic__subtitle .link, " \
                                  ".serp-title_type_subtitle .link").text
       rescue Selenium::WebDriver::Error::NoSuchElementError => e
-        # binding.pry
         log :error, "Нетипичная ссылка #{e.class}"
         "unknow"
       end

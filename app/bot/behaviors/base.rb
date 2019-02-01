@@ -35,7 +35,7 @@ module Bot
       end
 
       def visit
-        # driver.scroll_to element: @result, behavior: :search
+        # driver.scroll_to element: @result
         # sleep 1
         visit_click
         wait behavior_config(:pre_delay)
@@ -51,8 +51,7 @@ module Bot
       def visit_click
         check_time
         driver.click(query: { css: link_css },
-                     element: @result,
-                     behavior: :search)
+                     element: @result)
       rescue Selenium::WebDriver::Error::NoSuchElementError
         puts "element not found"
       end

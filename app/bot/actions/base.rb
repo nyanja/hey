@@ -24,11 +24,7 @@ module Bot
       end
 
       def behavior_config name
-        if @options[:behavior]
-          config.send "#{@options[:behavior]}_#{name}"
-        else
-          config.send name
-        end
+        config.send "#{@options[:behavior] || :search}_#{name}"
       end
 
       def system?

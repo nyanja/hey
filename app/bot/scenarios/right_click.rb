@@ -16,7 +16,7 @@ module Bot
         search_result
         return log(:error, "Нет подходящего сайта") unless @result
 
-        driver.scroll_to element: @result, behavior: :search
+        driver.scroll_to element: @result
 
         collect_links
 
@@ -33,6 +33,7 @@ module Bot
       end
 
       def collect_links
+        driver.mouse_move element: @result
         @amount.to_i.times do
           driver.action.context_click(@result.find_element(css: "a")).perform
           @links << @result.find_element(css: "a").attribute(:href)
