@@ -15,7 +15,6 @@ module Bot
         distribute_results
         assign_pseudo
 
-        puts "Target: #{@targets.join ', '}; Rivals: #{@rivals.join ', '}; Skip: #{@to_skip.join ', '}"
         return if try_to_defer_query
 
         build_result
@@ -106,16 +105,16 @@ module Bot
 
       def next_pseudo # rubocop:disable Metrics/AbcSize
         if @targets.empty?
-          pseudos = config.solo_pseudo
+          pseudos = config.solo_pseudo_targets
           key = "psdk"
         else
-          pseudos = config.pseudo
+          pseudos = config.pseudo_targets
           key = "spsdk"
         end
         return unless pseudos
 
         cached = Storage.get(key).to_i
-        index = if cached >= pseudos.max || cached <= pseudos.min
+        index = if cached >= pseudos.max || cached < pseudos.min
                   pseudos.min
                 else
                   cached + 1
@@ -156,12 +155,7 @@ module Bot
       end
 
       def target? result
-        result.text.match?(config.target)
-        d = domain(result)
-        return if @target_domains.include? d
-
-        @target_domains << d
-        true
+        config.target && result.text.match?(config.target)
       end
 
       def non_target? result
@@ -174,7 +168,7 @@ module Bot
 
       def skipped_below_pseudo?
         return unless config.query_skip_on_non_pseudos_below_pseudo? &&
-                      @pseudo && @pseudo > @to_skip.min.to_i
+                      @pseudo && !@to_skip.empty? && @pseudo > @to_skip.min.to_i
 
         log(:skip!, "Сайты к пропуску ниже доп. целевого")
         true
@@ -188,7 +182,14 @@ module Bot
       end
 
       def result_is_target?
-        :main if @targets.include? @actual_index
+        return unless @targets.include? @actual_index
+
+        result = @search_results[@actual_index]
+        d = domain(result)
+        return :skip if @target_domains.include? d
+
+        @target_domains << d
+        :main
       end
 
       def result_is_pseudo?
@@ -196,14 +197,12 @@ module Bot
       end
 
       def result_is_rival?
-        :rival if @rivals.include? @actual_index
+        :rival if @rivals.include?(@actual_index) ||
+                  !config.rival && @actual_index < config.results_count
       end
 
       def result_is_skip?
-        if @actual_index > config.results_count ||
-           (config.skip && !config.non_target)
-          :skip
-        end
+        :skip
       end
 
       def result_is_valid? result
