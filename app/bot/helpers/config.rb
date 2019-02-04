@@ -53,7 +53,10 @@ module Bot
       end
 
       def behavior_value method
-        fetch_value(method) || fetch_value(method.sub(/[^_]+_/, ""))
+        fetch_value(method) ||
+          (method.match(/^pseudo_/) &&
+           fetch_value(method.sub(/[^_]+/, "target"))) ||
+          fetch_value(method.sub(/[^_]+_/, ""))
       end
 
       def fetch_value method
@@ -83,27 +86,6 @@ module Bot
 
       def chance_value method
         @config["#{method}_chance"] > rand(0..100)
-      end
-
-      # TODO: relocate in class variable when will implement results
-      def pseudo
-        @pseudo ||= assign_pseudo
-      end
-
-      def solo_pseudo
-        @solo_pseudo ||= assign_pseudo true
-      end
-
-      def assign_pseudo solo = false
-        pseudo = if solo
-                   config.sole_pseudo_targets || config.pseudo_targets
-                 else
-                   config.pseudo_targets
-                 end
-        # массив с разбросом возможных позиций псевдо
-        (pseudo || []).map do |v|
-          config.results_limit ? [v, config.results_limit].min : v
-        end
       end
     end
   end

@@ -88,17 +88,8 @@ module Bot
         @scroll_percent ||= behavior_config(:scroll_height)
       end
 
-      def behavior_config name, behavior = behavior_name
+      def behavior_config name, behavior = @visit_type
         config.send("#{behavior}_#{name}")
-      end
-
-      def behavior_name
-        case @visit_type
-        when :pseudo, :main
-          :target
-        else
-          @visit_type
-        end
       end
     end
   end

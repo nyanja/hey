@@ -4,6 +4,7 @@ module Bot
   module Scenarios
     class Default < Base
       def perform
+        check_query_options
         search
         parse_results && process_query
         driver.quit
@@ -16,13 +17,22 @@ module Bot
 
       private
 
+      def check_query_options
+        match = query.match(/(.+) ~ ?(.+)/)
+        return unless match
+
+        @query = match[1]
+        @query_options = {}
+        match[2].scan(/(?=-?)\w+/).each { |k| @query_options[k.to_sym] = true }
+      end
+
       def process_query
         count_this_query
         @verified_results.each { |r| parse_result(*r) }
         :pass
       end
 
-      # element, [:skip, :rival, :pseudo, :main].sample, position_index
+      # element, [:skip, :rival, :pseudo, :target].sample, position_index
       def parse_result result, status, index
         log(:visit, "##{index + 1} #{domain(result)}", "[#{driver&.device}]")
 

@@ -86,7 +86,7 @@ module Bot
       end
 
       def build_result
-        main = []
+        target = []
 
         @search_results.each_with_index do |result, i|
           @actual_index = i
@@ -94,18 +94,18 @@ module Bot
           break if no_more_targets_below?
 
           status = assign_status
-          if status == :main
-            main << [result, status, @actual_index]
+          if status == :target
+            target << [result, status, @actual_index]
           else
             @verified_results << [result, status, @actual_index]
           end
         end
-        @verified_results += main # target results at the end
+        @verified_results += target # target results at the end
       end
 
       def next_pseudo # rubocop:disable Metrics/AbcSize
         if @targets.empty?
-          pseudos = config.solo_pseudo_targets
+          pseudos = config.sole_pseudo_targets
           key = "psdk"
         else
           pseudos = config.pseudo_targets
@@ -182,14 +182,15 @@ module Bot
       end
 
       def result_is_target?
-        return unless @targets.include? @actual_index
+        return unless @targets.include?(@actual_index)
 
         result = @search_results[@actual_index]
         d = domain(result)
-        return :skip if @target_domains.include? d
+        return :skip if @target_domains.include?(d) ||
+                        @query_options[:skip_target]
 
         @target_domains << d
-        :main
+        :target
       end
 
       def result_is_pseudo?
