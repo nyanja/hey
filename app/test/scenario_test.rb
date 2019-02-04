@@ -4,21 +4,6 @@ require "minitest/autorun"
 require "selenium-webdriver"
 require "pry"
 
-# require_relative "../bot/helpers/logger"
-# require_relative "../bot/helpers/wait"
-# require_relative "../bot/helpers/exception_handler"
-# require_relative "../bot/helpers/sites"
-# require_relative "../bot/storage"
-# require_relative "../bot/ip"
-#
-# require_relative "../bot/helpers/config"
-# require_relative "../bot/helpers/queries"
-# require_relative "../bot/helpers/results"
-# require_relative "../bot/scenarios/single"
-# require_relative "../bot/runner"
-# require_relative "../bot/driver"
-# require_relative "../bot/core"
-
 require_relative "../bot"
 
 class ScenarioTest < Minitest::Test
@@ -41,7 +26,7 @@ class ScenarioTest < Minitest::Test
   end
 
   # def test_handle_results
-    # puts @res.map(&:inspect)
+  # puts @res.map(&:inspect)
   # end
 
   def test_common

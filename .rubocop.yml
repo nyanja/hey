@@ -15,3 +15,7 @@ Style/MethodDefParentheses:
 
 # Style/FrozenStringLiteralComment:
   # EnforcedStyle: never
+
+# Enables Russian comments for difficult logic
+Style/AsciiComments:
+  Enabled: false
