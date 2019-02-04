@@ -2,6 +2,7 @@ module Bot
   module Actions
     class Base
       include Bot::Helpers::Coordinates
+      include Bot::Helpers::Wait
 
       attr_reader :driver, :config, :options
 

@@ -6,9 +6,13 @@ module Bot
       def perform
         return unless system?
 
-        assign_coordinates
+        Thread.new do
+          loop do
+            assign_coordinates
 
-        action
+            action
+          end
+        end
       end
 
       private
@@ -16,7 +20,11 @@ module Bot
       def system_action
         behavior_config(:random_moving_iterations)&.times do
           `xdotool mousemove_relative --sync -- #{@x} #{@y}`
+          wait(:random_moving_delay,
+               skip_logs: false, behavior: true)
         end
+        wait(:random_moving_delay_after_iterations,
+             skip_logs: true, behavior: true)
       end
 
       def selenium_action
@@ -30,7 +38,7 @@ module Bot
         assign_system_position
         swap_limits
 
-        puts "Random Mouse Move: {x: #{@x}, y: #{@y}}"
+        # puts "Random Mouse Move: {x: #{@x}, y: #{@y}}"
       end
 
       def swap_limits

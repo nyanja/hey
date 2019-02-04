@@ -14,15 +14,19 @@ module Bot
                     min: 1,
                     avg: 3 }.freeze
 
-      def wait time
+      def wait time, options = {}
         interval = if time.is_a?(Symbol)
-                     config.send(time) || INTERVALS.fetch(time, 0)
+                     if options[:behavior]
+                       behavior_config(time)
+                     else
+                       config.send(time) || INTERVALS.fetch(time, 0)
+                     end
                    else
                      time
                    end
         return unless interval&.positive?
 
-        log :wait, interval
+        log :wait, interval unless options[:skip_logs]
         sleep interval
       end
 

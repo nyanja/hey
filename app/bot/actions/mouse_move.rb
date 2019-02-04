@@ -21,7 +21,8 @@ module Bot
       end
 
       def selenium_action
-        driver.move_to(element)
+        # driver.move_to(element)
+        nil
       end
 
       def assign_coordinates

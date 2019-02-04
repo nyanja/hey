@@ -7,9 +7,12 @@ module Bot
         assign_coordinates
         assign_scroll_speed
 
+        @thread = driver.random_mouse_move(behavior: @options[:behavior])
         action
       rescue Errors::ScrollLoop
         nil
+      ensure
+        Thread.kill(@thread) if @thread
       end
 
       private
@@ -18,10 +21,10 @@ module Bot
         until y_vision?
           command = "xdotool click #{click_button}"
 
-          puts "System scroll: `#{command}`"
+          # puts "System scroll: `#{command}`"
           @speed.to_i.times { system(command) }
-          driver.random_mouse_move(behavior: @options[:behavior])
-          sleep delay
+          # driver.random_mouse_move(behavior: @options[:behavior])
+          delay
         end
       end
 
@@ -33,7 +36,7 @@ module Bot
 
           driver.js "window.scroll({left: 0, top: #{iteration * @speed}, " \
                                    "behavior: 'smooth'})"
-          sleep delay
+          delay
         end
       end
 
@@ -70,19 +73,26 @@ module Bot
 
       def check_speed_multiplier
         return unless behavior_config(:scroll_threshold) &&
-                      driver.page_height > behavior_config(:scroll_threshold).to_i
+                      driver.page_height >
+                      behavior_config(:scroll_threshold).to_i &&
+                      multiplier > 1
 
-        multiplier = if behavior_config(:multiplier)
-                       behavior_config(:multiplier).to_f
-                     else
-                       driver.page_height / behavior_config(:scroll_threshold).to_i
-                     end
-        puts "Applying scroll multiplier: #{multiplier}, new speed: #{@speed * multiplier}"
+        puts "Applying scroll multiplier: #{multiplier}, " \
+             "new speed: #{@speed * multiplier}"
         @speed *= multiplier
       end
 
+      def multiplier
+        @multiplier ||= if behavior_config(:multiplier)
+                          behavior_config(:multiplier).to_f
+                        else
+                          driver.page_height /
+                            behavior_config(:scroll_threshold).to_i
+                        end
+      end
+
       def delay
-        behavior_config :scroll_delay
+        wait(:scroll_delay, behavior: true, skip_logs: true)
       end
     end
   end

@@ -99,7 +99,7 @@ module Bot
                else
                  y_offset + @screen_height / 2
                end
-      puts "Inside y_vision: y == #{y}, offset == #{offset}, opts == #{opts}"
+      # puts "Inside y_vision: y == #{y}, offset == #{offset}, opts == #{opts}"
       y > offset - 100 && offset + 100 > y
     end
 

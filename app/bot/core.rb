@@ -75,7 +75,6 @@ module Bot
       return manual_mode if config.mode == 3
 
       log(:query, @query, "[#{driver.device}]")
-      # run = Bot::Runner.new self, @query
       config.mode == 2 ? lite_scenario : select_scenario
     end
 
