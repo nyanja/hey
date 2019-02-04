@@ -56,6 +56,7 @@ module Bot
       return if query_delayed? ||
                 query_limited?
 
+      assign_query_options
       search
       parse_results(search_results) && process_query
       driver.quit
@@ -64,6 +65,15 @@ module Bot
       log(:error, "Нетипичная страница поиска")
       puts e.inspect
       driver.quit
+    end
+
+    def assign_query_options
+      match = query.match(/(.+) ~ ?(.+)/)
+      return unless match
+
+      @query = match[1]
+      @query_options = {}
+      match[2].scan(/(?=-?)\w+/).each { |k| @query_options[k.to_sym] = true }
     end
 
     def parse_results results
@@ -164,7 +174,8 @@ module Bot
     def target?(result)
       return unless @targets.include? @actual_index
       d = domain(result)
-      return :skip if @target_domains.include? d
+      return :skip if @target_domains.include?(d) ||
+                      @query_options[:skip_target]
       @target_domains << d
       :main
     end
