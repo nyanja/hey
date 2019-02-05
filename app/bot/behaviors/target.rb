@@ -32,12 +32,12 @@ module Bot
         start_visit_time_counting
         wait 3
         print "  "
-        driver.scroll_to(percent: 99, behavior: behavior_name)
+        driver.scroll_to(percent: 99, behavior: @visit_type)
         puts
         return unless rest_of_visit!.positive?
 
         wait @rest_of_visit / 8
-        driver.scroll_to(percent: 0, behavior: behavior_name)
+        driver.scroll_to(percent: 0, behavior: @visit_type)
         wait @rest_of_visit if rest_of_visit!.positive?
       end
 
@@ -46,7 +46,7 @@ module Bot
         return unless link
 
         log(:link, link.text)
-        driver.click(element: link, behavior: behavior_name)
+        driver.click(element: link, behavior: @visit_type)
       end
 
       def skip_target?

@@ -1,3 +1,4 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
@@ -21,7 +22,7 @@ module Bot
         # wait 10
         # driver.js "window.stop()"
         print "  "
-        driver.scroll_to(percent: scroll_percent, behavior: behavior_name)
+        driver.scroll_to(percent: scroll_percent, behavior: @visit_type)
         puts
         return unless rest_of_visit!.positive?
 

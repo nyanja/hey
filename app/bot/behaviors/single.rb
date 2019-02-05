@@ -21,7 +21,7 @@ module Bot
         wait 10 # config for this wait?
         driver.js "window.stop()"
         print "  "
-        driver.scroll_to(percent: scroll_percent, behavior: behavior_name)
+        driver.scroll_to(percent: scroll_percent, behavior: @visit_type)
         puts
       rescue Interrupt
         kill_thread
