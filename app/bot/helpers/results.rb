@@ -105,7 +105,7 @@ module Bot
 
       def next_pseudo # rubocop:disable Metrics/AbcSize
         if @targets.empty?
-          pseudos = config.sole_pseudo_targets
+          pseudos = config.sole_pseudo_targets || config.pseudo_targets
           key = "psdk"
         else
           pseudos = config.pseudo_targets
