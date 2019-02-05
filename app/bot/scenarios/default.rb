@@ -1,3 +1,4 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
@@ -22,7 +23,6 @@ module Bot
         return unless match
 
         @query = match[1]
-        @query_options = {}
         match[2].scan(/(?=-?)\w+/).each { |k| @query_options[k.to_sym] = true }
       end
 

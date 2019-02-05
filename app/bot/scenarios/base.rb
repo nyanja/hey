@@ -19,6 +19,7 @@ module Bot
       def initialize core, query
         @core = core
         @query = query
+        @query_options = {}
       end
 
       # private
