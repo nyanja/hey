@@ -68,7 +68,17 @@ module Bot
       end
 
       def y_vision? y = @page_y
-        driver.y_vision? y, percent: @options[:percent]
+        offset = y_target
+        # puts "Inside y_vision: y == #{y}, offset == #{offset}, options: #{@options}"
+        y > offset - 100 && offset + 100 > y
+      end
+
+      def y_target
+        if @options[:percent]
+          driver.y_offset
+        else
+          driver.y_offset + driver.screen_height / 2
+        end
       end
     end
   end

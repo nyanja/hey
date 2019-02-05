@@ -1,3 +1,4 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
@@ -38,7 +39,7 @@ module Bot
         # driver.scroll_to element: @result
         # sleep 1
         visit_click
-        wait behavior_config(:pre_delay)
+        wait :pre_delay, behavior: true
         # what about depth visits for target and additional_visits for rival
         driver.switch_tab 1
       rescue Selenium::WebDriver::Error::TimeOutError

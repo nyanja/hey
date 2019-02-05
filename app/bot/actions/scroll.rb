@@ -1,3 +1,4 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
@@ -46,19 +47,18 @@ module Bot
         ((@page_y - driver.screen_height / 2) / @speed).to_i
       end
 
-      def selenium_iterations
-        @page_y - driver.screen_heigh / 2
-      end
-
       def click_button
-        click_button = driver.y_offset < @page_y ? 5 : 4
+        click_button = y_target < @page_y ? 5 : 4
         return @click_button = click_button unless @click_button
 
         if click_button != @click_button
           raise Errors::ScrollLoop if @speed <= 1
           @speed /= 2
+          @click_button = click_button
+          # puts "Changing scroll direction offset: #{driver.y_offset}," \
+          #        " y: #{@page_y}, new_speed: #{@speed}"
         end
-        @click_button = click_button
+        @click_button
       end
 
       def system?
@@ -67,6 +67,7 @@ module Bot
 
       def assign_scroll_speed
         @speed = behavior_config :scroll_speed
+        # binding.pry if @speed.nil? # It occured one time, but it should be impossible...
         check_speed_multiplier
         @speed = @speed > 150 ? 150 : @speed.to_i
       end
@@ -77,8 +78,9 @@ module Bot
                       behavior_config(:scroll_threshold).to_i &&
                       multiplier > 1
 
-        puts "Applying scroll multiplier: #{multiplier}, " \
-             "new speed: #{@speed * multiplier}"
+        # puts "Применяется умножение скорости: #{multiplier}, " \
+        # "новая скорость: #{@speed * multiplier}, " \
+        # "высота сайта: #{driver.page_height}"
         @speed *= multiplier
       end
 

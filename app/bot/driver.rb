@@ -93,16 +93,6 @@ module Bot
       y_offet + @screen_height / 2
     end
 
-    def y_vision? y, opts = {}
-      offset = if opts[:percent]
-                 y_offset
-               else
-                 y_offset + @screen_height / 2
-               end
-      # puts "Inside y_vision: y == #{y}, offset == #{offset}, opts == #{opts}"
-      y > offset - 100 && offset + 100 > y
-    end
-
     def page_height
       wait_until { driver.find_element(:tag_name, "body") }
         .attribute("scrollHeight").to_i
