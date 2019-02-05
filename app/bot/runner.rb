@@ -19,6 +19,7 @@ module Bot
     def initialize core, query
       @core = core
       @query = query
+      @query_options = {}
 
       @verified_results = []
       @actual_index = 0
@@ -72,7 +73,6 @@ module Bot
       return unless match
 
       @query = match[1]
-      @query_options = {}
       match[2].scan(/(?=-?)\w+/).each { |k| @query_options[k.to_sym] = true }
     end
 
