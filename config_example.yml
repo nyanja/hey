@@ -89,6 +89,7 @@ query_skip_after_perform?: true
 
 # Отложить обработку на время (минут)
 query_skip_interval: 2
+query_skip_on_presence_interval: 1 # нет на странице
 query_skip_on_limit_interval: 2 # из-за отсутствия прогресса
 
 # Процент использования мобильных user-agent

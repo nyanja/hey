@@ -35,10 +35,44 @@ module Bot
         end
       end
 
-      def defer_query
-        log(:info, "Запрос отложен на #{config.query_skip_interval} мин.")
+      # --------- Used in Results
+      # не будет выполняться если нет цели на странице ИЛИ цели не в топе ИЛИ
+      # первый мод И псевдо ниже игнорируемых О_о
+      def try_to_defer_query
+        no_target_on_the_page!
+        targets_on_top!
+        skipped_below_pseudo!
+      end
+
+      def no_target_on_the_page!
+        return unless @targets.empty? && config.query_skip_on_presence?
+
+        defer_query("Продвигаемого сайта нет на странице",
+                    config.query_skip_on_presence_interval)
+      end
+
+      def targets_on_top!
+        skip = config.query_skip_on_position_by_limit
+        return unless !@targets.empty? && skip && @targets.min <= skip.to_i ||
+                      !config.query_skip_after_perform?
+
+        defer_query("Продвигаемый сайт уже на высокой позиции")
+      end
+
+      def skipped_below_pseudo!
+        return unless config.mode == 1 &&
+                      config.query_skip_on_non_pseudos_below_pseudo? &&
+                      @pseudo && !@to_skip.empty? && @pseudo > @to_skip.min.to_i
+
+        defer_query "Сайты к пропуску ниже доп. целевого"
+      end
+
+      def defer_query message, time = config.query_skip_interval
+        log(:skip!, message)
+        log(:info, "Запрос отложен на #{time} мин.")
         Storage.set "delay//#{query} #{driver&.device}",
                     Time.now.to_i + config.query_skip_interval * 60
+        raise Errors::SkippingQuery
       end
     end
   end

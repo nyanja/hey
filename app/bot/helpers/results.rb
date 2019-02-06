@@ -15,10 +15,12 @@ module Bot
         distribute_results
         assign_pseudo
 
-        return if try_to_defer_query
+        try_to_defer_query
 
         build_result
         @verified_results
+      rescue Errors::SkippingQuery
+        nil
       end
 
       def assign_search_results results = nil
@@ -74,17 +76,6 @@ module Bot
         @pseudo = real_index
       end
 
-      # не будет выполняться если нет цели на странице ИЛИ цели не в топе ИЛИ
-      # первый мод И псевдо ниже игнорируемых О_о
-      def try_to_defer_query
-        return unless no_target_on_the_page? ||
-                      targets_on_top? ||
-                      (config.mode == 1 && skipped_below_pseudo?)
-
-        defer_query
-        true
-      end
-
       def build_result
         target = []
 
@@ -129,24 +120,6 @@ module Bot
           (@targets.empty? || @targets.max < @actual_index)
       end
 
-      def no_target_on_the_page?
-        return unless @targets.empty? && config.query_skip_on_presence?
-
-        log(:skip!, "Продвигаемого сайта нет на странице")
-        true
-      end
-
-      def targets_on_top?
-        skip = config.query_skip_on_position_by_limit
-        return unless !@targets.empty? && skip && @targets.min <= skip.to_i
-
-        log(:skip!, "Продвигаемый сайт уже на высокой позиции")
-        return true unless config.query_skip_after_perform?
-
-        defer_query
-        nil
-      end
-
       def skip_result? result
         return unless result.text.match?(config.ignore)
 
@@ -164,14 +137,6 @@ module Bot
 
       def to_skip? result
         config.skip_site && result.text.match?(config.skip_site)
-      end
-
-      def skipped_below_pseudo?
-        return unless config.query_skip_on_non_pseudos_below_pseudo? &&
-                      @pseudo && !@to_skip.empty? && @pseudo > @to_skip.min.to_i
-
-        log(:skip!, "Сайты к пропуску ниже доп. целевого")
-        true
       end
 
       def assign_status

@@ -8,5 +8,7 @@ module Bot
     class MissingAttribute < CommonError; end
 
     class ScrollLoop < CommonError; end
+
+    class SkippingQuerry < CommonError; end
   end
 end
