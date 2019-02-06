@@ -21,7 +21,7 @@ module Bot
         behavior_config(:random_moving_iterations)&.times do
           `xdotool mousemove_relative --sync -- #{@x} #{@y}`
           wait(:random_moving_delay,
-               skip_logs: false, behavior: true)
+               skip_logs: true, behavior: true)
         end
         wait(:random_moving_delay_after_iterations,
              skip_logs: true, behavior: true)

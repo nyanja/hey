@@ -233,6 +233,7 @@ random_moving_iterations_range:
 random_moving_delay: 0.02
 # Ожидание между итерациями
 
+
 ## ----------- КЛИКИ
 # Включение системных кликов по объектам(ссылкам)
 target_system_click: true

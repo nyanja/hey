@@ -1,4 +1,3 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
@@ -10,6 +9,8 @@ module Bot
         assign_depth
 
         visit
+        return if @depth&.zero?
+
         view_page
         return unless @depth
 
