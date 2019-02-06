@@ -1,11 +1,10 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
   module Behaviors
     class Rival < Base
       def perform
-        return unless unique_ip?
+        return if !unique_ip? || config.rival_skip
 
         log(:non_target, "прокрутка #{scroll_percent}%")
         visit

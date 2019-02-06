@@ -18,11 +18,11 @@ module Bot
 
       def perform_depth_visits
         @depth.times do |t|
-          view_page
           if @depth != t.succ
             wait(:explore_delay)
             visit_some_link
           end
+          view_page
         rescue Selenium::WebDriver::Error::NoSuchElementError
           log(:error, "Нет подходящей ссылки для перехода")
         end
@@ -32,7 +32,8 @@ module Bot
         start_visit_time_counting
         wait 3
         print "  "
-        driver.scroll_to(percent: 99, behavior: @visit_type)
+        driver.scroll_to(percent: behavior_config(:scroll_height),
+                         behavior: @visit_type)
         puts
         return unless rest_of_visit!.positive?
 
