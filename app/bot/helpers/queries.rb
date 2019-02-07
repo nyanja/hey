@@ -39,6 +39,16 @@ module Bot
         Storage.set "delay//#{query} #{driver&.device}",
                     Time.now.to_i + config.query_skip_interval * 60
       end
+
+      def assign_query_options q = nil
+        match = (q || @query).match(/(.+) ~ ?(.+)/)
+        return unless match
+
+        quer = match[1]
+        match[2].scan(/(?=-?)\w+/).each { |k| @query_options[k.to_sym] = true }
+        @query = quer if q
+        quer # костыли до релиза ветки mouse_feature
+      end
     end
   end
 end

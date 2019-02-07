@@ -8,7 +8,7 @@ module Bot
         # wait(:min)
         # search_bar = driver.find_element(id: "text")
         search_bar = wait_until { driver.find_element(name: "text") }
-        driver.type search_bar, search_text
+        driver.type search_bar, assign_query_options(search_text)
         wait(:min)
         search_bar.submit
         wait(:min)

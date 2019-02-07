@@ -57,7 +57,6 @@ module Bot
       return if query_delayed? ||
                 query_limited?
 
-      assign_query_options
       search
       parse_results(search_results) && process_query
       driver.quit
@@ -66,14 +65,6 @@ module Bot
       log(:error, "Нетипичная страница поиска")
       puts e.inspect
       driver.quit
-    end
-
-    def assign_query_options
-      match = query.match(/(.+) ~ ?(.+)/)
-      return unless match
-
-      @query = match[1]
-      match[2].scan(/(?=-?)\w+/).each { |k| @query_options[k.to_sym] = true }
     end
 
     def parse_results results
@@ -173,6 +164,7 @@ module Bot
 
     def target?(result)
       return unless @targets.include? @actual_index
+
       d = domain(result)
       return :skip if @target_domains.include?(d) ||
                       @query_options[:skip_target]
@@ -217,8 +209,12 @@ module Bot
 
     def lite_process_query
       @verified_results.each do |(r, status, info)|
-        unless status
+
+        if !status
           log :skip, domain(r)
+          next
+        elsif status == :skip
+          log :skip, "Пропуск игнорируемого #{domain(r)}"
           next
         end
         log(:visit, "##{info} #{domain(r)}", "[#{driver&.device}]")
