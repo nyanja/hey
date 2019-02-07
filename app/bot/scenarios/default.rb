@@ -42,6 +42,7 @@ module Bot
           parse_result_page(result, status)
         end
 
+        # puts "Delay: #{config.result_delay}"
         wait(:result_delay)
       rescue Selenium::WebDriver::Error::StaleElementReferenceError
         log :error, "Страница неактуальна"

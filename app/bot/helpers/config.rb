@@ -13,7 +13,7 @@ module Bot
       VALUES = %w[range patterns sample chance].freeze
       BEHAVIORS = /search|rival|target|link/.freeze
       DEFAULTS = { query_skip_on_position: 0,
-                   result_delay: 2,
+                   result_delay_sample: [2],
                    check_ip_delay: BIG_WAIT,
                    query_delay: MEDIUM_WAIT,
                    "unique_visit_ip?": false,
@@ -60,7 +60,7 @@ module Bot
       end
 
       def fetch_value method
-        return @config[method] if @config[method]
+        return @config[method] if @config[method] # what about Defaults-_-
 
         key = VALUES.find { |v| @config.key?("#{method}_#{v}") }
         return nil unless key
