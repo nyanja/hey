@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Bot
   module Helpers
     module Queries
@@ -52,8 +54,10 @@ module Bot
       end
 
       def targets_on_top!
-        skip = config.query_skip_on_position_by_limit
-        return unless !@targets.empty? && skip && @targets.min <= skip.to_i ||
+        skip = config.query_skip_on_position_by_limit&.to_i
+        return unless !@targets.empty? &&
+                      skip&.positive? &&
+                      @targets.min <= skip ||
                       !config.query_skip_after_perform?
 
         defer_query("Продвигаемый сайт уже на высокой позиции")

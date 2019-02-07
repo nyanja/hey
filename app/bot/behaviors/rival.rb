@@ -29,7 +29,8 @@ module Bot
       end
 
       def additional_visits
-        return if config.additional_visits&.empty?
+        return if config.additional_visits.nil? ||
+                  config.additional_visits.empty?
 
         config.additional_visits.each do |link|
           Behaviors.perform_single_visit_behavior(core, link)

@@ -109,7 +109,10 @@ module Bot
     end
 
     def switch_tab number
-      switch_to.window(driver.window_handles[number])
+      window = wait_until(0.5) { driver.window_handles[number] }
+      switch_to.window(window)
+    rescue Selenium::WebDriver::Error::TimeOutError
+      raise Errors::ThereIsNoSuchWindow
     end
 
     def close_tab second_call = nil

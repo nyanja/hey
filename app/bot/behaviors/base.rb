@@ -36,15 +36,15 @@ module Bot
       end
 
       def visit
-        # driver.scroll_to element: @result
-        # sleep 1
         visit_click
         wait :pre_delay, behavior: true
-        # what about depth visits for target and additional_visits for rival
         driver.switch_tab 1
       rescue Selenium::WebDriver::Error::TimeOutError
-        puts "stop"
-        nil
+        puts "Страница загружается слишком долго"
+      rescue Errors::ThereIsNoSuchWindow
+        log(:error,
+            "Время ожидания открытия окна (pre_delay) слишком маленькое " \
+            "или новое окно не получилось открыть.")
       ensure
         output_spent_time
       end
@@ -54,7 +54,7 @@ module Bot
         driver.click(query: { css: link_css },
                      element: @result)
       rescue Selenium::WebDriver::Error::NoSuchElementError
-        puts "element not found"
+        raise Errors::NotFound, "Ссылка не была найдена на странице поиска "
       end
 
       def check_time

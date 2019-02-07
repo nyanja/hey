@@ -11,7 +11,6 @@ module Bot
           driver.mouse_move(x: @page_x, y: @page_y,
                             behavior: @options[:behavior])
         end
-        puts "System Click"
 
         `xdotool click 1`
       end
@@ -19,7 +18,6 @@ module Bot
       def selenium_action
         assign_coordinates
         unless y_vision?
-          puts "Scroll Inside Click!!! ----------------------------"
           driver.scroll_to(x: @page_x, y: @page_y)
           sleep 1
         end
@@ -29,7 +27,12 @@ module Bot
       end
 
       def system?
-        behavior_config :system_click # config.system_click
+        if behavior_config(:system_click) && behavior_config(:system_scroll)
+          true
+        elsif behavior_config(:system_click)
+          puts "Системный клик мышкой не может работать без системного скролла"
+          false
+        end
       end
     end
   end

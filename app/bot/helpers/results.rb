@@ -18,6 +18,7 @@ module Bot
         try_to_defer_query
 
         build_result
+        output_results
         @verified_results
       rescue Errors::SkippingQuery
         nil
@@ -40,6 +41,7 @@ module Bot
         @rivals = []
 
         @target_domains = []
+        @results_count = config.results_count.to_i + 1
       end
 
       def filter_results
@@ -94,6 +96,13 @@ module Bot
         @verified_results += target # target results at the end
       end
 
+      def output_results
+        puts "Результаты:"
+        @verified_results.each do |result|
+          puts "  #{result[2] + 1} - #{result[1]} - #{domain(result[0])}"
+        end
+      end
+
       def next_pseudo # rubocop:disable Metrics/AbcSize
         if @targets.empty?
           pseudos = config.sole_pseudo_targets || config.pseudo_targets
@@ -115,8 +124,8 @@ module Bot
       end
 
       def no_more_targets_below?
-        @actual_index + 1 > config.results_count.to_i &&
-          (@pseudo.nil? || @pseudo < @actual_index - @targets.max.to_i) &&
+        @actual_index > @results_count &&
+          (@pseudo.nil? || @pseudo < @actual_index) && # - indx @targets.max.to_i
           (@targets.empty? || @targets.max < @actual_index)
       end
 
