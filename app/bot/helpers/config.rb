@@ -15,7 +15,7 @@ module Bot
       DEFAULTS = { query_skip_on_position: 0,
                    result_delay_sample: [2],
                    check_ip_delay: BIG_WAIT,
-                   query_delay: MEDIUM_WAIT,
+                   query_delay_sample: [MEDIUM_WAIT],
                    "unique_visit_ip?": false,
                    pseudo_targets: [],
                    throttling_latency: 0,
