@@ -42,7 +42,7 @@ module Bot
 
       def assign_query_options q = nil
         match = (q || @query).match(/(.+) ~ ?(.+)/)
-        return unless match
+        return q || @query unless match
 
         quer = match[1]
         match[2].scan(/(?=-?)\w+/).each { |k| @query_options[k.to_sym] = true }
