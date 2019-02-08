@@ -12,6 +12,7 @@ module Bot
       VALUES = %w[range patterns sample chance].freeze
       DEFAULTS = { query_skip_on_position: 0,
                    result_delay: 2,
+                   lite_pre_delay: 0,
                    check_ip_delay: BIG_WAIT,
                    query_delay: MEDIUM_WAIT,
                    "unique_visit_ip?": false,

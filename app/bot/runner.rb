@@ -210,6 +210,7 @@ module Bot
     def lite_process_query
       @verified_results.each do |(r, status, info)|
 
+        puts "domain: #{domain(r)}, status: #{status}"
         if !status
           log :skip, domain(r)
           next
@@ -218,7 +219,7 @@ module Bot
           next
         end
         log(:visit, "##{info} #{domain(r)}", "[#{driver&.device}]")
-        visit r, 0
+        visit r, config.lite_pre_delay
       ensure
         driver&.close_tab
         if @t
