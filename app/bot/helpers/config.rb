@@ -1,4 +1,3 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 require "yaml"
@@ -12,6 +11,8 @@ module Bot
 
       VALUES = %w[range patterns sample chance].freeze
       BEHAVIORS = /search|rival|target|link/.freeze
+
+      # all defaults will be transformed in initialize
       DEFAULTS = { query_skip_on_position: 0,
                    result_delay_sample: [2],
                    check_ip_delay: BIG_WAIT,
@@ -31,7 +32,7 @@ module Bot
                    mouse_move_delay_range: [0.008, 0.012] }.freeze
 
       def initialize path_to_config
-        @config = DEFAULTS.transform_keys(&:to_s)
+        @config = DEFAULTS.transform_keys { |k| "default_#{k}" }
                           .merge(load_config(path_to_config))
       end
 
@@ -59,13 +60,13 @@ module Bot
           fetch_value(method.sub(/[^_]+_/, ""))
       end
 
-      def fetch_value method
-        return @config[method] if @config[method] # what about Defaults-_-
+      def fetch_value method, first = true
+        return @config[method] if @config[method]
 
         key = VALUES.find { |v| @config.key?("#{method}_#{v}") }
-        return nil unless key
+        return send("#{key}_value", method) if key
 
-        send("#{key}_value", method)
+        fetch_value("default_#{method}", nil) if first
       end
 
       def range_value method
