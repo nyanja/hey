@@ -14,9 +14,9 @@ module Bot
 
       # all defaults will be transformed in initialize
       DEFAULTS = { query_skip_on_position: 0,
-                   result_delay_sample: [2],
+                   result_delay: 2,
                    check_ip_delay: BIG_WAIT,
-                   query_delay_sample: [MEDIUM_WAIT],
+                   query_delay: MEDIUM_WAIT,
                    "unique_visit_ip?": false,
                    pseudo_targets: [],
                    throttling_latency: 0,
@@ -25,7 +25,7 @@ module Bot
                    scroll_speed: 4,
                    scroll_delay: 1,
                    results_limit: 100,
-                   random_moving_iterations_range: [1, 10],
+                   random_moving_iterations_range: [5, 10],
                    random_move_by_x_range: [-5, 5],
                    random_move_by_y_range: [-5, 5],
                    mouse_move_range: [3, 5],
