@@ -18,12 +18,13 @@ module Bot
     def initialize core, opts = {}
       @core = core
       # @driver = Selenium::WebDriver.for :firefox, options: driver_options
-      client = Selenium::WebDriver::Remote::Http::Default.new
-      client.open_timeout = 200 # seconds
-      client.read_timeout = 200
+      client = Selenium::WebDriver::Remote::Http::Default
+      client = client.new(open_timeout: config.open_timeout,
+                          read_timeout: config.read_timeout)
       @driver = Selenium::WebDriver.for :chrome,
                                         options: driver_options(opts),
                                         http_client: client
+      @driver.manage.timeouts.page_load = config.page_load_timeout
       @driver.network_conditions = { offline: false,
                                      latency: config.throttling_latency,
                                      throughput:

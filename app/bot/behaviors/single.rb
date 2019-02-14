@@ -1,4 +1,3 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 module Bot
@@ -15,7 +14,7 @@ module Bot
         assign_scroll_percent
         navigate_inside_thread
 
-        wait :link_pre_delay
+        wait :pre_delay, behavior: true
         return kill_thread if scroll_percent.nil? || scroll_percent.zero?
 
         wait 10 # config for this wait?
