@@ -20,6 +20,9 @@ module Bot
                    throttling_latency: 0,
                    throttling_trhoughput: 500,
                    scroll_speed: 4,
+                   open_timeout: 30,
+                   read_timeout: 30,
+                   page_load_timeout: 30,
                    results_limit: 100 }.freeze
 
       def initialize path_to_config

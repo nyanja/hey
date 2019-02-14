@@ -166,6 +166,7 @@ module Bot
       return unless @targets.include? @actual_index
 
       d = domain(result)
+      # puts "domains: (#{@target_domains.join(', ')}), index: #{@actual_index}, targets: #{@targets}"
       return :skip if @target_domains.include?(d) ||
                       @query_options[:skip_target]
       @target_domains << d
@@ -209,7 +210,6 @@ module Bot
 
     def lite_process_query
       @verified_results.each do |(r, status, info)|
-
         puts "domain: #{domain(r)}, status: #{status}"
         if !status
           log :skip, domain(r)
