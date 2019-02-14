@@ -2,7 +2,7 @@
 
 module Bot
   module Behaviors
-    class Lite
+    class Lite < Base
       def perform index
         unless @visit_type
           log :skip, domain(@result)
