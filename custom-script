@@ -1,4 +1,4 @@
 #!/bin/bash
 
-git remote add gitlab git@gitlab.com:lideruslug/bot.git
-git branch --set-upstream-to=gitlab/master
+# git remote add gitlab git@gitlab.com:lideruslug/bot.git
+# git branch --set-upstream-to=gitlab/master
