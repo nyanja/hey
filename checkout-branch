@@ -1,14 +1,14 @@
 #!/bin/bash
 
-if [ -n "$1" ] # checks if any arg passed
-then
-   branch=$1
-else
-   branch='master'
-fi
+# if [ -n "$1" ] # checks if any arg passed
+# then
+   # branch=$1
+# else
+   # branch='master'
+# fi
 
-git fetch gitlab
-git checkout $branch
-git branch --set-upstream-to=gitlab/$branch
+git fetch $REMOTE
+git checkout $BRANCH
+git branch --set-upstream-to=$REMOTE/$BRANCH
 
 git pull
