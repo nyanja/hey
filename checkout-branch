@@ -7,7 +7,7 @@
    # branch='master'
 # fi
 
-source $DESKTOP_FOLDER/script.sh
+source "$DESKTOP_FOLDER/script.sh"
 git fetch $BOT_REMOTE
 git checkout $BOT_BRANCH
 git branch --set-upstream-to=$BOT_REMOTE/$BOT_BRANCH
