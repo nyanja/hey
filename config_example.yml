@@ -100,6 +100,9 @@ target_patterns:
 # Процент пропуска неосновного и доп целевого
 skip_target_chance: 0
 
+# Обрабатывает только один целевой. Первый.
+single_target: false
+
 # Нецелевые сайты
 non_target_patterns:
   - onhour

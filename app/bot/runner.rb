@@ -105,7 +105,11 @@ module Bot
                  (config.mode == 1 && rival?(result)) ||
                  (config.mode == 1 && skip?)
         if status == :main
-          main << [result, status, @actual_index]
+          if main.empty? || !config.single_target
+            main << [result, status, @actual_index]
+          else
+            @verified_results << [result, :skip, @actual_index]
+          end
         else
           @verified_results << [result, status, @actual_index]
         end
@@ -271,7 +275,7 @@ module Bot
     rescue Selenium::WebDriver::Error::UnknownError
       log :error, e.inspect
     rescue StandardError => e
-      raise e.class if e.class == HTTP::ConnectionError
+      # raise e.class if e.class == HTTP::ConnectionError
       puts
       log :error, "Ошибка на странице результата", e.inspect
       puts e.backtrace
@@ -293,7 +297,7 @@ module Bot
       rescue Selenium::WebDriver::Error::NoSuchElementError
         puts "element not found"
       end
-      wait delay if delay.positive?
+      wait delay if delay&.positive?
       driver.switch_tab 1
     rescue Selenium::WebDriver::Error::TimeOutError
       puts "stop"

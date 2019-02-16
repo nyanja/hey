@@ -16,6 +16,7 @@ module Bot
 
       def domain result
         return result.domain unless result.respond_to? :find_element # for tests
+
         result.find_element(css: ".organic__subtitle .link b, .organic__subtitle .link, .serp-title_type_subtitle .link").text
       rescue Selenium::WebDriver::Error::NoSuchElementError => e
         # binding.pry
