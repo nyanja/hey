@@ -108,6 +108,9 @@ use_real_ua?: true
 target_patterns:
   - lideruslug.ru
 
+# Обрабатывает только один целевой сайт, первый на странице поиска.
+single_target: true
+
 # Нецелевые сайты(вражеские), если не задано, то все кроме игнорируемых/целевых.
 rival_patterns:
   - onhour
@@ -144,7 +147,6 @@ rival_pre_delay_range: # для нецелевых сайтов (c)
   - 0.3
 target_pre_delay: 1 # для целевых сайтов
 link_pre_delay: 1 # для накликиваний яндекса / переходе по url
-lite_pre_delay: 1.5 # для второго режима (mode: 2)
 pre_delay: 1 # дефолтное
 
 # Минимальное время посещения (c)

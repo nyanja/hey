@@ -15,13 +15,13 @@ module Bot
         puts e.inspect
         driver.quit
       end
-    end
 
-    def process_results
-      @verified_results.each do |result, status, info|
-        apply_lite_behavior(result, status, info)
-      ensure
-        driver&.close_tab
+      def process_results
+        @verified_results.each do |result, status, info|
+          apply_lite_behavior(result, status, info)
+        ensure
+          driver&.close_tab
+        end
       end
     end
   end

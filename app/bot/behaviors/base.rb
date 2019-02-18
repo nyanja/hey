@@ -36,7 +36,7 @@ module Bot
 
       def visit
         visit_click
-        wait :pre_delay, behavior: true
+        visit_wait
         driver.switch_tab 1
       rescue Selenium::WebDriver::Error::TimeOutError
         puts "Страница загружается слишком долго"
@@ -46,6 +46,10 @@ module Bot
             "или новое окно не получилось открыть.")
       ensure
         output_spent_time
+      end
+
+      def visit_wait
+        wait :pre_delay, behavior: true
       end
 
       def visit_click

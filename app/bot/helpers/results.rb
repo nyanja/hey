@@ -40,6 +40,7 @@ module Bot
         @targets = []
         @rivals = []
 
+        @result_targets = []
         @target_domains = []
         @results_count = config.results_count.to_i + 1
       end
@@ -70,17 +71,15 @@ module Bot
         return if !next_index ||
                   previous_iteration == next_index # when it can be?
 
-        # в конфигах последовательность с рассчетом начала от 1
-        real_index = (next_index + @targets.max.to_i || 1) - 1
+        real_index = (next_index + @targets.max.to_i || 1)
         return assign_pseudo(real_index) if @to_skip.include?(real_index) ||
                                             @rivals.include?(real_index)
 
-        @pseudo = real_index
+        # For targets it's relation for sole it's real position
+        @pseudo = @targets.empty? ? real_index - 1 : real_index
       end
 
       def build_result
-        target = []
-
         @search_results.each_with_index do |result, i|
           @actual_index = i
 
@@ -88,12 +87,12 @@ module Bot
 
           status = assign_status
           if status == :target
-            target << [result, status, @actual_index]
+            @result_targets << [result, status, @actual_index]
           else
             @verified_results << [result, status, @actual_index]
           end
         end
-        @verified_results += target # target results at the end
+        @verified_results += @result_targets # target results at the end
       end
 
       def output_results
@@ -161,7 +160,8 @@ module Bot
         result = @search_results[@actual_index]
         d = domain(result)
         return :skip if @target_domains.include?(d) ||
-                        @query_options[:skip_target]
+                        @query_options[:skip_target] ||
+                        !@result_targets.empty? && config.single_target
 
         @target_domains << d
         :target
