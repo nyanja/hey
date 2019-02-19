@@ -106,7 +106,8 @@ module Bot
                  (config.mode == 1 && skip?)
         if status == :main
           if main.empty? || !config.single_target
-            main << [result, status, @actual_index]
+            destination = config.target_last ? main : @verified_results
+            destination << [result, status, @actual_index]
           else
             @verified_results << [result, :skip, @actual_index]
           end

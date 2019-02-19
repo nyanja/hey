@@ -103,6 +103,9 @@ skip_target_chance: 0
 # Обрабатывает только один целевой. Первый.
 single_target: false
 
+# Целевой сайт обрабатывается последним
+target_last: true
+
 # Нецелевые сайты
 non_target_patterns:
   - onhour
