@@ -276,7 +276,8 @@ module Bot
     rescue Selenium::WebDriver::Error::UnknownError
       log :error, e.inspect
     rescue StandardError => e
-      # raise e.class if e.class == HTTP::ConnectionError
+      raise e.class if e.class == Typhoeus::Errors::TyphoeusError
+
       puts
       log :error, "Ошибка на странице результата", e.inspect
       puts e.backtrace
