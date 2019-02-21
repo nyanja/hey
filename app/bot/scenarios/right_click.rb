@@ -45,6 +45,8 @@ module Bot
         @links.each do |link|
           core.driver = Bot::Driver.new core, user_agent: @user_agent
           perform_single_visit_behavior link
+        rescue Typhoeus::Errors::TyphoeusError => e
+          raise e
         rescue StandardError
           nil
         ensure
