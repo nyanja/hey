@@ -90,6 +90,7 @@ query_skip_after_perform?: true
 query_skip_interval: 2
 query_skip_on_presence_interval: 1 # нет на странице
 query_skip_on_limit_interval: 2 # из-за отсутствия прогресса
+query_skip_on_position_interval: 10 # из-за высокой позиции
 
 # Процент использования мобильных user-agent
 # 0 - только компы, 100 - только мобилы
