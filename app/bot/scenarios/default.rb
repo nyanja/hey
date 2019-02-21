@@ -49,12 +49,14 @@ module Bot
         end
       rescue StandardError => e
         rescues(e)
+      ensure
+        driver&.close_tab
       end
 
       def rescues error
         case error.class
         when Selenium::WebDriver::Error::NoSuchElementError
-          puts e.inspect
+          puts error.inspect
           log :skip, "Нетипичная ссылка"
         when Net::ReadTimeout
           puts
@@ -63,13 +65,13 @@ module Bot
           puts
           log :error, "Окно было закрыто"
         when Selenium::WebDriver::Error::UnknownError
-          log :error, e.inspect
+          log :error, error.inspect
         when Typhoeus::Errors::TyphoeusError
           raise error
         else
           puts
-          log :error, "Ошибка на странице результата", e.inspect
-          puts e.backtrace
+          log :error, "Ошибка на странице результата", error.inspect
+          puts error.backtrace
         end
       end
     end
