@@ -50,7 +50,7 @@ module Bot
         return unless @targets.empty? && config.query_skip_on_presence?
 
         defer_query("Продвигаемого сайта нет на странице",
-                    config.query_skip_on_presence_interval)
+                    time: config.query_skip_on_presence_interval)
       end
 
       def targets_on_top!
@@ -58,11 +58,11 @@ module Bot
         return if @targets.empty? ||
                   skip.nil? ||
                   skip.zero? ||
-                  skip - 1 < @targets.min ||
-                  !config.query_skip_after_perform?
+                  skip - 1 < @targets.min
 
         defer_query("Продвигаемый сайт уже на высокой позиции",
-                    config.query_skip_on_position_interval)
+                    time: config.query_skip_on_position_interval,
+                    skip_error: config.query_skip_after_perform?)
       end
 
       def skipped_below_pseudo!
@@ -73,12 +73,14 @@ module Bot
         defer_query "Сайты к пропуску ниже доп. целевого"
       end
 
-      def defer_query message, time = config.query_skip_interval
+      def defer_query message,
+                      time: config.query_skip_interval,
+                      skip_error: false
         log(:skip!, message)
         log(:info, "Запрос отложен на #{time} мин.")
         Storage.set "delay//#{query} #{driver&.device}",
                     Time.now.to_i + config.query_skip_interval * 60
-        raise Errors::SkippingQuery
+        raise Errors::SkippingQuery unless skip_error
       end
     end
   end
