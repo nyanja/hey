@@ -61,12 +61,8 @@ module Bot
                   skip - 1 < @targets.min ||
                   !config.query_skip_after_perform?
 
-        # return unless !@targets.empty? &&
-        # skip&.zero? &&
-        # @targets.min <= skip ||
-        # !config.query_skip_after_perform?
-
-        defer_query("Продвигаемый сайт уже на высокой позиции")
+        defer_query("Продвигаемый сайт уже на высокой позиции",
+                    config.query_skip_on_position_interval)
       end
 
       def skipped_below_pseudo!
