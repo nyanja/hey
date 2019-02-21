@@ -55,10 +55,15 @@ module Bot
 
       def targets_on_top!
         skip = config.query_skip_on_position_by_limit&.to_i
-        return unless !@targets.empty? &&
-                      skip&.positive? &&
-                      @targets.min <= skip ||
-                      !config.query_skip_after_perform?
+        return if @targets.empty? ||
+                  skip.nil? || skip&.zero? ||
+                  skip < @targets.min ||
+                  config.query_skip_after_perform?
+
+        # return unless !@targets.empty? &&
+        # skip&.zero? &&
+        # @targets.min <= skip ||
+        # !config.query_skip_after_perform?
 
         defer_query("Продвигаемый сайт уже на высокой позиции")
       end

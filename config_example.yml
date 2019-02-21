@@ -235,7 +235,7 @@ random_moving_iterations_range:
 # Ожидание внутри итерации(нужно для сглаживания движения)
 random_moving_delay: 0.02
 # Ожидание между итерациями
-
+random_moving_delay_after_iterations: 2
 
 ## ----------- КЛИКИ
 # Включение системных кликов по объектам(ссылкам)
