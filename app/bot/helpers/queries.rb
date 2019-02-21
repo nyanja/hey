@@ -56,9 +56,10 @@ module Bot
       def targets_on_top!
         skip = config.query_skip_on_position_by_limit&.to_i
         return if @targets.empty? ||
-                  skip.nil? || skip&.zero? ||
-                  skip < @targets.min ||
-                  config.query_skip_after_perform?
+                  skip.nil? ||
+                  skip.zero? ||
+                  skip - 1 < @targets.min ||
+                  !config.query_skip_after_perform?
 
         # return unless !@targets.empty? &&
         # skip&.zero? &&
