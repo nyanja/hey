@@ -74,8 +74,9 @@ module Bot
       end
 
       def defer_query message,
-                      time: config.query_skip_interval,
+                      time: nil,
                       skip_error: false
+        time ||= config.query_skip_interval
         log(:skip!, message)
         log(:info, "Запрос отложен на #{time} мин.")
         Storage.set "delay//#{query} #{driver&.device}",
