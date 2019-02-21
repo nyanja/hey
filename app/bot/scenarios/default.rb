@@ -66,7 +66,7 @@ module Bot
           log :error, "Окно было закрыто"
         when Selenium::WebDriver::Error::UnknownError
           log :error, error.inspect
-        when Typhoeus::Errors::TyphoeusError
+        when Typhoeus::Errors::TyphoeusError, Interrupt
           raise error
         else
           puts
