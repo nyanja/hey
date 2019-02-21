@@ -47,23 +47,30 @@ module Bot
         else
           log :skip, "Нейтральный сайт"
         end
-      rescue Selenium::WebDriver::Error::NoSuchElementError => e
-        puts e.inspect
-        log :skip, "Нетипичная ссылка"
-      rescue Net::ReadTimeout
-        puts
-        log :error, "Необрабатываемая страница"
-      rescue Selenium::WebDriver::Error::NoSuchWindowError
-        puts
-        log :error, "Окно было закрыто"
-      rescue Selenium::WebDriver::Error::UnknownError => e
-        log :error, e.inspect
       rescue StandardError => e
-        puts
-        log :error, "Ошибка на странице результата", e.inspect
-        puts e.backtrace
-      ensure
-        driver&.close_tab
+        rescues(e)
+      end
+
+      def rescues error
+        case error.class
+        when Selenium::WebDriver::Error::NoSuchElementError
+          puts e.inspect
+          log :skip, "Нетипичная ссылка"
+        when Net::ReadTimeout
+          puts
+          log :error, "Необрабатываемая страница"
+        when Selenium::WebDriver::Error::NoSuchWindowError
+          puts
+          log :error, "Окно было закрыто"
+        when Selenium::WebDriver::Error::UnknownError
+          log :error, e.inspect
+        when Typhoeus::Errors::TyphoeusError
+          raise error
+        else
+          puts
+          log :error, "Ошибка на странице результата", e.inspect
+          puts e.backtrace
+        end
       end
     end
   end
