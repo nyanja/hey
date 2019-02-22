@@ -17,7 +17,7 @@ module Bot
         Bot::Storage.del("qc//#{query}")
         log :skip, "Продвижение неэффективно. Отложим до лучших времен..."
         driver.quit
-        wait(:query_delay)
+        wait(:defered_query_delay)
         true
       end
 
@@ -28,7 +28,7 @@ module Bot
           tt = (t.to_i - Time.now.to_i) / 60
           log :skip, "Запрос отложен. Осталось #{tt} мин."
           driver.quit
-          wait(:query_delay)
+          wait(:defered_query_delay)
           true
         else
           Bot::Storage.del("delay//#{query}")

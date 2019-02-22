@@ -17,6 +17,7 @@ module Bot
                    result_delay: 2,
                    check_ip_delay: BIG_WAIT,
                    query_delay: MEDIUM_WAIT,
+                   defered_query_delay: MEDIUM_WAIT,
                    open_timeout: 30,
                    read_timeout: 30,
                    page_load_timeout: 30,

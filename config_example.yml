@@ -50,6 +50,9 @@ query_delay_range:
   - 2.0
   - 3
 
+# Пауза в случае, если запрос отложен
+defered_query_delay: 20
+
 # Пауза между переходами по ссылкам
 links_delay_range:
   - 2.0
