@@ -54,13 +54,14 @@ module Bot
       end
 
       def rescues error
-        case error.class
+        case error
         when Selenium::WebDriver::Error::NoSuchElementError
           puts error.inspect
           log :skip, "Нетипичная ссылка"
-        when Net::ReadTimeout
+        when Net::ReadTimeout, Selenium::WebDriver::Error::TimeOutError
           puts
-          log :error, "Необрабатываемая страница"
+          log :error, "Необрабатываемая страница, или ее загрузка " \
+                      "занимает слишком много времени(конфиг page_load_timeout)"
         when Selenium::WebDriver::Error::NoSuchWindowError
           puts
           log :error, "Окно было закрыто"

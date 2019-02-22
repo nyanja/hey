@@ -18,7 +18,8 @@ module Bot
     def initialize core, opts = {}
       @core = core
       # @driver = Selenium::WebDriver.for :firefox, options: driver_options
-      client = Selenium::WebDriver::Remote::Http::Default
+      # Redundant?
+      client = Selenium::WebDriver::Remote ::Http::Default
       client = client.new(open_timeout: config.open_timeout,
                           read_timeout: config.read_timeout)
       @driver = Selenium::WebDriver.for :chrome,
