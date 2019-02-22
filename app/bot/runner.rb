@@ -106,8 +106,8 @@ module Bot
                  (config.mode == 1 && skip?)
         if status == :main
           if main.empty? || !config.single_target
-            destination = config.target_last ? main : @verified_results
-            destination << [result, status, @actual_index]
+            main << [result, status, @actual_index]
+            @verified_results << main.last unless config.target_last
           else
             @verified_results << [result, :skip, @actual_index]
           end
@@ -115,7 +115,16 @@ module Bot
           @verified_results << [result, status, @actual_index]
         end
       end
-      @verified_results += main
+      @verified_results += main if config.target_last
+      output_results
+      @verified_results
+    end
+
+    def output_results
+      puts "Результаты:"
+      @verified_results.each do |result|
+        puts "  #{result[2] + 1} - #{result[1]} - #{domain(result[0])}"
+      end
     end
 
     def next_pseudo! last_index = nil
